@@ -14,7 +14,8 @@ let aniId,
 	watchDog= 0,
 	fpsArray= [60, 60, 60, 60, 60, 60];
 
-const getGameObjectList= GameObject.getGameObjectList();
+const gameObjectList= GameObject.getGameObjectList();
+const layerList= GameObject.getLayerList();
 window.time= 0;
 
 EventSystem.createEvent("onCanvasReady");
@@ -59,10 +60,17 @@ window.addEventListener("onCanvasReady", () => {
 	console.log("canvasReady");
 	InitialBehaviour();
 
-	for(const obj in getGameObjectList)
+	for(let i= 0; i < layerList.length; i++)
 	{
-		getGameObjectList[obj].script.Start();
+		const layer= layerList[i];
+		if(!gameObjectList[layer]) continue;
+
+		for(let obj in gameObjectList[layer])
+		{
+			gameObjectList[layer][obj].script.Start();
+		}
 	}
+
 	getNewFrame();
 });
 
@@ -119,11 +127,17 @@ const Update= () => {
 	TimeOut.update();
 	Interval.update();
 
-	for(const obj in getGameObjectList)
+	for(let i= 0; i < layerList.length; i++)
 	{
-		getGameObjectList[obj].runExecutables();
+		const layer= layerList[i];
+		if(!gameObjectList[layer]) continue;
+
+		for(let obj in gameObjectList[layer])
+		{
+			gameObjectList[layer][obj].runExecutables();
+		}
 	}
 
-	nurdyStats2.innerHTML= Object.keys(GameObject.getGameObjectList()).length;
+	nurdyStats2.innerHTML= Object.keys(gameObjectList).length;
 };
 

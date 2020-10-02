@@ -3,17 +3,21 @@ import {drawVector} from "./utilityFunctions.js";
 
 export const GameObject= (() => {
 
-	const gameObjectList= {};
+	const gameObjectList= {
+		default: {}
+	};
+
+	const layerList= ["default"];
 
 	class GameObject 
 	{
-		constructor(positionVector= new Vector(0, 0), drawGizmos= false) 
+		constructor(theLayer= "default", positionVector= new Vector(0, 0), drawGizmos= false) 
 		{
 			this.position= positionVector;
 			this.rotation= 0;
 			this.objectId= performance.now().toString() + Math.round(Math.random() * 1000);
 			this.drawGizmos= drawGizmos;
-			this.layer= "default";
+			this._layer= theLayer;
 			this.timers= {};
 			this.components= {};
 			this.script= {
@@ -21,7 +25,19 @@ export const GameObject= (() => {
 				Update: () => {}
 			};
 
-			gameObjectList[this.objectId]= this;
+			gameObjectList[this._layer][this.objectId]= this;
+		}
+
+		get layer()
+		{
+			return this._layer;
+		}
+
+		set layer(layerName)
+		{
+			this._layer= layerName;
+			gameObjectList[layerName][this.objectId]= this;
+			delete gameObjectList[this._layer][this.objectId];
 		}
 
 		addTimer(key, clock)
@@ -74,13 +90,14 @@ export const GameObject= (() => {
 		addComponent(component)
 		{
 			this.components[component.type]= component;
+			this.components[component.type].Start(this);
 		}
 
 		runComponents()
 		{
 			for(let key in this.components)
 			{
-				this.components[key].update(this);
+				this.components[key].Update(this);
 			}
 		}
 
@@ -98,6 +115,7 @@ export const GameObject= (() => {
 		}
 
 		static getGameObjectList= () => gameObjectList;
+		static getLayerList= () => layerList;
 	};
 
 	return GameObject;
