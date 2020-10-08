@@ -4,10 +4,11 @@ import Vector from "./vector.js";
 
 export class PlayerMovement{
 
-	constructor(obj)
+	constructor(obj, color= "orange")
 	{
 		this.gameObject= obj;
 		this.gameObject.velocity= new Vector();
+		this.color= color;
 	}
 
 	Start= () => {
@@ -16,7 +17,7 @@ export class PlayerMovement{
 			context.translate(obj.position.x, obj.position.y);
 			context.rotate(Math.PI / 2);
 			context.beginPath();
-			context.fillStyle= "yellow";
+			context.fillStyle= this.color;
 			context.moveTo(25, 0);
 			context.lineTo(-10, -15);
 			context.lineTo(0, 0);

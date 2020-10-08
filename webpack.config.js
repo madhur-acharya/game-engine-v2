@@ -20,7 +20,8 @@ const config = {
   devServer: {
     contentBase: path.join(__dirname),
     port: 3000
-  }
+  },
+  devtool: "source-map"
 };
 
 module.exports = config;

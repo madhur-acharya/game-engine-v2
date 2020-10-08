@@ -11,13 +11,13 @@ export const GameObject= (() => {
 
 	class GameObject 
 	{
-		constructor(theLayer= "default", positionVector= new Vector(0, 0), drawGizmos= false) 
+		constructor(positionVector= new Vector(0, 0), drawGizmos= false) 
 		{
 			this.position= positionVector;
 			this.rotation= 0;
 			this.objectId= performance.now().toString() + Math.round(Math.random() * 1000);
 			this.drawGizmos= drawGizmos;
-			this._layer= theLayer;
+			this._layer= "default";
 			this.timers= {};
 			this.components= {};
 			this.script= {
@@ -33,11 +33,32 @@ export const GameObject= (() => {
 			return this._layer;
 		}
 
-		set layer(layerName)
+		set layer(layerSettings)
 		{
-			this._layer= layerName;
-			gameObjectList[layerName][this.objectId]= this;
+			if(typeof layerSettings !== "object") return;
+
+			const indx= layerList.indexOf(layerSettings.name);
+			if(~indx)
+			{
+				if(indx != layerSettings.index)
+				{
+					layerList.splice(indx, 1);
+					layerList.splice(layerSettings.index, 0, layerSettings.name);
+				}
+			}
+			else
+			{
+				layerList.splice(layerSettings.index, 0, layerSettings.name);
+			}
+
+			if(!gameObjectList[layerSettings.name])
+			{
+				gameObjectList[layerSettings.name]= {};
+			}
+			
+			gameObjectList[layerSettings.name][this.objectId]= this;
 			delete gameObjectList[this._layer][this.objectId];
+			this._layer= layerSettings.name;
 		}
 
 		addTimer(key, clock)

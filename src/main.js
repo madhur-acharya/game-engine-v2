@@ -70,7 +70,7 @@ window.addEventListener("onCanvasReady", () => {
 			gameObjectList[layer][obj].script.Start();
 		}
 	}
-
+console.log(gameObjectList, layerList)
 	getNewFrame();
 });
 

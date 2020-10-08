@@ -4,8 +4,12 @@ import {PlayerMovement} from "./testScripts.js";
 
 const InitialBehaviour= () => {
 	
-	const testObject= new GameObject();
+	let testObject= new GameObject();
 	testObject.script= new PlayerMovement(testObject);
+	testObject.layer= {name: "1", index: 1};
+
+	testObject= new GameObject();
+	testObject.script= new PlayerMovement(testObject, "blue");
 }
 
 export default InitialBehaviour;

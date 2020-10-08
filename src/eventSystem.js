@@ -4,8 +4,10 @@ const EventSystem= function()
 
 	class EventSystem{
 
-		static createEvent(event)
+		static createEvent(event, detail)
 		{
+			const evt= new Event(event);
+			evt.detail= detail;
 			eventStack[event]= new Event(event);
 		}
 
