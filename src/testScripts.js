@@ -1,17 +1,18 @@
-import {VGRenderer, RigidBody} from "./components.js";
+import {VGRenderer, RigidBody, Collider} from "./components.js";
 import Input from "./input.js";
 import Vector from "./vector.js";
 
 export class PlayerMovement{
 
-	constructor(obj, color= "orange")
+	constructor(obj)
 	{
 		this.gameObject= obj;
 		this.gameObject.velocity= new Vector();
-		this.color= color;
+		this.color= "orange";
 	}
 
 	Start= () => {
+
 		this.gameObject.addComponent(new VGRenderer(obj => {
 			context.save();
 			context.translate(obj.position.x, obj.position.y);
@@ -26,8 +27,12 @@ export class PlayerMovement{
 			context.fill();
 			context.restore();
 		}));
-
 		this.gameObject.addComponent(new RigidBody(false, false));
+		this.gameObject.addComponent(new Collider("circle", {radius: 35}, () => {
+			console.log("X");
+		}, () => {
+			console.log("O");
+		}));
 	}
 
 	Update= () => {
@@ -83,5 +88,35 @@ export class PlayerMovement{
 		}
 
 		this.gameObject.position.addTo(this.gameObject.velocity);
+	}
+};
+
+
+export class Circle{
+	constructor(obj)
+	{
+		this.gameObject= obj;
+	}
+
+	Start= () => {
+		this.gameObject.position= new Vector(Math.random() * 200, Math.random() * 200);
+		this.gameObject.addComponent(new VGRenderer(obj => {
+			context.save();
+			context.beginPath();
+			context.fillStyle= "teal";
+			context.arc(obj.position.x, obj.position.y, 20, 0, Math.PI * 2)
+			context.fill();
+			context.restore();
+		}));
+
+		this.gameObject.addComponent(new Collider("circle", {radius: 20}, () => {
+			console.log("X");
+		}, () => {
+			console.log("O");
+		}));
+	}
+
+	Update= () => {
+
 	}
 };

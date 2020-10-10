@@ -51,38 +51,44 @@ export function Timer()
 
 export const TimeOut= (() => {
 
-	const timeOutArray= [];
+	const timeOutArray= {};
 
 	class TimeOut{
 
-		static newTimeOut(onTimeOut= () => {}, delay= 0)
+		static new(onTimeOut= () => {}, delay= 0)
 		{
-			const timeOutId= performance.now().toString();
-			timeOutArray.push({
+			const timeOutId= performance.now() + "-" + (Math.random() * 1000);
+			timeOutArray[timeOutId]= {
 				timer: new Timer(),
 				delay: delay,
 				onTimeOut: onTimeOut,
 				timeOutId: timeOutId
-			});
+			};
 
 			return timeOutId;
 		}
 
-		static clearTimeOut(id)
+		static clear(id)
 		{
-			timeOutArray= timeOutArray.filter(itm => !itm.timeOutId === id);
+			delete timeOutArray[id];
 		}
 
 		static update()
 		{
-			for(let i=0; i < timeOutArray.length; i++)
+			for(let i in timeOutArray)
 			{
-				if(timeOutArray[i].timer.getDuration() >= timeOutArray[i].delay)
+				const obj= timeOutArray[i];
+				if(obj.timer.getDuration() >= obj.delay)
 				{
-					timeOutArray[i].onTimeOut();
-					timeOutArray.splice(i, 1);
+					obj.onTimeOut();
+					delete timeOutArray[obj.timeOutId];
 				}
 			}
+		}
+
+		static reset()
+		{
+			timeOutArray= {};
 		}
 	};
 
@@ -93,46 +99,46 @@ export const TimeOut= (() => {
 
 export const Interval= (() => {
 
-	const intervalArray= [];
+	const intervalArray= {};
 
 	class Interval{
 
-		newInterval(onInterval= () => {}, duaration, maxIterations= -1, onIntervalEnd= () => {})
+		new(onInterval= () => {}, duaration, maxIterations= -1, onIntervalEnd= () => {})
 		{
-			const intervalId= performance.now().toString();
-			intervalArray.push({
+			const intervalId= performance.now() + "-" + (Math.random() * 1000);
+			intervalArray[intervalId]= {
 				timer: new Timer(),
 				maxIterations: maxIterations,
 				iterationCount: 0,
 				onInterval: onInterval,
 				duaration: duaration,
-				intervalId: performance.now().toString(),
+				intervalId: intervalId,
 				onIntervalEnd: onIntervalEnd
-			});
+			};
+
 			return intervalId;
 		}
 
-		clearInterval(id)
+		clear(id)
 		{
-			if(!intervalId) return;
-			console.log(id, intervalArray.filter(itm => !itm.intervalId === id));
-			intervalArray= intervalArray.filter(itm => !itm.intervalId === id);
+			delete intervalArray[id];
 		}
 
 		update()
 		{
-			for(let i=0; i < intervalArray.length; i++)
+			for(let i in intervalArray)
 			{
-				if(intervalArray[i].timer.getDuration() >= intervalArray[i].duaration)
+				const obj= intervalArray[i];
+				if(obj.timer.getDuration() >= obj.duaration)
 				{
-					const ele= intervalArray[i];
+					const ele= obj;
 					ele.onInterval();
 					ele.timer.reset();
 					ele.iterationCount+= 1;
 					if(ele.maxIterations !== -1 && ele.iterationCount >= ele.maxIterations)
 					{
 						ele.onIntervalEnd && ele.onIntervalEnd();
-						intervalArray.splice(i, 1);
+						delete intervalArray[obj.intervalId];
 					}
 				}
 			}
@@ -140,6 +146,42 @@ export const Interval= (() => {
 	};
 
 	return new Interval;
+})();
+
+//------------------------------------------------------------------------
+
+export const Coroutine= (() => {
+	const coroutineList= {};
+
+	class Coroutine{
+
+		static start(routine= () => {})
+		{
+			const routineObj= {
+				id: performance.now() + "" + Math.random() * 1000,
+				routine: routine()
+			};
+			coroutineList[routineObj.id]= routineObj;
+		}
+
+		static remove(id)
+		{
+			delete coroutineList[id];
+		}
+
+		static run()
+		{
+			for(let i in coroutineList)
+			{
+				if(coroutineList[i].routine.next().done === true)
+				{
+					Coroutine.remove(coroutineList[i].id);
+				}
+			}
+		}
+	};
+
+	return Coroutine;
 })();
 
 //------------------------------------------------------------------------
@@ -197,9 +239,10 @@ export function clone_particle(original)
 //------------------------------------------------------------------------
 export function Circle2CircleCollision(b1, b2)
 {
-	var x= Math.abs(b1.position.x - b2.position.x);
-	var y= Math.abs(b1.position.y - b2.position.y);
-	return (((x * x) + (y * y)) <= ((b1.collider.radius + b2.collider.radius) * (b1.collider.radius + b2.collider.radius)));
+	var x= Math.abs(b1.x - b2.x);
+	var y= Math.abs(b1.y - b2.y);
+
+	return (((x * x) + (y * y)) <= ((b1.radius + b2.radius) * (b1.radius + b2.radius)));
 }
 //------------------------------------------------------------------------
 export function box2BoxCollision(b1, b2)
@@ -287,10 +330,12 @@ export function wrappAround(ref)
 //------------------------------------------------------------------------
 export function draw_bounding_circle(pos, radius= 20)
 {
+	context.save();
 	context.beginPath();
 	context.strokeStyle= "white";
 	context.arc(pos.x, pos.y, radius, 0, Math.PI * 2)
 	context.stroke();
+	context.restore();
 }
 //------------------------------------------------------------------------
 export function fullscreen()

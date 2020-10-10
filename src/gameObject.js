@@ -11,7 +11,7 @@ export const GameObject= (() => {
 
 	class GameObject 
 	{
-		constructor(positionVector= new Vector(0, 0), drawGizmos= false) 
+		constructor(positionVector= new Vector(0, 0), layerSettings= {name: "default", index: 0}, drawGizmos= false) 
 		{
 			this.position= positionVector;
 			this.rotation= 0;
@@ -24,6 +24,7 @@ export const GameObject= (() => {
 				Start: () => {},
 				Update: () => {}
 			};
+			this.layer= layerSettings;
 
 			gameObjectList[this._layer][this.objectId]= this;
 		}
@@ -120,6 +121,11 @@ export const GameObject= (() => {
 			{
 				this.components[key].Update(this);
 			}
+		}
+
+		assignScript(script)
+		{
+			this.script= new script(this);
 		}
 
 		onDestroy()

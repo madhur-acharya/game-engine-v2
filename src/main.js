@@ -1,5 +1,5 @@
 import EventSystem from "./eventSystem.js";
-import {TimeOut, Interval, drawGrid} from "./utilityFunctions.js";
+import {TimeOut, Interval, drawGrid, Coroutine} from "./utilityFunctions.js";
 import InitialBehaviour from "./initialBehaviour.js";
 import {GameObject} from "./gameObject.js";
 import Input from "./input.js";
@@ -70,7 +70,9 @@ window.addEventListener("onCanvasReady", () => {
 			gameObjectList[layer][obj].script.Start();
 		}
 	}
-console.log(gameObjectList, layerList)
+	
+	console.log(gameObjectList, layerList, gameObjectList);
+	
 	getNewFrame();
 });
 
@@ -126,6 +128,9 @@ const Update= () => {
 	
 	TimeOut.update();
 	Interval.update();
+	Coroutine.run();
+
+	let length= 0;
 
 	for(let i= 0; i < layerList.length; i++)
 	{
@@ -135,9 +140,12 @@ const Update= () => {
 		for(let obj in gameObjectList[layer])
 		{
 			gameObjectList[layer][obj].runExecutables();
+			length++;
 		}
 	}
 
-	nurdyStats2.innerHTML= Object.keys(gameObjectList).length;
+	
+
+	nurdyStats2.innerHTML= length;
 };
 

@@ -1,5 +1,6 @@
-import {getRandomVector, isFunction} from "./utilityFunctions.js";
+import {getRandomVector, isFunction, draw_bounding_circle, Circle2CircleCollision} from "./utilityFunctions.js";
 import Vector from "./vector.js";
+import {GameObject} from "./gameObject.js";
 
 export class VGRenderer{
 
@@ -89,43 +90,101 @@ export class RigidBody{
 }
 
 export class Collider{
-	constructor()
+	
+	constructor(collideTtype= "circle", dimentions= {radius: 5}, onCollisionEnter= () => {}, onCollisionExit= () => {}, isTrigger= false, ignoreLayers= [])
 	{
-		collideTtype: "circle";
-		dimentions: {radius: 15};
-		onCollision: () => {};
-		isTrigger: false;
-		computeBoundryCollision: false;
-		enabled: true;
+		this.collideTtype= collideTtype;
+		this.dimentions= dimentions;
+		this.onCollisionEnter= onCollisionEnter;
+		this.onCollisionExit= onCollisionExit;
+		this.isTrigger= isTrigger;
+		this.enabled= true;
+		this.ignoreLayers= ignoreLayers;
+		this.colliding= false;
+		this.drawColiider= true;
+		this.type= "Collider"
+	}
+
+	Start(obj)
+	{
+		this.gameObject= obj;
 	}
 
 	Update()
 	{
 		if(!this.enabled) return;
-	}
 
-	collisionDetection()
-	{
-		if(this.collider.computeBoundryCollision)
-		{
-			this.velocity= cirlce2WalllCollision(this);
-		}
+		const gameObjectList= GameObject.getGameObjectList();
+		const layerList= GameObject.getLayerList();
 
-		for(const ob in gameObjectList)
+		for(let i= 0; i < layerList.length; i++)
 		{
-			if(this.objectId !== gameObjectList[ob].objectId && this.layer === gameObjectList[ob].layer)
+			const layer= layerList[i];
+
+			if(this.ignoreLayers.includes(layer) || !gameObjectList[layer])
 			{
-				if(gameObjectList[ob].disableCollisionDetection) return;
-				if(Circle2CircleCollision(this, gameObjectList[ob]))
+				continue;
+			}
+
+			for(let i in gameObjectList[layer])
+			{
+				if(gameObjectList[layer][i].objectId !== this.gameObject.objectId)
 				{
-					if(this.collider.uncolide && gameObjectList[ob].collider.uncolide) 
-					{
-						uncolide(this, gameObjectList[ob] && gameObjectList[ob]);
-					}
-					this.collider.onCollision(this, gameObjectList[ob]);
-					gameObjectList[ob] && gameObjectList[ob].collider.onCollision(gameObjectList[ob], this);
+					this.collisionDetection(gameObjectList[layer][i].components.Collider);
 				}
 			}
+		}
+
+		if(this.drawColiider)
+		{
+			draw_bounding_circle(this.gameObject.position, this.dimentions.radius);
+		}
+	}
+
+	collisionDetection(other)
+	{
+		switch(this.collideTtype + other.collideTtype)
+		{
+			case "circlecircle":
+			{
+				if(Circle2CircleCollision({x: this.gameObject.position.x, y: this.gameObject.position.y, radius: this.dimentions.radius}, {x: other.gameObject.position.x, y: other.gameObject.position.y, radius: other.dimentions.radius}))
+				{
+					if(this.colliding === false)
+					{
+						this.onCollisionEnter(this.gameObject, other.gameObject);
+						this.colliding= true;
+					}
+					if(other.colliding === false)
+					{
+						other.onCollisionEnter(other.gameObject, this.gameObject);
+						other.colliding= true;
+					}
+				}
+				else
+				{
+					if(this.colliding === true)
+					{
+						this.onCollisionExit(this.gameObject, other.gameObject);
+						this.colliding= false;
+					}
+					if(other.colliding === true)
+					{
+						other.onCollisionExit(other.gameObject, this.gameObject);
+						other.colliding= false;
+					}
+				}
+				break;
+			}
+			case "squaresquare":
+			{
+				break;
+			}
+			case "circlesquare":
+			case "squarecircle":
+			{
+				break;
+			}
+			default : break;
 		}
 	}
 
