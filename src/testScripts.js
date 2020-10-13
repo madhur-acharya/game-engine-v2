@@ -12,7 +12,7 @@ export class PlayerMovement{
 	}
 
 	Start= () => {
-
+		this.gameObject.position= new Vector(width / 2, 50);
 		this.gameObject.addComponent(new VGRenderer(obj => {
 			context.save();
 			context.translate(obj.position.x, obj.position.y);
@@ -27,15 +27,19 @@ export class PlayerMovement{
 			context.fill();
 			context.restore();
 		}));
-		this.gameObject.addComponent(new RigidBody(false, false));
-		this.gameObject.addComponent(new Collider("circle", {radius: 35}, () => {
+		const rb= this.gameObject.addComponent(new RigidBody(false, false));
+		rb.mass= 10;
+		rb.velocity= new Vector(-3, 0);
+		this.gameObject.addComponent(new Collider("circle", {radius: 50}, () => {
 			console.log("X");
 		}, () => {
-			console.log("O");
+			//console.log("O");
 		}));
 	}
 
 	Update= () => {
+		return;
+
 		if(Input.getKey("w") === true)
 		{
 			this.gameObject.velocity.setMag(5);
@@ -99,24 +103,19 @@ export class Circle{
 	}
 
 	Start= () => {
-		this.gameObject.position= new Vector(Math.random() * 200, Math.random() * 200);
-		this.gameObject.addComponent(new VGRenderer(obj => {
-			context.save();
-			context.beginPath();
-			context.fillStyle= "teal";
-			context.arc(obj.position.x, obj.position.y, 20, 0, Math.PI * 2)
-			context.fill();
-			context.restore();
-		}));
+		this.gameObject.position= new Vector(-width / 2, 0);
 
-		this.gameObject.addComponent(new Collider("circle", {radius: 20}, () => {
-			console.log("X");
+		const rb= this.gameObject.addComponent(new RigidBody(false, false));
+		rb.velocity= new Vector(3, 0);
+		this.gameObject.addComponent(new Collider("circle", {radius: 50}, () => {
+			//console.log("X");
 		}, () => {
-			console.log("O");
+			//console.log("O");
 		}));
 	}
 
 	Update= () => {
-
 	}
 };
+
+

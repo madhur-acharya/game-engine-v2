@@ -16,39 +16,65 @@ export class Point
 //------------------------------------------------------------------------
 export function RealWorldTimer()
 {
-	this.start_time= Date.now();
+	this.startTime= Date.now();
 
 	this.getDuration= function()
 	{
-		let delay= Date.now() - this.start_time;
+		let delay= Date.now() - this.startTime;
 		return delay;
 	}
 
 	this.reset= function()
 	{
-		this.start_time= Date.now();
+		this.startTime= Date.now();
 	}
 }
 
 //------------------------------------------------------------------------
-export function Timer()
-{
-	this.start_time= time;
-
-	this.getDuration= function()
+export class Timer{
+	constructor()
 	{
-		let delay= time - this.start_time;
+		this.startTime= time;
+	}
+	
+	getDuration= function()
+	{
+		let delay= time - this.startTime;
 		return delay;
 	}
 
-	this.reset= function()
+	reset= function()
 	{
-		this.start_time= time;
+		this.startTime= time;
+	}
+};
+
+//------------------------------------------------------------------------
+export class WaitForMilliSeconds{
+	constructor(delay= 0)
+	{
+		const theTimer= new Timer();
+		this.timer= theTimer;
+		this.delay= delay;
+		this.iterator= (function* ()
+		{
+			while(theTimer.getDuration() < 1000)
+			{
+				yield 0;
+			}
+		})();
+	}
+
+	after(func)
+	{
+		if(this.iterator.next().done === true)
+		{
+			func();
+		}
 	}
 }
 
 //------------------------------------------------------------------------
-
 export const TimeOut= (() => {
 
 	const timeOutArray= {};
@@ -155,11 +181,11 @@ export const Coroutine= (() => {
 
 	class Coroutine{
 
-		static start(routine= () => {})
+		static start(routine= (function*(){yield;}))
 		{
 			const routineObj= {
 				id: performance.now() + "" + Math.random() * 1000,
-				routine: routine()
+				routine: routine
 			};
 			coroutineList[routineObj.id]= routineObj;
 		}
@@ -204,9 +230,16 @@ export function getRandomColor()
 		var letters = '0123456789ABCDEF';
 		var color = '#';
 		for (var i = 0; i < 6; i++) 
-	color += letters[Math.floor(Math.random() * 16)];
+			color += letters[Math.floor(Math.random() * 16)];
 		return color;
 }
+
+//------------------------------------------------------------------------
+export function midpoint(p1, p2)
+{
+	return {dx : (p1.dx + p2.dx) / 2, dy: (p1.dy + p2.dy) / 2};
+};
+
 //------------------------------------------------------------------------
 export function drawVector(pos, vel= pos, color= "red")
 {
@@ -407,4 +440,28 @@ while(accumulatedTime > deltaTime)
 	accumulatedTime-= deltaTime;
 }
 */
+
+function collisionTestWithWalls(ball) 
+{
+    if (ball.x < ball.radius) 
+    {
+        ball.x = ball.radius;
+        ball.vx *= -1;
+    } 
+    if (ball.x > width - (ball.radius)) 
+    {
+        ball.x = width - (ball.radius);
+        ball.vx *= -1;
+    }     
+    if (ball.y < ball.radius) 
+    {
+        ball.y = ball.radius;
+        ball.vy *= -1;
+    }     
+    if (ball.y > height - (ball.radius)) 
+    {
+        ball.y = height - (ball.radius);
+        ball.vy *= -1;
+    }
+}
 

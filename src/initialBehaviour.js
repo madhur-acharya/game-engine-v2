@@ -1,5 +1,5 @@
 import {GameObject} from "./gameObject.js";
-import {getRandomVector, Coroutine} from "./utilityFunctions.js";
+import {getRandomVector, Coroutine, WaitForMilliSeconds, Timer} from "./utilityFunctions.js";
 import {PlayerMovement, Circle} from "./testScripts.js";
 
 const InitialBehaviour= () => {
@@ -7,17 +7,20 @@ const InitialBehaviour= () => {
 	new GameObject().assignScript(PlayerMovement);
 	new GameObject().assignScript(Circle);
 
-	function* countAppleSales() 
+	/*Coroutine.start((function*() 
 	{
-		let saleList = [3, 7, 5]
-		for (let i = 0; i < saleList.length; i++) 
-		{
-			yield saleList[i]
-			console.log(saleList[i]);
-		}
-	}
+		let timer= new Timer();
 
-	Coroutine.start(countAppleSales);
+		for(let i= 0; i < 10; i++)
+		{
+			while(timer.getDuration() < 1000)
+			{
+				yield 0;
+			}
+			timer= new Timer();
+			console.log("!");
+		}
+	})());*/
 }
 
 export default InitialBehaviour;

@@ -69,8 +69,11 @@ export const GameObject= (() => {
 
 		renderGizmos()
 		{
-			drawVector(this.position, new Vector(0, 1), "green");
-			drawVector(this.position, new Vector(1, 0));
+			if(this.drawGizmos)
+			{
+				drawVector(this.position, new Vector(0, 1), "green");
+				drawVector(this.position, new Vector(1, 0));
+			}
 		}
 
 		Destroy(delay= 0)
@@ -113,6 +116,7 @@ export const GameObject= (() => {
 		{
 			this.components[component.type]= component;
 			this.components[component.type].Start(this);
+			return component;
 		}
 
 		runComponents()
