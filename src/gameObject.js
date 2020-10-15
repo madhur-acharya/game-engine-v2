@@ -1,5 +1,6 @@
 import Vector from "./vector.js";
 import {drawVector} from "./utilityFunctions.js";
+import {Collider} from "./components.js";
 
 export const GameObject= (() => {
 
@@ -60,6 +61,8 @@ export const GameObject= (() => {
 			gameObjectList[layerSettings.name][this.objectId]= this;
 			delete gameObjectList[this._layer][this.objectId];
 			this._layer= layerSettings.name;
+
+			Collider.updateCollisionArray();
 		}
 
 		addTimer(key, clock)

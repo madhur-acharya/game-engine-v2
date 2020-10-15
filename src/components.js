@@ -1,4 +1,4 @@
-import {getRandomVector, isFunction, draw_bounding_circle, Circle2CircleCollision, drawVector} from "./utilityFunctions.js";
+import {getRandomVector, isFunction, drawBoundingCircle, Circle2CircleCollision, drawVector} from "./utilityFunctions.js";
 import Vector from "./vector.js";
 import {GameObject} from "./gameObject.js";
 
@@ -91,208 +91,177 @@ export class RigidBody{
 
 }
 
-export class Collider{
-	
-	constructor(collideTtype= "circle", dimentions= {radius: 5}, onCollisionEnter= () => {}, onCollisionExit= () => {}, isTrigger= false, ignoreLayers= [])
-	{
-		this.collideTtype= collideTtype;
-		this.dimentions= dimentions;
-		this.onCollisionEnter= onCollisionEnter;
-		this.onCollisionExit= onCollisionExit;
-		this.isTrigger= isTrigger;
-		this.enabled= true;
-		this.ignoreLayers= ignoreLayers;
-		this.colliding= false;
-		this.drawColiider= true;
-		this.type= "Collider"
-	}
+export const Collider= (() => {
 
-	Start(obj)
-	{
-		this.gameObject= obj;
-	}
+	let collisionList= [];
 
-	Update()
-	{
-		if(!this.enabled) return;
-
-		const gameObjectList= GameObject.getGameObjectList();
-		const layerList= GameObject.getLayerList();
-
-		for(let i= 0; i < layerList.length; i++)
+	return class Collider{
+		
+		constructor(colliderType= "circle", dimentions= {radius: 5}, onCollisionEnter= () => {}, onCollisionExit= () => {}, isTrigger= false, ignoreLayers= [])
 		{
-			const layer= layerList[i];
+			this.colliderType= colliderType;
+			this.dimentions= dimentions;
+			this.onCollisionEnter= onCollisionEnter;
+			this.onCollisionExit= onCollisionExit;
+			this.isTrigger= isTrigger;
+			this.enabled= true;
+			this.ignoreLayers= ignoreLayers;
+			this.colliding= false;
+			this.drawColiider= true;
+			this.type= "Collider"
+		}
 
-			if(this.ignoreLayers.includes(layer) || !gameObjectList[layer]) continue;
+		Start(obj)
+		{
+			this.gameObject= obj;
+		}
 
-			for(let i in gameObjectList[layer])
+		Update()
+		{
+
+		}
+
+		static updateCollisionArray()
+		{
+			const gameObjectList= GameObject.getGameObjectList();
+			const layerList= GameObject.getLayerList();
+
+			for(let i= 0; i < layerList.length; i++)
 			{
-				if(gameObjectList[layer][i].objectId !== this.gameObject.objectId)
+				collisionList= collisionList.concat(Object.values(gameObjectList[layerList[i]]));
+			}
+		}
+
+		static computeCollisionDetection()
+		{
+			const gameObjectList= GameObject.getGameObjectList();
+
+			for(let i= 0; i < collisionList.length; i ++)
+			{
+				for(let j= i; j < collisionList.length; j ++)
 				{
-					this.collisionDetection(gameObjectList[layer][i].components.Collider);
+					if(collisionList[i].components.Collider.ignoreLayers.includes(collisionList[j].layer) || collisionList[j].components.Collider.ignoreLayers.includes(collisionList[i].layer)) continue;
+					if(collisionList[i].objectId !== collisionList[j].objectId)
+					{
+						Collider.checkCollisionType(collisionList[i], collisionList[j]);
+					}
 				}
 			}
 		}
 
-		if(this.drawColiider)
+		static checkCollisionType(gameObject1, gameObject2)
 		{
-			draw_bounding_circle(this.gameObject.position, this.dimentions.radius);
-		}
-	}
+			if(gameObject1.components.Collider.drawColiider)
+				drawBoundingCircle(gameObject1.position, gameObject1.components.Collider.dimentions.radius);
 
-	collisionDetection(other)
-	{
+			if(gameObject2.components.Collider.drawColiider)
+				drawBoundingCircle(gameObject2.position, gameObject2.components.Collider.dimentions.radius);
 
-		switch(this.collideTtype + other.collideTtype)
-		{
-			case "circlecircle":
+			switch(gameObject1.components.Collider.colliderType + gameObject2.components.Collider.colliderType)
 			{
-				if(Circle2CircleCollision({x: this.gameObject.position.x, y: this.gameObject.position.y, radius: this.dimentions.radius}, {x: other.gameObject.position.x, y: other.gameObject.position.y, radius: other.dimentions.radius}))
+				case "circlecircle":
 				{
-					if(this.colliding === false)
-					{
-						this.onCollisionEnter(this.gameObject, other.gameObject);
-						this.colliding= true;
-					}
-					if(other.colliding === false)
-					{
-						other.onCollisionEnter(other.gameObject, this.gameObject);
-						other.colliding= true;
-					}
-					this.impulseResolution(other);
+					Collider.c2cCollisionDetection(gameObject1, gameObject2);
+					break;
 				}
-				else
+				case "squaresquare":
 				{
-					if(this.colliding === true)
-					{
-						this.onCollisionExit(this.gameObject, other.gameObject);
-						this.colliding= false;
-					}
-					if(other.colliding === true)
-					{
-						other.onCollisionExit(other.gameObject, this.gameObject);
-						other.colliding= false;
-					}
+					break;
 				}
-				break;
+				case "circlesquare":
+				case "squarecircle":
+				{
+					break;
+				}
+				default : break;
 			}
-			case "squaresquare":
+		}
+
+		static c2cCollisionDetection(gameObject1, gameObject2)
+		{
+			const rigidBody1= gameObject1.components.RigidBody;
+			const rigidBody2= gameObject2.components.RigidBody;
+			const collider1= gameObject2.components.Collider;
+			const collider2= gameObject2.components.Collider;
+
+			if(!rigidBody1 || !rigidBody2) return;
+			if((rigidBody1.kinematic === true && rigidBody2.kinematic === true)) return;
+			if(!Circle2CircleCollision({x: gameObject1.position.x, y: gameObject1.position.y, radius: collider1.dimentions.radius}, {x: gameObject2.position.x, y: gameObject2.position.y, radius: collider1.dimentions.radius}))
 			{
-				break;
+				return;
 			}
-			case "circlesquare":
-			case "squarecircle":
+
+			const pos1= gameObject1.position;
+			const pos2= gameObject2.position;
+			const u1= rigidBody1.velocity;
+			const u2= rigidBody2.velocity;
+			const m1= rigidBody1.mass;
+			const m2= rigidBody2.mass;
+
+			if(collider1.colliding === false)
 			{
-				break;
+				collider1.onCollisionEnter(gameObject1, gameObject2);
+				collider1.colliding= true;
 			}
-			default : break;
+			if(collider2.colliding === false)
+			{
+				collider2.onCollisionEnter(gameObject2, gameObject1);
+				collider2.colliding= true;
+			}
+
+			let normalVector= Vector.subtraction(pos1, pos2);
+			const impulse= (collider1.dimentions.radius + collider2.dimentions.radius) - normalVector.getMag();
+			normalVector= normalVector.getUnitVector();
+
+			const tangent_vector= normalVector.getTangentVector();
+
+			const u1n= Vector.dotProduct(u1, normalVector);
+			const u2n= Vector.dotProduct(u2, normalVector);
+
+			let u1t= Vector.dotProduct(u1, tangent_vector);
+			let u2t= Vector.dotProduct(u2, tangent_vector);
+			let v1n= (u1n * (m1 - m2) + (2 * m2 * u2n)) / (m1 + m2);
+			let v2n= (u2n * (m2 - m1) + (2 * m1 * u1n)) / (m1 + m2);
+
+			v1n= new Vector(v1n * normalVector.x, v1n * normalVector.y);
+			v2n= new Vector(v2n * normalVector.x, v2n * normalVector.y);
+			u1t= new Vector(u1t * tangent_vector.x, u1t * tangent_vector.y);
+			u2t= new Vector(u2t * tangent_vector.x, u2t * tangent_vector.y);
+
+			const v1= new Vector(v1n.x + u1t.x, v1n.y + u1t.y);
+			const v2= new Vector(v2n.x + u2t.x, v2n.y + u2t.y);
+
+			if(rigidBody1.kinematic === true)
+			{
+				const resol2= normalVector.multiply(-1).clone();
+				resol2.setMag(impulse + 1);
+				gameObject2.position= pos2.add(resol2);
+				v2.setMag(rigidBody2.velocity.getMag());
+				rigidBody2.velocity= v2;
+			}
+			else if(rigidBody2.kinematic === true)
+			{
+				const resol1= normalVector.clone();
+				resol1.setMag(impulse + 1);
+				gameObject1.position= pos1.add(resol1);
+				v1.setMag(rigidBody1.velocity.getMag());
+				rigidBody1.velocity= v1;
+			}
+			else
+			{
+				const resol1= normalVector.clone();
+				resol1.setMag(impulse / 2 + 1);
+				gameObject1.position= pos1.add(resol1);
+
+				const resol2= normalVector.multiply(-1).clone();
+				resol2.setMag(impulse / 2 + 1);
+				gameObject2.position= pos2.add(resol2);
+
+				rigidBody1.velocity= v1;
+				rigidBody2.velocity= v2;
+			}
 		}
+
 	}
-
-	impulseResolution(other)
-	{
-		const thisRigidBody= this.gameObject.components.RigidBody;
-		const otherRigidBody= other.gameObject.components.RigidBody;
-
-		const pos1= this.gameObject.position;
-		const pos2= other.gameObject.position;
-		const u1= thisRigidBody.velocity;
-		const u2= otherRigidBody.velocity;
-		const m1= thisRigidBody.mass;
-		const m2= otherRigidBody.mass;
-
-		let normal_vector= new Vector(pos2.x - pos1.x, pos2.y - pos1.y);
-		normal_vector= normal_vector.getUnitVector();
-		let tangent_vector= new Vector(-normal_vector.y, normal_vector.x);
-
-		let u1n= Vector.dotProduct(u1, normal_vector);
-		let u2n= Vector.dotProduct(u2, normal_vector);
-		let u1t= Vector.dotProduct(u1, tangent_vector);
-		let u2t= Vector.dotProduct(u2, tangent_vector);
-
-		let v1n= (u1n * (m1 - m2) + (2 * m2 * u2n)) / (m1 + m2);
-		let v2n= (u2n * (m2 - m1) + (2 * m1 * u1n)) / (m1 + m2);
-
-		v1n= new Vector(v1n * normal_vector.x, v1n * normal_vector.y);
-		v2n= new Vector(v2n * normal_vector.x, v2n * normal_vector.y);
-		u1t= new Vector(u1t * tangent_vector.x, u1t * tangent_vector.y);
-		u2t= new Vector(u2t * tangent_vector.x, u2t * tangent_vector.y);
-
-		let v1= new Vector(v1n.x + u1t.x, v1n.y + u1t.y);
-		let v2= new Vector(v2n.x + u2t.x, v2n.y + u2t.y);
-
-		thisRigidBody.velocity= v1;
-		otherRigidBody.velocity= v2;
-	}
-
-	/*impulseResolution(other)
-	{
-		const thisRigidBody= this.gameObject.components.RigidBody;
-		const otherRigidBody= other.gameObject.components.RigidBody;
-
-		if(!thisRigidBody || !otherRigidBody) return;
-		if((thisRigidBody.kinematic === true && otherRigidBody.kinematic === true)) return;
-
-		const pos1= this.gameObject.position;
-		const pos2= other.gameObject.position;
-		const u1= thisRigidBody.velocity;
-		const u2= otherRigidBody.velocity;
-		const m1= thisRigidBody.mass;
-		const m2= otherRigidBody.mass;
-
-		let normalVector= Vector.subtraction(pos1, pos2);
-		const impulse= (this.dimentions.radius + other.dimentions.radius) - normalVector.getMag();
-		normalVector= normalVector.getUnitVector();
-
-		const tangent_vector= normalVector.getTangentVector();
-
-		const u1n= Vector.dotProduct(u1, normalVector);
-		const u2n= Vector.dotProduct(u2, normalVector);
-
-		let u1t= Vector.dotProduct(u1, tangent_vector);
-		let u2t= Vector.dotProduct(u2, tangent_vector);
-		let v1n= (u1n * (m1 - m2) + (2 * m2 * u2n)) / (m1 + m2);
-		let v2n= (u2n * (m2 - m1) + (2 * m1 * u1n)) / (m1 + m2);
-
-		v1n= new Vector(v1n * normalVector.x, v1n * normalVector.y);
-		v2n= new Vector(v2n * normalVector.x, v2n * normalVector.y);
-		u1t= new Vector(u1t * tangent_vector.x, u1t * tangent_vector.y);
-		u2t= new Vector(u2t * tangent_vector.x, u2t * tangent_vector.y);
-
-		const v1= new Vector(v1n.x + u1t.x, v1n.y + u1t.y);
-		const v2= new Vector(v2n.x + u2t.x, v2n.y + u2t.y);
-
-		if(thisRigidBody.kinematic === true)
-		{
-			const resol2= normalVector.multiply(-1).clone();
-			resol2.setMag(impulse + 1);
-			other.gameObject.position= pos2.add(resol2);
-			v2.setMag(otherRigidBody.velocity.getMag());
-			otherRigidBody.velocity= v2;
-		}
-		else if(otherRigidBody.kinematic === true)
-		{
-			const resol1= normalVector.clone();
-			resol1.setMag(impulse + 1);
-			this.gameObject.position= pos1.add(resol1);
-			v1.setMag(thisRigidBody.velocity.getMag());
-			thisRigidBody.velocity= v1;
-		}
-		else
-		{
-			const resol1= normalVector.clone();
-			resol1.setMag(impulse / 2 + 1);
-			this.gameObject.position= pos1.add(resol1);
-
-			const resol2= normalVector.multiply(-1).clone();
-			resol2.setMag(impulse / 2 + 1);
-			other.gameObject.position= pos2.add(resol2);
-
-			thisRigidBody.velocity= v1;
-			otherRigidBody.velocity= v2;
-		}
-
-	}*/
-
-}
+})();
 

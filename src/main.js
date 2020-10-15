@@ -2,21 +2,22 @@ import EventSystem from "./eventSystem.js";
 import {TimeOut, Interval, drawGrid, Coroutine} from "./utilityFunctions.js";
 import InitialBehaviour from "./initialBehaviour.js";
 import {GameObject} from "./gameObject.js";
-import Input from "./input.js";
+import {Collider} from "./components.js";
 
 let aniId,
-	lastTime= 0,
+	lastTime= performance.now() + 16.666666666666668,
 	timePerFrame= 0,
-	isPaused= false,
 	accumulatedTime= 0,
 	fps= 0,
 	deltaTime= 1/16,
 	watchDog= 0,
+	stepMode= false,
 	fpsArray= [60, 60, 60, 60, 60, 60];
 
 const gameObjectList= GameObject.getGameObjectList();
 const layerList= GameObject.getLayerList();
 window.time= 0;
+window.isPaused= false;
 
 EventSystem.createEvent("onCanvasReady");
 
@@ -43,10 +44,25 @@ window.addEventListener("load", () => {
 });
 
 window.addEventListener("keyup", event => {
+	event.preventDefault();
 	const temp= isPaused;
-	if(event.keyCode == 27)
+
+	if(event.keyCode === 27)
 	{
 		isPaused= !isPaused; 
+		stepMode= false;
+	}
+	else if(event.keyCode === 16)
+	{
+		if(stepMode === false)
+		{
+			stepMode= true;
+		}
+		else
+		{
+			lastTime= performance.now() - 16.66;
+			getNewFrame();
+		}
 	}
 
 	if(temp !== isPaused && !isPaused)
@@ -70,15 +86,30 @@ window.addEventListener("onCanvasReady", () => {
 			gameObjectList[layer][obj].script.Start();
 		}
 	}
-	
+
 	console.log(gameObjectList, layerList, gameObjectList);
+
+	Collider.updateCollisionArray();
 	
-	getNewFrame();
+	firstFrame();
 });
 
 const clearCanvas= () => {
 	context.fillStyle= "black";
 	context.fillRect(-width / 2, -height / 2, width, height);
+};
+
+const firstFrame= () => {
+	aniId= requestAnimationFrame((timestamp) => {
+		timePerFrame= (timestamp - lastTime);
+		time+= timePerFrame;
+		lastTime= timestamp;
+		deltaTime= timePerFrame / 16.666666666666668;
+
+		clearCanvas();
+		Update();
+		getNewFrame();
+	});
 };
 
 const getNewFrame= () => {
@@ -119,13 +150,17 @@ const getNewFrame= () => {
 				Update();
 			}
 
-			getNewFrame();
+			if(!stepMode)
+			{
+				getNewFrame();
+			}
+			
 		});
 	}
 };
 
 const Update= () => {
-	
+
 	TimeOut.update();
 	Interval.update();
 	Coroutine.run();
@@ -144,7 +179,7 @@ const Update= () => {
 		}
 	}
 
-	
+	Collider.computeCollisionDetection();
 
 	nurdyStats2.innerHTML= length;
 };

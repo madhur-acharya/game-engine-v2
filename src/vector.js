@@ -16,17 +16,22 @@ class Vector{
 	getMag= () => Math.sqrt(this.x * this.x + this.y * this.y); 
 
 	setAngle= angle => {
-		/*
-		@need performance upgrades
-		*/
 		var mag= this.getMag();
 		this.x= Math.cos(angle) * mag;
 		this.y= Math.sin(angle) * mag;
 	};
 	setMag= mag => {
 		const curMag= this.getMag();
-		this.x = this.x * mag / curMag;
-		this.y = this.y * mag / curMag;
+		if(curMag === 0)
+		{
+			this.x = this.x * mag;
+			this.y = this.y * mag;
+		}
+		else
+		{
+			this.x = this.x * (mag / curMag);
+			this.y = this.y * (mag / curMag);
+		}
 	};
 
 	add= vect => new Vector(this.x + vect.x, this.y + vect.y);

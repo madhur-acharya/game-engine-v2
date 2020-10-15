@@ -361,7 +361,7 @@ export function wrappAround(ref)
 	}
 }
 //------------------------------------------------------------------------
-export function draw_bounding_circle(pos, radius= 20)
+export function drawBoundingCircle(pos, radius= 20)
 {
 	context.save();
 	context.beginPath();

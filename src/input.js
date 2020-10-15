@@ -12,7 +12,8 @@ const Input= function()
 		a: false,
 		s: false,
 		d: false,
-		esc: false
+		esc: false,
+		tab: false
 	};
 	console.log("inputs initializing")
 	window.addEventListener("keydown", event => {
@@ -30,6 +31,7 @@ const Input= function()
 			case 83 : {keys.s= true; break;}
 			case 68 : {keys.d= true; break;}
 			case 27 : {keys.esc= true; break;}
+			case 9 : {keys.tab= true; break;}
 		}
 	});
 
@@ -48,6 +50,7 @@ const Input= function()
 			case 83 : {keys.s= false; break;}
 			case 68 : {keys.d= false; break;}
 			case 27 : {keys.esc= false; break;}
+			case 9 : {keys.tab= false; break;}
 		}
 	});
 

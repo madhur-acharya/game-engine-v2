@@ -1,6 +1,7 @@
 import {VGRenderer, RigidBody, Collider} from "./components.js";
 import Input from "./input.js";
 import Vector from "./vector.js";
+import {drawBoundingCircle} from "./utilityFUnctions.js";
 
 export class PlayerMovement{
 
@@ -26,9 +27,11 @@ export class PlayerMovement{
 			context.lineTo(25, 0);
 			context.fill();
 			context.restore();
+
+			drawBoundingCircle(this.gameObject.position, 50);
 		}));
 		const rb= this.gameObject.addComponent(new RigidBody(false, false));
-		rb.mass= 10;
+		rb.mass= 100;
 		rb.velocity= new Vector(-3, 0);
 		this.gameObject.addComponent(new Collider("circle", {radius: 50}, () => {
 			console.log("X");
@@ -104,7 +107,9 @@ export class Circle{
 
 	Start= () => {
 		this.gameObject.position= new Vector(-width / 2, 0);
-
+		this.gameObject.addComponent(new VGRenderer(obj => {
+			drawBoundingCircle(this.gameObject.position, 50);
+		}));
 		const rb= this.gameObject.addComponent(new RigidBody(false, false));
 		rb.velocity= new Vector(3, 0);
 		this.gameObject.addComponent(new Collider("circle", {radius: 50}, () => {
