@@ -4,65 +4,26 @@ import {Collider} from "./components.js";
 
 export const GameObject= (() => {
 
-	const gameObjectList= {
-		default: {}
-	};
-
-	const layerList= ["default"];
+	const gameObjectList= [];
 
 	class GameObject 
 	{
-		constructor(positionVector= new Vector(0, 0), layerSettings= {name: "default", index: 0}, drawGizmos= false) 
+		constructor(positionVector= new Vector(0, 0), layer= "default", layerIndex= 0, drawGizmos= false) 
 		{
 			this.position= positionVector;
 			this.rotation= 0;
 			this.objectId= performance.now().toString() + Math.round(Math.random() * 1000);
 			this.drawGizmos= drawGizmos;
-			this._layer= "default";
+			this.layer= "default";
+			this.layerIndex= layerIndex;
 			this.timers= {};
 			this.components= {};
 			this.script= {
 				Start: () => {},
 				Update: () => {}
 			};
-			this.layer= layerSettings;
 
-			gameObjectList[this._layer][this.objectId]= this;
-		}
-
-		get layer()
-		{
-			return this._layer;
-		}
-
-		set layer(layerSettings)
-		{
-			if(typeof layerSettings !== "object") return;
-
-			const indx= layerList.indexOf(layerSettings.name);
-			if(~indx)
-			{
-				if(indx != layerSettings.index)
-				{
-					layerList.splice(indx, 1);
-					layerList.splice(layerSettings.index, 0, layerSettings.name);
-				}
-			}
-			else
-			{
-				layerList.splice(layerSettings.index, 0, layerSettings.name);
-			}
-
-			if(!gameObjectList[layerSettings.name])
-			{
-				gameObjectList[layerSettings.name]= {};
-			}
-			
-			gameObjectList[layerSettings.name][this.objectId]= this;
-			delete gameObjectList[this._layer][this.objectId];
-			this._layer= layerSettings.name;
-
-			Collider.updateCollisionArray();
+			gameObjectList.push(this);
 		}
 
 		addTimer(key, clock)
@@ -149,7 +110,6 @@ export const GameObject= (() => {
 		}
 
 		static getGameObjectList= () => gameObjectList;
-		static getLayerList= () => layerList;
 	};
 
 	return GameObject;

@@ -241,23 +241,46 @@ export function midpoint(p1, p2)
 };
 
 //------------------------------------------------------------------------
-export function drawVector(pos, vel= pos, color= "red")
+export function drawVector(pos, vel= pos, color= "red", unitVector= true)
 {
-	context.save();
-	context.beginPath();
-	context.strokeStyle= color;
-	context.translate(pos.x, pos.y);
-	context.rotate(vel.getAngle());
-	context.moveTo(0, 0);
-	context.lineTo(30, 0);
-	context.lineTo(23, -5);
-	context.moveTo(30, 0);
-	context.lineTo(23, 5);
-	context.stroke();
-	context.restore();
+	if(unitVector)
+	{
+		context.save();
+		context.beginPath();
+		context.lineWidth= 1;
+		context.strokeStyle= color;
+		context.translate(pos.x, pos.y);
+		context.rotate(vel.getAngle());
+		context.moveTo(0, 0);
+		context.lineTo(30, 0);
+		context.lineTo(23, -5);
+		context.moveTo(30, 0);
+		context.lineTo(23, 5);
+		context.stroke();
+		context.restore();
+	}
+	else
+	{
+		const mag= vel.getMag();
+
+		context.save();
+		context.beginPath();
+		context.lineWidth= 1;
+		context.strokeStyle= color;
+		context.translate(pos.x, pos.y);
+		context.rotate(vel.getAngle());
+		context.beginPath();
+		context.moveTo(0, 0);
+		context.lineTo(mag, 0);
+		context.lineTo(mag - 10, 10);
+		context.moveTo(mag, 0);
+		context.lineTo(mag - 10, -10);
+		context.stroke();
+		context.restore();
+	}
 }
 //------------------------------------------------------------------------
-export function clone_particle(original)
+export function cloneParticle(original)
 {
 	var clone= new particle(0, 0, 0, 0, 0);
 		clone.position.x= original.position.x + 0;
@@ -272,20 +295,32 @@ export function clone_particle(original)
 //------------------------------------------------------------------------
 export function Circle2CircleCollision(b1, b2)
 {
-	var x= Math.abs(b1.x - b2.x);
-	var y= Math.abs(b1.y - b2.y);
+	const pos1= b1.position;
+	const pos2= b2.position;
+	const r1= b1.components.Collider.dimentions.radius;
+	const r2= b2.components.Collider.dimentions.radius;
 
-	return (((x * x) + (y * y)) <= ((b1.radius + b2.radius) * (b1.radius + b2.radius)));
+	var x= Math.abs(pos1.x - pos2.x);
+	var y= Math.abs(pos1.y - pos2.y);
+
+	return (((x * x) + (y * y)) <= ((r1 + r2) * (r1 + r2)));
 }
 //------------------------------------------------------------------------
 export function box2BoxCollision(b1, b2)
 {
-	if(b1.position.x >= b2.position.x - b2.width && b1.position.x <= b2.position.x + b2.width && b1.position.y >= b2.position.y - b2.height && b1.position.y <= b2.position.y + b2.height) 
-	{
-		return true;
-	}
-	else
-		return false;
+	const pos1= b1.position;
+	const pos2= b2.position;
+	const w1= b1.components.Collider.dimentions.width;
+	const w2= b2.components.Collider.dimentions.width;
+	const h1= b1.components.Collider.dimentions.height;
+	const h2= b2.components.Collider.dimentions.height;
+
+	return (
+		(pos1.x + w1) >= pos2.x &&
+		pos1.x <= (pos2.x + w2) &&
+		(pos1.y + h1) >= pos2.y &&
+		pos1.y <= (pos2.y + h2)
+	);
 }
 //------------------------------------------------------------------------
 export function cirlce2WalllCollision(ref)
@@ -370,6 +405,26 @@ export function drawBoundingCircle(pos, radius= 20)
 	context.stroke();
 	context.restore();
 }
+//------------------------------------------------------------------------
+export function drawRectangle(pos, w, h, color= "white", fill= false)
+{
+	context.save();
+	context.beginPath();
+	context.rect(pos.x, pos.y, w, h);
+	if(fill)
+	{
+		context.fillStyle= color;
+		context.fill();
+	}
+	else
+	{
+		context.lineWidth= 1;
+		context.strokeStyle= color;
+		context.stroke();
+	}
+	context.restore();
+}
+
 //------------------------------------------------------------------------
 export function fullscreen()
 {

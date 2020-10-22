@@ -1,11 +1,13 @@
 import {GameObject} from "./gameObject.js";
-import {getRandomVector, Coroutine, WaitForMilliSeconds, Timer} from "./utilityFunctions.js";
-import {PlayerMovement, Circle} from "./testScripts.js";
+import {TimeOut, Interval, drawGrid, Coroutine} from "./utilityFunctions.js";
+import {PlayerMovement, Rectangle} from "./testScripts.js";
 
 const InitialBehaviour= () => {
 
 	new GameObject().assignScript(PlayerMovement);
-	new GameObject().assignScript(Circle);
+
+	for(let i= 0; i < 10; i++)
+		new GameObject().assignScript(Rectangle);
 
 	/*Coroutine.start((function*() 
 	{

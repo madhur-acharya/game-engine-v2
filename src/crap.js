@@ -1,3 +1,58 @@
+for(let j= 0; j < gameObjectList.length; j++)
+{
+	if(this.gameObject.objectId === gameObjectList[j].objectId) continue;
+
+	const pos1= this.gameObject.position.clone();
+	const pos2= gameObjectList[j].position.clone();
+	const w1= this.gameObject.components.Collider.dimentions.width;
+	const w2= gameObjectList[j].components.Collider.dimentions.width;
+	const h1= this.gameObject.components.Collider.dimentions.height;
+	const h2= gameObjectList[j].components.Collider.dimentions.height;
+	const u1= this.gameObject.components.RigidBody.velocity.clone();
+	const u2= gameObjectList[j].components.RigidBody.velocity.clone();
+	const shadow= this.gameObject.position.clone();
+
+	let normalVector= Vector.subtraction(pos1, pos2);
+
+	if(pos1.x < (pos2.x + w2) && (pos1.x + w1) > pos2.x && pos1.y < (pos2.y + h2) && (pos1.y + h1) > pos2.y)
+	{
+		this.color= "red";
+		let watchDog= 0;
+		const temp= normalVector.getUnitVector();
+		while((pos1.x < (pos2.x + w2) && (pos1.x + w1) > pos2.x && pos1.y < (pos2.y + h2) && (pos1.y + h1) > pos2.y) && watchDog < 1000 )
+		{
+			pos1.addTo(temp);
+			watchDog++;
+		}
+
+		/*drawVector(pos2, normalVector, "red", false);
+		context.save();
+		context.beginPath();
+		context.lineWidth= 1;
+		context.strokeStyle= "#3b3b3b";
+		context.moveTo(shadow.x, shadow.y);
+		context.lineTo(pos1.x, pos1.y);
+
+		context.moveTo((shadow.x + w1), (shadow.y + w1));
+		context.lineTo((pos1.x + w1), (pos1.y + w1));
+
+		context.moveTo((shadow.x + h1), shadow.y);
+		context.lineTo((pos1.x + h1), pos1.y);
+
+		context.moveTo(shadow.x, (shadow.y + w1));
+		context.lineTo(pos1.x, (pos1.y + w1));
+
+		context.stroke();
+		context.restore();*/
+
+		//drawRectangle(pos1, w1, h1, "lime");
+		this.gameObject.position= pos1;
+	}
+	else
+		this.color= "white";
+}
+
+
 export class Asteroid extends GameObject{
 	constructor(list= [], position= new Vector(0, 0), vertices= 30, collider= {
 		type: "circle",

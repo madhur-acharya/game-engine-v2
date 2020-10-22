@@ -16,7 +16,7 @@ class Vector{
 	getMag= () => Math.sqrt(this.x * this.x + this.y * this.y); 
 
 	setAngle= angle => {
-		var mag= this.getMag();
+		var mag= this.getMag() || 1;
 		this.x= Math.cos(angle) * mag;
 		this.y= Math.sin(angle) * mag;
 	};
@@ -59,7 +59,13 @@ class Vector{
 		this.y= this.y / scalar;
 	}
 
-	getUnitVector= vect => this.divide(this.getMag());
+	getUnitVector= vect => {
+		const mag= this.getMag();
+		if(mag === 0)
+			return new Vector(1, 0);
+		else
+			return this.divide(mag);
+	};
 
 	getTangentVector= () => new Vector(-this.y, this.x);
 

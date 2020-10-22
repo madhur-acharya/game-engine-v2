@@ -2,7 +2,7 @@ import EventSystem from "./eventSystem.js";
 import {TimeOut, Interval, drawGrid, Coroutine} from "./utilityFunctions.js";
 import InitialBehaviour from "./initialBehaviour.js";
 import {GameObject} from "./gameObject.js";
-import {Collider} from "./components.js";
+import {Collider, VGRenderer} from "./components.js";
 
 let aniId,
 	lastTime= performance.now() + 16.666666666666668,
@@ -14,8 +14,7 @@ let aniId,
 	stepMode= false,
 	fpsArray= [60, 60, 60, 60, 60, 60];
 
-const gameObjectList= GameObject.getGameObjectList();
-const layerList= GameObject.getLayerList();
+window.gameObjectList= GameObject.getGameObjectList();
 window.time= 0;
 window.isPaused= false;
 
@@ -76,21 +75,12 @@ window.addEventListener("onCanvasReady", () => {
 	console.log("canvasReady");
 	InitialBehaviour();
 
-	for(let i= 0; i < layerList.length; i++)
+	for(let i= 0; i < gameObjectList.length; i++)
 	{
-		const layer= layerList[i];
-		if(!gameObjectList[layer]) continue;
+		gameObjectList[i].script.Start();
 
-		for(let obj in gameObjectList[layer])
-		{
-			gameObjectList[layer][obj].script.Start();
-		}
 	}
-
-	console.log(gameObjectList, layerList, gameObjectList);
-
-	Collider.updateCollisionArray();
-	
+	console.log(gameObjectList);
 	firstFrame();
 });
 
@@ -167,19 +157,13 @@ const Update= () => {
 
 	let length= 0;
 
-	for(let i= 0; i < layerList.length; i++)
+	for(let i= 0; i < gameObjectList.length; i++)
 	{
-		const layer= layerList[i];
-		if(!gameObjectList[layer]) continue;
-
-		for(let obj in gameObjectList[layer])
-		{
-			gameObjectList[layer][obj].runExecutables();
-			length++;
-		}
+		gameObjectList[i].runExecutables();
 	}
 
 	Collider.computeCollisionDetection();
+	VGRenderer.render();
 
 	nurdyStats2.innerHTML= length;
 };
