@@ -6,7 +6,7 @@ const InitialBehaviour= () => {
 
 	new GameObject().assignScript(PlayerMovement);
 
-	for(let i= 0; i < 10; i++)
+	for(let i= 0; i < 5; i++)
 		new GameObject().assignScript(Rectangle);
 
 	/*Coroutine.start((function*() 

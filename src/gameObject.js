@@ -12,6 +12,7 @@ export const GameObject= (() => {
 		{
 			this.position= positionVector;
 			this.rotation= 0;
+			this.scale= new Vector(1, 1);
 			this.objectId= performance.now().toString() + Math.round(Math.random() * 1000);
 			this.drawGizmos= drawGizmos;
 			this.layer= "default";

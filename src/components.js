@@ -59,6 +59,104 @@ export const VGRenderer= (() => {
 
 })();
 
+export const SpriteRenderer= (() => {
+
+	const spriteRenderList= {};
+
+	class SpriteRenderer{
+
+		constructor(sprite, spriteX= 0, spriteY= 0, spriteWidth, spriteHeight, drawWidth, drawHeight)
+		{
+			/*
+				spriteX= start of selection;
+				spriteY= end of selection;
+				spriteWidth= width of selection;
+				spriteHeight= height of selection;
+				drawX= x pos to draw on canvas;
+				drawY= y pos to draw on canvas;
+				drawWidth= width of sprite on canvas;
+				drawHeight= height of sprite on canvas;
+			*/
+
+			this.type= "SpriteRenderer";
+			this.enabled= true;
+			this.sprite= sprite;
+			this.spriteX= spriteX;
+			this.spriteY= spriteY;
+			this.spriteWidth= spriteWidth;
+			this.spriteHeight= spriteHeight;
+			this.drawWidth= drawWidth;
+			this.drawHeight= drawHeight;
+		}
+
+		Start(obj)
+		{
+			this.gameObject= obj;
+			this.ReAssignLayer();
+		}
+
+		ReAssignLayer()
+		{
+			if(this.gameObject.layer in spriteRenderList)
+			{
+				spriteRenderList[this.gameObject.layer]= spriteRenderList[this.gameObject.layer].splice(this.gameObject.layerIndex, 0, this);
+			}
+			else
+			{
+				spriteRenderList[this.gameObject.layer]= [this];
+			}
+		}
+
+		Update()
+		{
+			if(!this.enabled) return;
+
+			this.drawX= this.gameObject.position.x;
+			this.drawY= this.gameObject.position.y;
+
+			if(this.spriteWidth === undefined || this.spriteHeight === undefined)
+			{
+				this.spriteWidth= this.sprite.width;
+				this.spriteHeight= this.sprite.height;
+			}
+
+			if(this.drawWidth === undefined) this.drawWidth= this.spriteWidth;
+			if(this.drawHeight === undefined) this.drawHeight= this.spriteHeight;
+
+			/*
+			//for cornor pivot
+			context.save();
+			context.scale(1, -1);
+			context.rotate(this.gameObject.rotation);
+
+			context.drawImage(this.sprite, this.spriteX, this.spriteY, this.spriteWidth, this.spriteHeight, -this.drawWidth, -this.drawHeight, this.drawWidth, this.drawHeight);
+			context.restore();
+			*/
+
+			context.save();
+			context.scale(1, -1);
+			context.translate(this.drawX + (this.drawWidth/2), -(this.drawY + (this.drawHeight/2)));
+			context.rotate(this.gameObject.rotation);
+			context.drawImage(this.sprite, this.spriteX, this.spriteY, this.spriteWidth, this.spriteHeight, -this.drawWidth/2, -this.drawHeight/2, this.drawWidth, this.drawHeight);
+			context.restore();
+		}
+
+		static render()
+		{
+			for(let layer in spriteRenderList)
+			{
+				for(let i= 0; i < spriteRenderList[layer].length; i++)
+				{
+					spriteRenderList[layer][i].Update();
+				}
+			}
+		}
+	}
+
+	return SpriteRenderer;
+
+})();
+
 export class RigidBody{
 
 	constructor(applyGravity= true, applyFriction= true)
@@ -202,7 +300,7 @@ export class Collider{
 		const collider2= gameObject2.components.Collider;
 
 		if(!rigidBody1 || !rigidBody2) return;
-		if((rigidBody1.kinematic === true && rigidBody2.kinematic === true)) return;
+		//if((rigidBody1.kinematic === true && rigidBody2.kinematic === true)) return;
 
 		const pos1= gameObject1.position.clone();
 		const pos2= gameObject2.position.clone();

@@ -2,7 +2,8 @@ import EventSystem from "./eventSystem.js";
 import {TimeOut, Interval, drawGrid, Coroutine} from "./utilityFunctions.js";
 import InitialBehaviour from "./initialBehaviour.js";
 import {GameObject} from "./gameObject.js";
-import {Collider, VGRenderer} from "./components.js";
+import {Collider, VGRenderer, SpriteRenderer} from "./components.js";
+import image from "./assets/image.js";
 
 let aniId,
 	lastTime= performance.now() + 16.666666666666668,
@@ -26,20 +27,23 @@ window.addEventListener("load", () => {
 	window.canvas= document.getElementById("my_canvas");
 	window.width= canvas.width= window.innerWidth;
 	window.height= canvas.height= window.innerHeight;
-
 	window.context= canvas.getContext("2d");
+
 	context.translate(width / 2, height / 2);
 	context.transform(1, 0, 0, -1, 0, 0);
-	context.lineWidth= 3;
 
-	//context.transform(1, 0, 0, -1, 0, canvas.height)  for cartecian cordinate system with origin at bottom left of screen
+	//context.transform(1, 0, 0, -1, 0, canvas.height); /*for cartecian cordinate system with origin at bottom left of screen*/
 
-	EventSystem.dispatchEvent("onCanvasReady");
+	context.lineWidth= 1;
 
 	window.framerateTag= document.getElementById("framerate");
 	window.nurdyStats= document.getElementById("nurdy_stats");
 	window.nurdyStats2= document.getElementById("nurdy_stats2");
 	window.nurdyStats3= document.getElementById("nurdy_stats3");
+	window.sprite= new Image();
+	sprite.src= image;
+
+	EventSystem.dispatchEvent("onCanvasReady");
 });
 
 window.addEventListener("keyup", event => {
@@ -78,8 +82,8 @@ window.addEventListener("onCanvasReady", () => {
 	for(let i= 0; i < gameObjectList.length; i++)
 	{
 		gameObjectList[i].script.Start();
-
 	}
+	
 	console.log(gameObjectList);
 	firstFrame();
 });
@@ -87,6 +91,7 @@ window.addEventListener("onCanvasReady", () => {
 const clearCanvas= () => {
 	context.fillStyle= "black";
 	context.fillRect(-width / 2, -height / 2, width, height);
+	//context.fillRect(0, 0, width, height);
 };
 
 const firstFrame= () => {
@@ -163,6 +168,7 @@ const Update= () => {
 	}
 
 	Collider.computeCollisionDetection();
+	SpriteRenderer.render();
 	VGRenderer.render();
 
 	nurdyStats2.innerHTML= length;
