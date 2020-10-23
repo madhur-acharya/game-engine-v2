@@ -3,7 +3,6 @@ import {TimeOut, Interval, drawGrid, Coroutine} from "./utilityFunctions.js";
 import InitialBehaviour from "./initialBehaviour.js";
 import {GameObject} from "./gameObject.js";
 import {Collider, VGRenderer, SpriteRenderer} from "./components.js";
-import image from "./assets/image.js";
 
 let aniId,
 	lastTime= performance.now() + 16.666666666666668,
@@ -22,6 +21,7 @@ window.isPaused= false;
 EventSystem.createEvent("onCanvasReady");
 
 window.addEventListener("load", () => {	
+
 	console.log("DOM Loaded");
 
 	window.canvas= document.getElementById("my_canvas");
@@ -40,8 +40,6 @@ window.addEventListener("load", () => {
 	window.nurdyStats= document.getElementById("nurdy_stats");
 	window.nurdyStats2= document.getElementById("nurdy_stats2");
 	window.nurdyStats3= document.getElementById("nurdy_stats3");
-	window.sprite= new Image();
-	sprite.src= image;
 
 	EventSystem.dispatchEvent("onCanvasReady");
 });

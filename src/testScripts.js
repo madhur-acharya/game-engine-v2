@@ -2,6 +2,7 @@ import {VGRenderer, RigidBody, Collider, SpriteRenderer} from "./components.js";
 import Input from "./input.js";
 import Vector from "./vector.js";
 import {drawBoundingCircle, drawRectangle, box2BoxCollision, drawVector, getRandomVector} from "./utilityFUnctions.js";
+import tileset from "./assets/tileset.png";
 
 export class PlayerMovement{
 
@@ -13,7 +14,6 @@ export class PlayerMovement{
 
 	Start= () => {
 		this.gameObject.position= new Vector();
-		this.gameObject.rotation= Math.PI / 6;
 		this.gameObject.addComponent(new VGRenderer(obj => {
 			context.save();
 			context.translate(obj.position.x, obj.position.y);
@@ -27,14 +27,18 @@ export class PlayerMovement{
 			context.lineTo(25, 0);
 			context.fill();
 			context.restore();
-			drawRectangle(this.gameObject.position, 100, 100, this.color);
+			drawRectangle(this.gameObject.position, 64, 64, this.color);
 		}));
-		this.gameObject.addComponent(new SpriteRenderer(sprite, 64, 64, 100, 100));
+
+		window.sprite= new Image();
+		sprite.src= tileset;
+
+		this.gameObject.addComponent(new SpriteRenderer(sprite, 16, 16, 16, 16, 64, 64));
 		this.rb= this.gameObject.addComponent(new RigidBody(false, false));
 		this.rb.mass= 100;
 		//this.rb.kinematic= true;
 
-		this.gameObject.addComponent(new Collider("box", {width: 100, height: 100}, () => {
+		this.gameObject.addComponent(new Collider("box", {width: 64, height: 64}, () => {
 			//console.log("X");
 		}, () => {
 			//console.log("O");
@@ -42,8 +46,6 @@ export class PlayerMovement{
 	}
 
 	Update= () => {
-
-		this.gameObject.rotation+= Math.PI/55;
 
 		const vel= 5;
 
