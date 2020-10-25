@@ -14,6 +14,7 @@ export class PlayerMovement{
 
 	Start= () => {
 		this.gameObject.position= new Vector();
+		//render vector graphics
 		this.gameObject.addComponent(new VGRenderer(obj => {
 			context.save();
 			context.translate(obj.position.x, obj.position.y);
@@ -30,19 +31,17 @@ export class PlayerMovement{
 			drawRectangle(this.gameObject.position, 64, 64, this.color);
 		}));
 
-		window.sprite= new Image();
+		const sprite= new Image();
 		sprite.src= tileset;
-
+		//render sprite
 		this.gameObject.addComponent(new SpriteRenderer(sprite, 16, 16, 16, 16, 64, 64));
+		// rigid body for physics purposes.
 		this.rb= this.gameObject.addComponent(new RigidBody(false, false));
 		this.rb.mass= 100;
 		//this.rb.kinematic= true;
 
-		this.gameObject.addComponent(new Collider("box", {width: 64, height: 64}, () => {
-			//console.log("X");
-		}, () => {
-			//console.log("O");
-		}));
+		//box collider
+		this.gameObject.addComponent(new Collider("box", {width: 64, height: 64}));
 	}
 
 	Update= () => {
@@ -111,13 +110,12 @@ export class Rectangle{
 	}
 
 	Start= () => {
-		//this.gameObject.position= new Vector(200, 0);
 		this.gameObject.position= getRandomVector(100, 100);
 		this.gameObject.addComponent(new VGRenderer(obj => {
 			drawRectangle(this.gameObject.position, 75, 200, this.color);
 		}));
 		this.rb= this.gameObject.addComponent(new RigidBody(false, false));
-		//this.rb.kinematic= true;
+		this.rb.kinematic= Math.round(Math.random() * 10) % 2 ? true : false;
 		this.gameObject.addComponent(new Collider("box", {width: 75, height: 200}, () => {}));
 	}
 
