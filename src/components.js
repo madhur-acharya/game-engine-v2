@@ -250,13 +250,16 @@ export class Collider{
 	{
 		const gameObjectList= GameObject.getGameObjectList();
 
+		//loop through game objects and compare with eachother.
 		for(let i= 0; i < gameObjectList.length; i++)
 		{
 			for(let j= i; j < gameObjectList.length; j++)
 			{
+				//if collider layer is listed in ignoreLayers, skip.
 				if(gameObjectList[i].components.Collider.ignoreLayers.includes(gameObjectList[j].layer) || gameObjectList[j].components.Collider.ignoreLayers.includes(gameObjectList[i].layer)) continue;
 				if(gameObjectList[i].objectId !== gameObjectList[j].objectId)
 				{
+					//check collider types
 					Collider.checkCollisionType(gameObjectList[i], gameObjectList[j]);
 				}
 			}
@@ -265,21 +268,25 @@ export class Collider{
 
 	static checkCollisionType(gameObject1, gameObject2)
 	{
+		//draw bounding circle. if collider type == circle
 		if(gameObject1.components.Collider.drawColiider)
 			drawBoundingCircle(gameObject1.position, gameObject1.components.Collider.dimentions.radius);
 
 		if(gameObject2.components.Collider.drawColiider)
 			drawBoundingCircle(gameObject2.position, gameObject2.components.Collider.dimentions.radius);
 
+		
 		switch(gameObject1.components.Collider.colliderType + gameObject2.components.Collider.colliderType)
 		{
 			case "circlecircle":
 			{
+				//for collision between 2 circles
 				Collider.c2cCollisionDetection(gameObject1, gameObject2);
 				break;
 			}
 			case "boxbox":
 			{
+				//for collision between 2 boxes AABB
 				Collider.x2xCollisionDetection(gameObject1, gameObject2);
 				break;
 			}
@@ -313,25 +320,36 @@ export class Collider{
 
 		let hasCollided= false;
 
+		//if rigid body is knematic, the object cannor be moved.
+
+		/* algorithm works by moving the game object first in the x axis, 
+			checking for collisions, moving them away and then doing it again for the y axis.
+		*/
+
+		//if object 2 is imovable
 		if(rigidBody2.kinematic === true)
 		{
+			//the object has laready been moved by the velocity vector. So move it back in the y axis.
 			pos2.y-= u2.y;
 			pos1.y-= u1.y;
 
+			//check collision and resolve only for the x axis.
 			if(pos1.x < (pos2.x + w2) && (pos1.x + w1) > pos2.x && pos1.y < (pos2.y + h2) && (pos1.y + h1) > pos2.y)
 			{
 				hasCollided= true;
 
+				//if object 1 is moving right
 				if(u1.x > 0)
 				{
 					pos1.x= pos2.x - (w1 + 1);
 				}
-				else if(u1.x < 0)
+				else if(u1.x < 0)//if object 1 is moving left
 				{
 					pos1.x= pos2.x + (w2 + 1);
 				}
 				else
 				{
+					//find the edge intersecting the second object and push the first object in the opposite direction.
 					if(pos1.x > pos2.x && pos1.x < pos2.x + w2)
 					{
 						pos1.x= pos2.x + (w2 + 1);
@@ -347,9 +365,11 @@ export class Collider{
 				}
 			}
 
+			//add the velocity back in the y axis.
 			pos2.y+= u2.y;
 			pos1.y+= u1.y;
 
+			//check collision and resolve only for the y axis.
 			if(pos1.x < (pos2.x + w2) && (pos1.x + w1) > pos2.x && pos1.y < (pos2.y + h2) && (pos1.y + h1) > pos2.y)
 			{
 				hasCollided= true;
@@ -383,6 +403,8 @@ export class Collider{
 		}
 		else /*if(rigidBody1.kinematic === true)*/
 		{
+			//if object 1 is imovable or if both are movable
+
 			pos2.y-= u2.y;
 			pos1.y-= u1.y;
 
@@ -450,6 +472,8 @@ export class Collider{
 			gameObject2.position= pos2;
 		}
 
+
+		//call collision handlers if collision occured.
 		if(hasCollided)
 		{
 			if(collider1.colliding === false)
@@ -478,6 +502,7 @@ export class Collider{
 		}
 	}
 
+	//for collision between 2 circles.
 	static c2cCollisionDetection(gameObject1, gameObject2)
 	{
 		const rigidBody1= gameObject1.components.RigidBody;

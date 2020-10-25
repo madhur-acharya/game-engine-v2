@@ -117,7 +117,7 @@ export class Rectangle{
 			drawRectangle(this.gameObject.position, 75, 200, this.color);
 		}));
 		this.rb= this.gameObject.addComponent(new RigidBody(false, false));
-		this.rb.kinematic= true;
+		//this.rb.kinematic= true;
 		this.gameObject.addComponent(new Collider("box", {width: 75, height: 200}, () => {}));
 	}
 
