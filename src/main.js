@@ -3,6 +3,7 @@ import {TimeOut, Interval, drawGrid, Coroutine} from "./utilityFunctions.js";
 import InitialBehaviour from "./initialBehaviour.js";
 import {GameObject} from "./gameObject.js";
 import {Collider, VGRenderer, SpriteRenderer} from "./components.js";
+import tileset from "./assets/mario_tileset.png";
 
 let aniId,
 	lastTime= performance.now() + 16.666666666666668,
@@ -75,15 +76,22 @@ window.addEventListener("keyup", event => {
 
 window.addEventListener("onCanvasReady", () => {
 	console.log("canvasReady");
-	InitialBehaviour();
+	clearCanvas();
 
-	for(let i= 0; i < gameObjectList.length; i++)
-	{
-		gameObjectList[i].script.Start();
-	}
-	
-	console.log(gameObjectList);
-	firstFrame();
+	window.sprite= new Image();
+	sprite.src= tileset;
+	sprite.addEventListener("load", () => {
+		InitialBehaviour();
+
+		for(let i= 0; i < gameObjectList.length; i++)
+		{
+			gameObjectList[i].script.Start();
+		}
+		
+		console.log(gameObjectList);
+
+		firstFrame();
+	});
 });
 
 const clearCanvas= () => {

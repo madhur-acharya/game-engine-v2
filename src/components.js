@@ -256,6 +256,7 @@ export class Collider{
 			for(let j= i; j < gameObjectList.length; j++)
 			{
 				//if collider layer is listed in ignoreLayers, skip.
+				if(!("Collider" in gameObjectList[i].components) || !("Collider" in gameObjectList[j].components)) return;
 				if(gameObjectList[i].components.Collider.ignoreLayers.includes(gameObjectList[j].layer) || gameObjectList[j].components.Collider.ignoreLayers.includes(gameObjectList[i].layer)) continue;
 				if(gameObjectList[i].objectId !== gameObjectList[j].objectId)
 				{

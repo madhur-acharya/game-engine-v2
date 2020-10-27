@@ -1,8 +1,8 @@
 import {VGRenderer, RigidBody, Collider, SpriteRenderer} from "./components.js";
 import Input from "./input.js";
 import Vector from "./vector.js";
+import Tilemap, {Tile} from "./tilemap.js";
 import {drawBoundingCircle, drawRectangle, box2BoxCollision, drawVector, getRandomVector} from "./utilityFUnctions.js";
-import tileset from "./assets/tileset.png";
 
 export class PlayerMovement{
 
@@ -15,7 +15,7 @@ export class PlayerMovement{
 	Start= () => {
 		this.gameObject.position= new Vector();
 		//render vector graphics
-		this.gameObject.addComponent(new VGRenderer(obj => {
+		/*this.gameObject.addComponent(new VGRenderer(obj => {
 			context.save();
 			context.translate(obj.position.x, obj.position.y);
 			context.rotate(Math.PI / 2);
@@ -29,12 +29,10 @@ export class PlayerMovement{
 			context.fill();
 			context.restore();
 			drawRectangle(this.gameObject.position, 64, 64, this.color);
-		}));
+		}));*/
 
-		const sprite= new Image();
-		sprite.src= tileset;
 		//render sprite
-		this.gameObject.addComponent(new SpriteRenderer(sprite, 16, 16, 16, 16, 64, 64));
+		this.gameObject.addComponent(new SpriteRenderer(sprite, 64, 368, 16, 16, 64, 64));
 		// rigid body for physics purposes.
 		this.rb= this.gameObject.addComponent(new RigidBody(false, false));
 		this.rb.mass= 100;
@@ -121,4 +119,40 @@ export class Rectangle{
 
 	Update= () => {}
 };
+
+export class LevelManager{
+	constructor(obj)
+	{
+		this.gameObject= obj;
+		this.color= "cyan";
+	}
+
+	Start= () => {
+
+		const level= [
+			["$", "$", "$", "$", "$", "$", "$", "$", "$", "$", "$", "$", "$", "$", "$", "$"],
+			["#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"],
+			["#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"],
+			["#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"],
+			["#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"],
+			["#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "@", "@", "@", "#", "#", "#"],
+			["#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "@", "#", "#", "#", "#"],
+			["#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"],
+			["#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"],
+			["#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"],
+			["#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"],
+			["#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"],
+		];
+
+		const spriteMap= {
+			"@": () => new Tile(sprite, "@", 384, 0, 16, 16),
+			"$": () => new Tile(sprite, "$", 0, 0, 16, 16),
+			"#": () => new Tile(sprite, "#", 48, 368, 16, 16),
+		};
+
+		this.gameObject.addComponent(new Tilemap(level, spriteMap));
+	}
+
+	Update= () => {}
+}
 

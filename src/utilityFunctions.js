@@ -449,30 +449,49 @@ export function circleRenderer(obj, color= "white", fill= true)
 
 //------------------------------------------------------------------------
 
-export const drawGrid= (totalSize= 100, color= "#0080000f") => {
+export const drawGrid= (xCells, yCells, gridWidth, gridHeight, pixelsPerCell, color= "grey") => {
 	context.save();
 	context.beginPath();
 	context.strokeStyle= color;
 	context.lineWidth= 1;
 
-	const pixelsPerUnit= Math.floor(width / totalSize);
-
-	const top0= height / 2;
-	for(let i= -width; i < width; i+= pixelsPerUnit)
+	for(let i= 1; i <= xCells / 2; i++)
 	{
-		context.moveTo(i, top0);
-		context.lineTo(i, -top0);
+		context.moveTo(-gridWidth/2, i * pixelsPerCell);
+		context.lineTo(gridWidth/2, i * pixelsPerCell);
 	}
 
-	const left0= width / 2;
-	for(let i= -height; i < height; i+= pixelsPerUnit)
+	for(let i= 1; i <= xCells / 2; i++)
 	{
-		context.moveTo(left0, i);
-		context.lineTo(-left0, i);
+		context.moveTo(-gridWidth/2, -i * pixelsPerCell);
+		context.lineTo(gridWidth/2, -i * pixelsPerCell);
+	}
+
+	for(let i= 1; i <= xCells / 2; i++)
+	{
+		context.moveTo(i * pixelsPerCell, -gridHeight/2);
+		context.lineTo(i * pixelsPerCell, gridHeight/2);
+	}
+
+	for(let i= 1; i <= xCells / 2; i++)
+	{
+		context.moveTo(-i * pixelsPerCell, -gridHeight/2);
+		context.lineTo(-i * pixelsPerCell, gridHeight/2);
 	}
 
 	context.stroke();
+
+	context.beginPath();
+	context.strokeStyle= "green";
+	context.moveTo(-width/2, 0);
+	context.lineTo(width/2, 0);
+	context.moveTo(0, -height/2);
+	context.lineTo(0, height/2);
+	context.stroke();
+
 	context.restore();
+
+	return pixelsPerCell;
 };
 
 /*for(let i= 0; i < Math.floor(accumulatedTime / deltaTime); i++)
