@@ -4,6 +4,7 @@ import InitialBehaviour from "./initialBehaviour.js";
 import {GameObject} from "./gameObject.js";
 import {Collider, VGRenderer, SpriteRenderer} from "./components.js";
 import tileset from "./assets/mario_tileset.png";
+import cliffside from "./assets/cliffside.png";
 
 let aniId,
 	lastTime= performance.now() + 16.666666666666668,
@@ -29,7 +30,8 @@ window.addEventListener("load", () => {
 	window.width= canvas.width= window.innerWidth;
 	window.height= canvas.height= window.innerHeight;
 	window.context= canvas.getContext("2d");
-
+	
+	context.imageSmoothingEnabled= false;
 	context.translate(width / 2, height / 2);
 	context.transform(1, 0, 0, -1, 0, 0);
 
@@ -78,9 +80,24 @@ window.addEventListener("onCanvasReady", () => {
 	console.log("canvasReady");
 	clearCanvas();
 
-	window.sprite= new Image();
-	sprite.src= tileset;
-	sprite.addEventListener("load", () => {
+	window.tileSet1= new Image();
+	tileSet1.src= tileset;
+	window.tileSet2= new Image();
+	tileSet2.src= cliffside;
+
+	Promise.allSettled([
+		new Promise((resolve, reject) => {
+			tileSet1.addEventListener("load", () => {
+				resolve();
+			});
+		}),
+		new Promise((resolve, reject) => {
+			tileSet2.addEventListener("load", () => {
+				resolve()
+			});
+		})
+	])
+	.then(() => {
 		InitialBehaviour();
 
 		for(let i= 0; i < gameObjectList.length; i++)
@@ -91,6 +108,9 @@ window.addEventListener("onCanvasReady", () => {
 		console.log(gameObjectList);
 
 		firstFrame();
+	})
+	.catch(err => {
+		console.log(err);
 	});
 });
 

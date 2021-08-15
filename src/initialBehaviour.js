@@ -4,12 +4,12 @@ import {PlayerMovement, Rectangle, LevelManager} from "./testScripts.js";
 
 const InitialBehaviour= () => {
 
+	new GameObject().assignScript(LevelManager);
 	new GameObject().assignScript(PlayerMovement);
 
 	/*for(let i= 0; i < 5; i++)
 		new GameObject().assignScript(Rectangle);*/
 
-	new GameObject().assignScript(LevelManager);
 
 	/*Coroutine.start((function*() 
 	{

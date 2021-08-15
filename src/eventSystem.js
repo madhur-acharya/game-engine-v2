@@ -8,7 +8,7 @@ const EventSystem= function()
 		{
 			const evt= new Event(event);
 			evt.detail= detail;
-			eventStack[event]= new Event(event);
+			eventStack[event]= evt;
 		}
 
 		static dispatchEvent(event)
