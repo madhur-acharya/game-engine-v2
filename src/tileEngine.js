@@ -1,43 +1,48 @@
 import tileset from './assets/tiles.png';
 
+class ImageLoader{
+	constructor(obj)
+	{
+		this.images= {};
+	}
+
+	loadImage= (key, src) =>{
+		const img= new Image();
+		const d= new Promise((resolve, reject) => {
+			img.onload= () => {
+				this.images[key]= img;
+				resolve(img);
+			};
+
+			img.onerror= () => {
+				reject('Could not load image: ' + src);
+			};
+		});
+
+		img.src = src;
+		return d;
+	};
+
+	getImage= key => {
+		return (key in this.images) ? this.images[key] : null;
+	};
+}
+
 class TileEngine{
 	constructor(obj)
 	{
+		this.ready= false;
 		this.gameObject= obj;
-		this.Loader = {
-			images: {}
-		};
-
-		this.Loader.loadImage = function (key, src) 
-		{
-			var img = new Image();
-
-			var d = new Promise(function (resolve, reject) 
-			{
-				img.onload = function () 
-				{
-					this.images[key] = img;
-					resolve(img);
-				}.bind(this);
-
-				img.onerror = function () 
-				{
-					reject('Could not load image: ' + src);
-				};
-			}.bind(this));
-
-			img.src = src;
-			return d;
-		};
-
-		this.Loader.getImage = function (key) {
-			return (key in this.images) ? this.images[key] : null;
-		};
+		this.Loader= new ImageLoader();
 
 		Promise.all([
 			this.Loader.loadImage('tiles', tileset)
-		]).then(loaded => {
+		])
+		.then(loaded => {
 			this.tileAtlas= this.Loader.getImage('tiles');
+		})
+		.then(() => {
+			this.ready= true;
 		})
 		.catch(err => {
 			console.log(err);
@@ -70,6 +75,8 @@ class TileEngine{
 	}
 
 	render= () => {
+		if(!this.ready) return;
+
 		for (var c = 0; c < this.map.cols; c++) 
 		{
 			for (var r = 0; r < this.map.rows; r++) 
@@ -77,6 +84,9 @@ class TileEngine{
 				var tile = this.map.getTile(c, r);
 				if (tile !== 0) 
 				{ // 0 => empty tile
+					context.save();
+					context.scale(1, -1);
+					context.translate(-width/2, -height/2);
 					context.drawImage(
 						this.tileAtlas, // image
 						(tile - 1) * this.map.tsize, // source x
@@ -88,6 +98,7 @@ class TileEngine{
 						this.map.tsize, // target width
 						this.map.tsize // target height
 					);
+					context.restore();
 				}
 			}
 		}
