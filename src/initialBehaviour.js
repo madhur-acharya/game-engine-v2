@@ -1,11 +1,10 @@
 import {GameObject} from "./gameObject.js";
 import {TimeOut, Interval, drawGrid, Coroutine} from "./utilityFunctions.js";
-import {PlayerMovement, Rectangle} from "./testScripts.js";
-import {LevelManager} from "./tilemap.js";
-import TileEngine from "./tileEngine.js";
+import PlayerMovement from "./scripts/playerMovement.js";
+import GameLevel1 from "./scripts/gameLevel.js";
 
 const InitialBehaviour= () => {
-	new GameObject().assignScript(TileEngine);
+	new GameObject().assignScript(GameLevel1);
 	new GameObject().assignScript(PlayerMovement);
 }
 

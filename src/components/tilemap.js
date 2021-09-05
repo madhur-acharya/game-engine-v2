@@ -1,6 +1,6 @@
-import Vector from "./vector.js";
-import {GameObject} from "./gameObject.js";
-import {drawGrid, drawRectangle} from "./utilityFunctions.js";
+import Vector from "../vector.js";
+import {GameObject} from "../gameObject.js";
+import {drawGrid, drawRectangle} from "../utilityFunctions.js";
 
 export class Tile{
 	constructor(spriteSheet, alias= "#", spriteX= 0, spriteY= 0, spriteWidth= 16, spriteHeight= 16, drawX= 0, drawY= 0, drawWidth= spriteWidth, drawHeight= spriteHeight, gameObject)

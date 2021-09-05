@@ -1,6 +1,6 @@
-import {getRandomVector, isFunction, drawBoundingCircle, Circle2CircleCollision, box2BoxCollision, drawVector} from "./utilityFunctions.js";
-import Vector from "./vector.js";
-import {GameObject} from "./gameObject.js";
+import {getRandomVector, isFunction, drawBoundingCircle, Circle2CircleCollision, box2BoxCollision, drawVector} from "../utilityFunctions.js";
+import Vector from "../vector.js";
+import {GameObject} from "../gameObject.js";
 
 export const VGRenderer= (() => {
 

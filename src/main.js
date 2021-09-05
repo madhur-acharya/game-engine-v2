@@ -1,10 +1,14 @@
 import EventSystem from "./eventSystem.js";
-import {TimeOut, Interval, drawGrid, Coroutine} from "./utilityFunctions.js";
-import InitialBehaviour from "./initialBehaviour.js";
 import {GameObject} from "./gameObject.js";
-import {Collider, VGRenderer, SpriteRenderer} from "./components.js";
-import tileset from "./assets/mario_tileset.png";
+import {TimeOut, Interval, drawGrid, Coroutine} from "./utilityFunctions.js";
+import {bulkLoadImages} from "./constants.js";
+import InitialBehaviour from "./initialBehaviour.js";
+import {Collider, VGRenderer, SpriteRenderer} from "./components/components.js";
+
 import cliffside from "./assets/cliffside.png";
+import tilesetSample from './assets/tiles.png';
+import character from './assets/character.png';
+import mario from "./assets/mario_tileset.png";
 
 let aniId,
 	lastTime= performance.now() + 16.666666666666668,
@@ -21,33 +25,15 @@ window.addEventListener("onCanvasReady", () => {
 	console.log("canvasReady");
 	clearCanvas();
 
-	window.tileSet1= new Image();
-	tileSet1.src= tileset;
-	window.tileSet2= new Image();
-	tileSet2.src= cliffside;
-
-	Promise.allSettled([
-		new Promise((resolve, reject) => {
-			tileSet1.addEventListener("load", () => {
-				resolve();
-			});
-		}),
-		new Promise((resolve, reject) => {
-			tileSet2.addEventListener("load", () => {
-				resolve()
-			});
-		})
-	])
-	.then(() => {
+	bulkLoadImages({
+		"tilesetSample": tilesetSample,
+		"tilesetClifside": cliffside,
+		"character": character,
+		"mario": mario,
+	})
+	.then(imgMp => {
 		InitialBehaviour();
-
-		for(let i= 0; i < gameObjectList.length; i++)
-		{
-			gameObjectList[i].script.Start();
-		}
-		
 		console.log(gameObjectList);
-
 		getNewFrame();
 	})
 	.catch(err => {

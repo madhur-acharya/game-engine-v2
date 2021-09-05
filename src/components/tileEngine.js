@@ -1,47 +1,118 @@
-import tileset from './assets/tiles.png';
+import {ImageLoader} from "../utilityFunctions.js";
 
-class ImageLoader{
-	constructor(obj)
+export class Tile{
+	constructor(
+		spriteSheet, 
+		alias= "#", 
+		spriteX= 0, 
+		spriteY= 0, 
+		spriteWidth= 64, 
+		spriteHeight= 64, 
+		drawX= 0, 
+		drawY= 0, 
+		drawWidth= spriteWidth, 
+		drawHeight= spriteHeight, 
+	)
 	{
-		this.images= {};
+		this.spriteSheet= spriteSheet;
+		this.spriteX= spriteX;
+		this.spriteY= spriteY;
+		this.spriteWidth= spriteWidth;
+		this.spriteHeight= spriteHeight;
+		this.drawWidth= drawWidth;
+		this.drawHeight= drawHeight;
+		this.alias= alias;
+		this.drawX= drawX;
+		this.drawY= drawY;
 	}
 
-	loadImage= (key, src) =>{
-		const img= new Image();
-		const d= new Promise((resolve, reject) => {
-			img.onload= () => {
-				this.images[key]= img;
-				resolve(img);
-			};
-
-			img.onerror= () => {
-				reject('Could not load image: ' + src);
-			};
-		});
-
-		img.src = src;
-		return d;
-	};
-
-	getImage= key => {
-		return (key in this.images) ? this.images[key] : null;
-	};
+	Draw()
+	{
+		context.save();
+		context.scale(1, -1);
+		context.translate(this.drawX + (this.drawWidth/2), -(this.drawY + (this.drawHeight/2)));
+		context.drawImage(this.spriteSheet, this.spriteX, this.spriteY, this.spriteWidth, this.spriteHeight, -this.drawWidth/2, -this.drawHeight/2, this.drawWidth, this.drawHeight);
+		context.restore();
+	}
 }
 
 class TileEngine{
-	constructor(obj)
+	constructor(tileAtlas= {}, spriteMap= {}, levelData, totalCellsHorizontal= 16, totalCellsVertical= 16, tileSize= 64)
 	{
 		this.ready= false;
+		this.spriteMap= spriteMap;
+		this.tileAtlas= tileAtlas;
+		this.levelData= levelData;
+		this.totalCellsHorizontal= totalCellsHorizontal;
+		this.totalCellsVertical= totalCellsVertical;
+		this.tileSize= tileSize;
+	}
+
+	Start= obj => {
 		this.gameObject= obj;
+	}
+
+	Update= delta => {
+		this.render();
+	}
+
+	getTile= (Lix, col, row) => {
+		return this.levelData[Lix][row * this.totalCellsHorizontal + col];
+	}
+
+	drawLayer= layerIndex => {
+		for(let col= 0; col < this.totalCellsHorizontal; col++)
+		{
+			for(let row= 0; row < this.totalCellsVertical; row++)
+			{
+				const alias= this.getTile(layerIndex, col, row);
+				const tile= this.spriteMap[alias];
+				tile.Draw();
+				/*if(tile !== 0) 
+				{ // 0 => empty tile
+					context.save();
+					context.scale(1, -1);
+					context.translate(-width/2, -height/2);
+					context.drawImage(
+						tile.spriteSheet, // image
+						tile.spriteX, // source x
+						0, // source y
+						this.tileSize, // source width
+						this.tileSize, // source height
+						c * this.tileSize,  // target x
+						r * this.tileSize, // target y
+						this.tileSize, // target width
+						this.tileSize // target height
+					);
+					context.restore();
+				}*/
+			}
+		}
+	}
+
+	render= () => {
+		if(!this.ready) return;
+
+		this.drawLayer(0);
+		this.drawLayer(1);
+	}
+}
+
+export default TileEngine;
+
+
+/*
+class TileEngine{
+	constructor(tileAtlas= {}, spriteMap= {}, totalCellsHorizontal= 16, totalCellsVertical= 16, tileSize= 64, levelData)
+	{
+		this.ready= false;
 		this.Loader= new ImageLoader();
 
-		Promise.all([
-			this.Loader.loadImage('tiles', tileset)
-		])
+		Promise.all(Object.entries(tileAtlas).map(([name, tileset]) => {
+			return this.Loader.loadImage(name, tileset)
+		}))
 		.then(loaded => {
-			this.tileAtlas= this.Loader.getImage('tiles');
-		})
-		.then(() => {
+			this.tileAtlas= this.Loader.images;
 			this.ready= true;
 		})
 		.catch(err => {
@@ -49,7 +120,9 @@ class TileEngine{
 		});	
 	}
 
-	Start= () => {
+	Start= obj => {
+		this.gameObject= obj;
+
 		this.map= {
 			cols: 16,
 			rows: 16,
@@ -136,6 +209,4 @@ class TileEngine{
 		this.drawLayer(0);
 		this.drawLayer(1);
 	}
-}
-
-export default TileEngine;
+}*/

@@ -1,10 +1,10 @@
-import {VGRenderer, RigidBody, Collider, SpriteRenderer} from "./components.js";
-import Input from "./input.js";
-import Vector from "./vector.js";
-import Tilemap, {Tile} from "./tilemap.js";
-import {drawBoundingCircle, drawRectangle, box2BoxCollision, drawVector, getRandomVector} from "./utilityFUnctions.js";
+import {VGRenderer, RigidBody, Collider, SpriteRenderer} from "../components/components.js";
+import Input from "../input.js";
+import Vector from "../vector.js";
+import {drawBoundingCircle, drawRectangle, box2BoxCollision, drawVector, getRandomVector} from "../utilityFUnctions.js";
+import {getImages} from "../constants.js";
 
-export class PlayerMovement{
+class PlayerMovement{
 
 	constructor(obj)
 	{
@@ -32,7 +32,7 @@ export class PlayerMovement{
 		}));*/
 
 		//render sprite
-		this.gameObject.addComponent(new SpriteRenderer(tileSet1, 64, 368, 16, 16, 32, 32));
+		this.gameObject.addComponent(new SpriteRenderer(getImages()?.mario, 64, 368, 16, 16, 32, 32));
 		// rigid body for physics purposes.
 		this.rb= this.gameObject.addComponent(new RigidBody(false, false));
 		this.rb.mass= 100;
@@ -98,3 +98,5 @@ export class PlayerMovement{
 		}
 	}
 };
+
+export default PlayerMovement;

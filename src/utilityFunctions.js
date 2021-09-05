@@ -1,6 +1,9 @@
 import Vector from "./vector.js";
 
 //------------------------------------------------------------------------
+export const isPromise= sus => sus && isFunction(sus.then);
+
+//------------------------------------------------------------------------
 export const isFunction= functionToCheck => functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
 
 //------------------------------------------------------------------------
@@ -538,4 +541,48 @@ function collisionTestWithWalls(ball)
         ball.vy *= -1;
     }
 }
+
+export class ImageLoader{
+	constructor()
+	{
+		this.images= {};
+	}
+
+	loadImage= (key, src) => {
+		const img= new Image();
+		const d= new Promise((resolve, reject) => {
+			img.onload= () => {
+				this.images[key]= img;
+				resolve(img);
+			};
+
+			img.onerror= () => {
+				reject('Could not load image: ' + src);
+			};
+		});
+
+		img.src = src;
+		return d;
+	};
+
+	bulkLoad= imgMap => {
+		return new Promise((resolve, reject) => {
+			Promise.all(Object.entries(imgMap).map(([name, im]) => {
+				return this.loadImage(name, im)
+			}))
+			.then(loaded => {
+				this.images= this.images;
+				resolve(this.images);
+			})
+			.catch(err => {
+				reject(err);
+			});
+		});
+	}
+
+	getImage= key => {
+		return (key in this.images) ? this.images[key] : null;
+	};
+};
+
 

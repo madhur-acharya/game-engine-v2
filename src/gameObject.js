@@ -1,6 +1,6 @@
 import Vector from "./vector.js";
-import {drawVector} from "./utilityFunctions.js";
-import {Collider} from "./components.js";
+import {drawVector, isPromise} from "./utilityFunctions.js";
+import {Collider} from "./components/components.js";
 
 export const GameObject= (() => {
 
@@ -79,8 +79,17 @@ export const GameObject= (() => {
 
 		addComponent(component)
 		{
-			this.components[component.type]= component;
-			this.components[component.type].Start(this);
+			Promise.resolve(component.Start(this))
+			.then(() => {
+				if(this.components[component.type])
+					console.warn("component of type", component.type, "already exists. Replacing...");
+
+				this.components[component.type]= component;
+				this.components[component.type].ready= true;
+			})
+			.catch(err => {
+				console.log(err);
+			})
 			return component;
 		}
 
@@ -88,13 +97,21 @@ export const GameObject= (() => {
 		{
 			for(let key in this.components)
 			{
-				this.components[key].Update(this);
+				this.components[key].ready && this.components[key].Update(this);
 			}
 		}
 
 		assignScript(script)
 		{
-			this.script= new script(this);
+			const theScript= new script(this);
+
+			Promise.resolve(theScript.Start(this))
+			.then(() => {
+				this.script= theScript;
+			})
+			.catch(err => {
+				console.log(err);
+			})
 		}
 
 		onDestroy()
@@ -104,7 +121,7 @@ export const GameObject= (() => {
 
 		runExecutables()
 		{
-			this.script.Update();
+			this.script?.Update();
 			this.runComponents();
 			this.renderGizmos();
 			this.selfDestruct();
