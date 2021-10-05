@@ -52,9 +52,9 @@ class GameLevel1{
 		];
 
 		const spriteMap= {
-			"@": new Tile(this.tileAtlas.tilesetSample, "@", 384, 0, 16, 16),
-			"$": new Tile(this.tileAtlas.tilesetSample, "$", 0, 0, 16, 16),
-			"#": new Tile(this.tileAtlas.tilesetSample, "#", 48, 368, 16, 16),
+			"@": new Tile(this.tileAtlas.tilesetClifside, "@", 384, 0, 16, 16),
+			"$": new Tile(this.tileAtlas.tilesetClifside, "$", 0, 0, 16, 16),
+			"#": new Tile(this.tileAtlas.tilesetClifside, "#", 48, 368, 16, 16),
 
 			"1": new Tile(this.tileAtlas.tilesetSample, "1", 0, 0, 64, 64),
 			"2": new Tile(this.tileAtlas.tilesetSample, "2", 64, 0, 64, 64),

@@ -68,24 +68,6 @@ class TileEngine{
 				const alias= this.getTile(layerIndex, col, row);
 				const tile= this.spriteMap[alias];
 				tile.Draw();
-				/*if(tile !== 0) 
-				{ // 0 => empty tile
-					context.save();
-					context.scale(1, -1);
-					context.translate(-width/2, -height/2);
-					context.drawImage(
-						tile.spriteSheet, // image
-						tile.spriteX, // source x
-						0, // source y
-						this.tileSize, // source width
-						this.tileSize, // source height
-						c * this.tileSize,  // target x
-						r * this.tileSize, // target y
-						this.tileSize, // target width
-						this.tileSize // target height
-					);
-					context.restore();
-				}*/
 			}
 		}
 	}
