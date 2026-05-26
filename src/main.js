@@ -3,12 +3,11 @@ import {GameObject} from "./gameObject.js";
 import {TimeOut, Interval, drawGrid, Coroutine} from "./utilityFunctions.js";
 import {bulkLoadImages} from "./constants.js";
 import InitialBehaviour from "./initialBehaviour.js";
-import {Collider, VGRenderer, SpriteRenderer} from "./components/components.js";
+import RenderPipeline from "./renderPipeline.js";
 
-import cliffside from "./assets/cliffside.png";
-import tilesetSample from './assets/tiles.png';
-import character from './assets/character.png';
-import mario from "./assets/mario_tileset.png";
+import {getImages} from "./constants.js";
+import {Tile} from "./components/tileEngine.js";
+
 
 let aniId,
 	lastTime= performance.now() + 16.666666666666668,
@@ -26,10 +25,10 @@ window.addEventListener("onCanvasReady", () => {
 	clearCanvas();
 
 	bulkLoadImages({
-		"tilesetSample": tilesetSample,
-		"tilesetClifside": cliffside,
-		"character": character,
-		"mario": mario,
+		"tilesetSample": "/src/assets/tiles.png",
+		"tilesetClifside": "/src/assets/cliffside.png",
+		"character": "/src/assets/character.png",
+		"mario": "/src/assets/mario_tileset.png",
 	})
 	.then(imgMp => {
 		InitialBehaviour();
@@ -114,6 +113,8 @@ const Update= () => {
 	{
 		gameObjectList[i].runExecutables();
 	}
+
+	RenderPipeline.Render();
 
 	nurdyStats2.innerHTML= gameObjectList.length;
 };

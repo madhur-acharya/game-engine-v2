@@ -39,6 +39,7 @@ export class Tile{
 class TileEngine{
 	constructor(tileAtlas= {}, spriteMap= {}, levelData, totalCellsHorizontal= 16, totalCellsVertical= 16, tileSize= 64)
 	{
+		this.type= "TileEngine"
 		this.ready= false;
 		this.spriteMap= spriteMap;
 		this.tileAtlas= tileAtlas;
@@ -56,17 +57,19 @@ class TileEngine{
 		this.render();
 	}
 
-	getTile= (Lix, col, row) => {
-		return this.levelData[Lix][row * this.totalCellsHorizontal + col];
+	getTile= (col, row) => {
+		return this.levelData[row * this.totalCellsHorizontal + col];
 	}
 
-	drawLayer= layerIndex => {
+	drawSprites= () => {
 		for(let col= 0; col < this.totalCellsHorizontal; col++)
 		{
 			for(let row= 0; row < this.totalCellsVertical; row++)
 			{
-				const alias= this.getTile(layerIndex, col, row);
+				const alias= this.getTile(col, row);
 				const tile= this.spriteMap[alias];
+				tile.drawX= (col * tile.spriteWidth) - ((this.totalCellsHorizontal * this.tileSize)/2);
+				tile.drawY= row * tile.spriteHeight - ((this.totalCellsVertical * this.tileSize)/2);
 				tile.Draw();
 			}
 		}
@@ -74,9 +77,7 @@ class TileEngine{
 
 	render= () => {
 		if(!this.ready) return;
-
-		this.drawLayer(0);
-		this.drawLayer(1);
+		this.drawSprites();
 	}
 }
 

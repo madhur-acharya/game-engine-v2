@@ -1,5 +1,5 @@
-const webpack = require('webpack');
-const path = require('path');
+import webpack from 'webpack';
+import path from 'path';
 
 const config = {
   mode: 'development',
@@ -22,7 +22,7 @@ const config = {
         {
           loader: 'url-loader',
           options: {limit: '40000'}
-        }, 
+        },
         'image-webpack-loader'
         ]
       }
@@ -35,5 +35,5 @@ const config = {
   devtool: "source-map"
 };
 
-module.exports = config;
+export default config;
 

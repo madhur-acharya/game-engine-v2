@@ -1,6 +1,5 @@
 import Vector from "./vector.js";
 import {drawVector, isPromise} from "./utilityFunctions.js";
-import {Collider} from "./components/components.js";
 
 export const GameObject= (() => {
 
