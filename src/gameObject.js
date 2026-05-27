@@ -17,12 +17,7 @@ export const GameObject= (() => {
 			this.layer= "default";
 			this.layerIndex= layerIndex;
 			this.timers= {};
-			this.components= {};
-			this.script= {
-				Start: () => {},
-				Update: () => {}
-			};
-
+			this.components= [];
 			gameObjectList.push(this);
 		}
 
@@ -76,41 +71,21 @@ export const GameObject= (() => {
 			}
 		}
 
-		addComponent(component)
+		AddComponent(component)
 		{
-			Promise.resolve(component.Start(this))
-			.then(() => {
-				if(this.components[component.type])
-					console.warn("component of type", component.type, "already exists. Replacing...");
-
-				this.components[component.type]= component;
-				this.components[component.type].ready= true;
-			})
-			.catch(err => {
-				console.log(err);
-			})
+			component.gameObject= this;
+			component.Setup?.(this);
+			this.components.push(component);
 			return component;
 		}
 
 		runComponents()
 		{
-			for(let key in this.components)
+			for(let i in this.components)
 			{
-				this.components[key].ready && this.components[key].Update(this);
+				// this.components[i].ready && this.components[i].Update(this);
+				this.components[i].Update(this);
 			}
-		}
-
-		assignScript(script)
-		{
-			const theScript= new script(this);
-
-			Promise.resolve(theScript.Start(this))
-			.then(() => {
-				this.script= theScript;
-			})
-			.catch(err => {
-				console.log(err);
-			})
 		}
 
 		onDestroy()
@@ -118,9 +93,8 @@ export const GameObject= (() => {
 			this.timers= {};
 		}
 
-		runExecutables()
+		Update()
 		{
-			this.script?.Update();
 			this.runComponents();
 			this.renderGizmos();
 			this.selfDestruct();

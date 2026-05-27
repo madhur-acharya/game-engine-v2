@@ -1,0 +1,31 @@
+import EventSystem from "./eventSystem.js";
+import {bulkLoadImages} from "./constants.js";
+import Scene1 from "./scenes/scene1.js";
+
+EventSystem.createEvent("onCanvasReady");
+EventSystem.createEvent("onGameReady");
+EventSystem.createEvent("onDispatchNewFrame");
+
+window.addEventListener("onCanvasReady", () => {
+	console.log("canvasReady");
+	bulkLoadImages({
+		"tilesetSample": "/src/assets/tiles.png",
+		"tilesetClifside": "/src/assets/cliffside.png",
+		"character": "/src/assets/character.png",
+		"mario": "/src/assets/mario_tileset.png",
+	})
+	.then(imgMp => {
+		EventSystem.dispatchEvent("onGameReady");
+	})
+	.catch(err => {
+		console.log(err);
+	});
+});
+
+
+window.addEventListener("onGameReady", () => {
+	console.log("game load complete");
+	Scene1();
+	EventSystem.dispatchEvent("onDispatchNewFrame");
+});
+

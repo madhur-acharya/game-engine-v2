@@ -1,49 +1,28 @@
-import {VGRenderer, RigidBody, Collider, SpriteRenderer} from "../components/components.js";
+import {RigidBody} from "../components/rigidBody.js";
+import {Collider} from "../components/collider.js";
+import {SpriteRenderer} from "../components/spriteRenderer.js";
 import Input from "../input.js";
 import Vector from "../vector.js";
 import {drawBoundingCircle, drawRectangle, box2BoxCollision, drawVector, getRandomVector} from "../utilityFUnctions.js";
 import {getImages} from "../constants.js";
 
 class PlayerMovement{
-
-	constructor(obj)
+	constructor()
 	{
-		this.gameObject= obj;
 		this.color= "orange"; 
 	}
 
-	Start= () => {
+	Setup= (obj) => {
+		this.ready= true;
+		this.gameObject= obj;
 		this.gameObject.position= new Vector();
-		//render vector graphics
-		/*this.gameObject.addComponent(new VGRenderer(obj => {
-			context.save();
-			context.translate(obj.position.x, obj.position.y);
-			context.rotate(Math.PI / 2);
-			context.beginPath();
-			context.fillStyle= this.color;
-			context.moveTo(25, 0);
-			context.lineTo(-10, -15);
-			context.lineTo(0, 0);
-			context.lineTo(-10, 15);
-			context.lineTo(25, 0);
-			context.fill();
-			context.restore();
-			drawRectangle(this.gameObject.position, 64, 64, this.color);
-		}));*/
-
-		//render sprite
-		this.gameObject.addComponent(new SpriteRenderer(getImages()?.mario, 64, 368, 16, 16, 32, 32));
-		// rigid body for physics purposes.
-		this.rb= this.gameObject.addComponent(new RigidBody(false, false));
+		this.gameObject.AddComponent(new SpriteRenderer(3, getImages()?.mario, 64, 368, 16, 16, 32, 32));
+		this.rb= this.gameObject.AddComponent(new RigidBody(false, false));
+		this.rb.ready= true;
 		this.rb.mass= 100;
-		//this.rb.kinematic= true;
-
-		//box collider
-		//this.gameObject.addComponent(new Collider("box", {width: 32, height: 32}));
 	}
 
 	Update= () => {
-
 		const vel= 5;
 
 		if(Input.getKey("w") === true)

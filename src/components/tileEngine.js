@@ -1,4 +1,5 @@
 import {ImageLoader} from "../utilityFunctions.js";
+import RenderPipeline from "../renderPipeline.js";
 
 export class Tile{
 	constructor(
@@ -26,7 +27,7 @@ export class Tile{
 		this.drawY= drawY;
 	}
 
-	Draw()
+	draw()
 	{
 		context.save();
 		context.scale(1, -1);
@@ -37,10 +38,11 @@ export class Tile{
 }
 
 class TileEngine{
-	constructor(tileAtlas= {}, spriteMap= {}, levelData, totalCellsHorizontal= 16, totalCellsVertical= 16, tileSize= 64)
+	constructor(layer, tileAtlas= {}, spriteMap= {}, levelData, totalCellsHorizontal= 16, totalCellsVertical= 16, tileSize= 64)
 	{
-		this.type= "TileEngine"
-		this.ready= false;
+		this.layer= layer;
+		this.type= "TileEngine";
+		this.ready= true;
 		this.spriteMap= spriteMap;
 		this.tileAtlas= tileAtlas;
 		this.levelData= levelData;
@@ -49,19 +51,19 @@ class TileEngine{
 		this.tileSize= tileSize;
 	}
 
-	Start= obj => {
+	Setup= obj => {
 		this.gameObject= obj;
 	}
 
 	Update= delta => {
-		this.render();
+		RenderPipeline.DispatchDraw(this);
 	}
 
 	getTile= (col, row) => {
 		return this.levelData[row * this.totalCellsHorizontal + col];
 	}
 
-	drawSprites= () => {
+	draw= () => {
 		for(let col= 0; col < this.totalCellsHorizontal; col++)
 		{
 			for(let row= 0; row < this.totalCellsVertical; row++)
@@ -70,126 +72,11 @@ class TileEngine{
 				const tile= this.spriteMap[alias];
 				tile.drawX= (col * tile.spriteWidth) - ((this.totalCellsHorizontal * this.tileSize)/2);
 				tile.drawY= row * tile.spriteHeight - ((this.totalCellsVertical * this.tileSize)/2);
-				tile.Draw();
+				tile.draw();
 			}
 		}
-	}
-
-	render= () => {
-		if(!this.ready) return;
-		this.drawSprites();
 	}
 }
 
 export default TileEngine;
 
-
-/*
-class TileEngine{
-	constructor(tileAtlas= {}, spriteMap= {}, totalCellsHorizontal= 16, totalCellsVertical= 16, tileSize= 64, levelData)
-	{
-		this.ready= false;
-		this.Loader= new ImageLoader();
-
-		Promise.all(Object.entries(tileAtlas).map(([name, tileset]) => {
-			return this.Loader.loadImage(name, tileset)
-		}))
-		.then(loaded => {
-			this.tileAtlas= this.Loader.images;
-			this.ready= true;
-		})
-		.catch(err => {
-			console.log(err);
-		});	
-	}
-
-	Start= obj => {
-		this.gameObject= obj;
-
-		this.map= {
-			cols: 16,
-			rows: 16,
-			tsize: 64,
-			tiles: [
-				[
-					1, 3, 3, 3, 1, 1, 3, 1, 1, 3, 3, 3, 1, 1, 3, 1,
-					1, 3, 3, 3, 1, 1, 3, 1, 1, 3, 3, 3, 1, 1, 3, 1,
-					1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-					1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-					1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1,
-					1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1,
-					1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-					1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-					1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1,
-					1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1,
-					1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1,
-					1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1,
-					1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1,
-					1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1,
-					1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1,
-					1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1,
-				],
-				[
-					4, 3, 3, 3, 3, 3, 3, 4, 4, 3, 3, 3, 3, 3, 3, 4,
-					4, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 4,
-					4, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 4,
-					4, 0, 0, 5, 0, 0, 0, 4, 4, 0, 0, 5, 0, 0, 0, 4,
-					4, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 4,
-					4, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 4,
-					4, 4, 4, 0, 5, 4, 4, 4, 4, 4, 4, 0, 5, 4, 4, 4,
-					0, 3, 3, 0, 0, 3, 3, 3, 0, 3, 3, 0, 0, 3, 3, 3,
-					4, 3, 3, 3, 3, 3, 3, 4, 4, 3, 3, 3, 3, 3, 3, 4, 
-					4, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 4,
-					4, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 4,
-					4, 0, 0, 5, 0, 0, 0, 4, 4, 0, 0, 5, 0, 0, 0, 4,
-					4, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 4,
-					4, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 4,
-					4, 4, 4, 0, 5, 4, 4, 4, 4, 4, 4, 0, 5, 4, 4, 4,
-					0, 3, 3, 0, 0, 3, 3, 3, 0, 3, 3, 0, 0, 3, 3, 3,
-				]
-			],
-			getTile: (Lix, col, row) => {
-				return this.map.tiles[Lix][row * this.map.cols + col];
-			}
-		};
-	}
-
-	Update= delta => {
-		this.render();
-	}
-
-	drawLayer= layerIndex => {
-		for(var c = 0; c < this.map.cols; c++) 
-		{
-			for(var r = 0; r < this.map.rows; r++) 
-			{
-				var tile = this.map.getTile(layerIndex, c, r);
-				if(tile !== 0) 
-				{ // 0 => empty tile
-					context.save();
-					context.scale(1, -1);
-					context.translate(-width/2, -height/2);
-					context.drawImage(
-						this.tileAtlas, // image
-						(tile - 1) * this.map.tsize, // source x
-						0, // source y
-						this.map.tsize, // source width
-						this.map.tsize, // source height
-						c * this.map.tsize,  // target x
-						r * this.map.tsize, // target y
-						this.map.tsize, // target width
-						this.map.tsize // target height
-					);
-					context.restore();
-				}
-			}
-		}
-	}
-
-	render= () => {
-		if(!this.ready) return;
-
-		this.drawLayer(0);
-		this.drawLayer(1);
-	}
-}*/

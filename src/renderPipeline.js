@@ -1,14 +1,15 @@
 
-
 class RenderPipeline{
 
 	static renderStack= [];
 
-	static Push(layer, gameObj) {
-		if(!RenderPipeline.renderStack[layer]) {
-			RenderPipeline.renderStack[layer]= [];
+	static DispatchDraw(comp) {
+		if(comp.layer == undefined) return;
+		if(!comp.draw == undefined) return;
+		if(!RenderPipeline.renderStack[comp.layer]) {
+			RenderPipeline.renderStack[comp.layer]= [];
 		}
-		RenderPipeline.renderStack[layer].push(gameObj);
+		RenderPipeline.renderStack[comp.layer].push(comp);
 	};
 
 	static Pop(layer) {
@@ -16,7 +17,7 @@ class RenderPipeline{
 	};
 
 	static Draw(layer) {
-		return RenderPipeline.Pop(layer)?.Draw();
+		return RenderPipeline.Pop(layer)?.draw();
 	}
 
 	static RenderLayer(layer) {
@@ -27,6 +28,7 @@ class RenderPipeline{
 	}
 
 	static Render() {
+		nurdyStats4.innerHTML= `Render dispatch count: ${RenderPipeline.renderStack.length}`;
 		const stack= RenderPipeline.renderStack;
 		for(let i=0; i < stack.length; i++) RenderPipeline.RenderLayer(i);
 	}

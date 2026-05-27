@@ -1,13 +1,8 @@
-import EventSystem from "./eventSystem.js";
 import {GameObject} from "./gameObject.js";
 import {TimeOut, Interval, drawGrid, Coroutine} from "./utilityFunctions.js";
-import {bulkLoadImages} from "./constants.js";
-import InitialBehaviour from "./initialBehaviour.js";
 import RenderPipeline from "./renderPipeline.js";
-
-import {getImages} from "./constants.js";
-import {Tile} from "./components/tileEngine.js";
-
+import EventSystem from "./eventSystem.js";
+import "./startup.js";
 
 let aniId,
 	lastTime= performance.now() + 16.666666666666668,
@@ -19,29 +14,7 @@ let aniId,
 window.gameObjectList= GameObject.getGameObjectList();
 window.time= 0;
 
-EventSystem.createEvent("onCanvasReady");
-window.addEventListener("onCanvasReady", () => {
-	console.log("canvasReady");
-	clearCanvas();
-
-	bulkLoadImages({
-		"tilesetSample": "/src/assets/tiles.png",
-		"tilesetClifside": "/src/assets/cliffside.png",
-		"character": "/src/assets/character.png",
-		"mario": "/src/assets/mario_tileset.png",
-	})
-	.then(imgMp => {
-		InitialBehaviour();
-		console.log(gameObjectList);
-		getNewFrame();
-	})
-	.catch(err => {
-		console.log(err);
-	});
-});
-
 window.addEventListener("load", () => {	
-
 	console.log("DOM Loaded");
 
 	window.canvas= document.getElementById("my_canvas");
@@ -61,6 +34,7 @@ window.addEventListener("load", () => {
 	window.nurdyStats= document.getElementById("nurdy_stats");
 	window.nurdyStats2= document.getElementById("nurdy_stats2");
 	window.nurdyStats3= document.getElementById("nurdy_stats3");
+	window.nurdyStats4= document.getElementById("nurdy_stats4");
 
 	EventSystem.dispatchEvent("onCanvasReady");
 });
@@ -73,6 +47,7 @@ window.addEventListener("keyup", event => {
 		return;
 	}
 });
+
 
 const clearCanvas= () => {
 	context.fillStyle= "black";
@@ -104,18 +79,24 @@ const getNewFrame= () => {
 };
 
 const Update= () => {
-
 	TimeOut.update();
 	Interval.update();
 	Coroutine.run();
 
 	for(let i= 0; i < gameObjectList.length; i++)
 	{
-		gameObjectList[i].runExecutables();
+		gameObjectList[i].Update();
 	}
 
 	RenderPipeline.Render();
 
 	nurdyStats2.innerHTML= gameObjectList.length;
 };
+
+
+window.addEventListener("onDispatchNewFrame", () => {
+	getNewFrame();
+});
+
+
 
