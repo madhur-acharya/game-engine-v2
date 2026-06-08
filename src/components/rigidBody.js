@@ -1,12 +1,13 @@
 import {getRandomVector, isFunction, drawBoundingCircle, Circle2CircleCollision, box2BoxCollision, drawVector} from "../utilityFunctions.js";
 import Vector from "../vector.js";
 import {GameObject} from "../gameObject.js";
+import Generic from "./generic.js";
 
-
-export class RigidBody{
+export class RigidBody extends Generic{
 
 	constructor(applyGravity= true, applyFriction= true)
 	{
+		super();
 		this.type= "RigidBody";
 		this.mass= 1;
 		this.applyGravity= applyGravity;

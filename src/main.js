@@ -13,6 +13,8 @@ let aniId,
 
 window.gameObjectList= GameObject.getGameObjectList();
 window.time= 0;
+window.timestamp= 0;
+window.deltaTime= 0;
 
 window.addEventListener("load", () => {	
 	console.log("DOM Loaded");
@@ -62,6 +64,9 @@ const getNewFrame= () => {
 		time+= timePerFrame;
 		lastTime= timestamp;
 		deltaTime= timePerFrame / 16.666666666666668;
+		window.timestamp= timestamp;
+		window.deltaTime= deltaTime;
+		window.time= time;
 
 		fps= Math.ceil(1000 / timePerFrame);
 		fpsArray.unshift(fps);

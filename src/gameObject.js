@@ -17,7 +17,7 @@ export const GameObject= (() => {
 			this.layer= "default";
 			this.layerIndex= layerIndex;
 			this.timers= {};
-			this.components= [];
+			this.components= {};
 			gameObjectList.push(this);
 		}
 
@@ -75,7 +75,7 @@ export const GameObject= (() => {
 		{
 			component.gameObject= this;
 			component.Setup?.(this);
-			this.components.push(component);
+			this.components[component.name ?? `$COMP-${performance.now()}-${Math.random()}`]= component;
 			return component;
 		}
 

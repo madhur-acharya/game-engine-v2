@@ -1,7 +1,8 @@
 import {ImageLoader} from "../utilityFunctions.js";
 import RenderPipeline from "../renderPipeline.js";
+import Generic from "./generic.js";
 
-export class Tile{
+export class Tile extends Generic{
 	constructor(
 		spriteSheet, 
 		alias= "#", 
@@ -15,6 +16,7 @@ export class Tile{
 		drawHeight= spriteHeight, 
 	)
 	{
+		super();
 		this.spriteSheet= spriteSheet;
 		this.spriteX= spriteX;
 		this.spriteY= spriteY;
@@ -31,15 +33,18 @@ export class Tile{
 	{
 		context.save();
 		context.scale(1, -1);
-		context.translate(this.drawX + (this.drawWidth/2), -(this.drawY + (this.drawHeight/2)));
-		context.drawImage(this.spriteSheet, this.spriteX, this.spriteY, this.spriteWidth, this.spriteHeight, -this.drawWidth/2, -this.drawHeight/2, this.drawWidth, this.drawHeight);
+		// context.translate(this.drawX + (this.drawWidth/2), -(this.drawY + (this.drawHeight/2)));
+		// context.drawImage(this.spriteSheet, this.spriteX, this.spriteY, this.spriteWidth, this.spriteHeight, -this.drawWidth/2, -this.drawHeight/2, this.drawWidth, this.drawHeight);
+		context.translate(this.drawX, -this.drawY);
+		context.drawImage(this.spriteSheet, this.spriteX, this.spriteY, this.spriteWidth, this.spriteHeight, 0, 0, this.drawWidth, this.drawHeight);
 		context.restore();
 	}
 }
 
-class TileEngine{
+class TileEngine extends Generic{
 	constructor(layer, tileAtlas= {}, spriteMap= {}, levelData, totalCellsHorizontal= 16, totalCellsVertical= 16, tileSize= 64)
 	{
+		super();
 		this.layer= layer;
 		this.type= "TileEngine";
 		this.ready= true;

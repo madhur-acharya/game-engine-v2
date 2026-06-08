@@ -65,7 +65,7 @@ const load= () => {
 	return {tileAtlas, spriteMap, levelData};
 }
 
-export class GameLevel1{
+class GameLevel1{
 	constructor() {};
 
 	Setup= (gameObj) => {
@@ -81,7 +81,7 @@ export class GameLevel1{
 
 
 
-export class RenderTest{
+class RenderTest{
 	constructor() {
 		this.layer= 3;
 	};
@@ -112,9 +112,9 @@ export class RenderTest{
 
 
 const Scene1= () => {
-	new GameObject().AddComponent(new GameLevel1());
+	// new GameObject().AddComponent(new GameLevel1());
 	new GameObject().AddComponent(new PlayerMovement());
-	new GameObject().AddComponent(new RenderTest());
+	// new GameObject().AddComponent(new RenderTest());
 }
 
 export default Scene1;

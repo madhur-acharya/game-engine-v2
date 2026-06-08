@@ -1,12 +1,14 @@
 import {getRandomVector, isFunction, drawBoundingCircle, Circle2CircleCollision, box2BoxCollision, drawVector} from "../utilityFunctions.js";
 import Vector from "../vector.js";
 import {GameObject} from "../gameObject.js";
+import Generic from "./generic.js";
 
 
-export class Collider{
+export class Collider extends Generic{
 	
 	constructor(colliderType= "circle", dimentions= {radius: 5}, onCollisionEnter= () => {}, onCollisionExit= () => {}, isTrigger= false, ignoreLayers= [])
 	{
+		super();
 		this.colliderType= colliderType;
 		this.dimentions= dimentions;
 		this.onCollisionEnter= onCollisionEnter;

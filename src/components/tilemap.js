@@ -1,10 +1,12 @@
 import Vector from "../vector.js";
 import {GameObject} from "../gameObject.js";
 import {drawGrid, drawRectangle} from "../utilityFunctions.js";
+import Generic from "./generic.js";
 
-export class Tile{
+export class Tile extends Generic{
 	constructor(spriteSheet, alias= "#", spriteX= 0, spriteY= 0, spriteWidth= 16, spriteHeight= 16, drawX= 0, drawY= 0, drawWidth= spriteWidth, drawHeight= spriteHeight, gameObject)
 	{
+		super();
 		this.spriteSheet= spriteSheet;
 		this.spriteX= spriteX;
 		this.spriteY= spriteY;
@@ -29,9 +31,10 @@ export class Tile{
 }
 
 
-class Tilemap{
+class Tilemap extends Generic{
 	constructor(level, spriteMap, totalCellsHorizontal= 32, aspectRatio= 4/3)
 	{
+		super();
 		let tilemapWidth= width;
 		let tilemapHeight= (tilemapWidth / totalCellsHorizontal) * Math.trunc(totalCellsHorizontal / aspectRatio);
 

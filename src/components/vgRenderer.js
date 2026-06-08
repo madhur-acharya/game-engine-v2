@@ -2,10 +2,12 @@ import {getRandomVector, isFunction, drawBoundingCircle, Circle2CircleCollision,
 import Vector from "../vector.js";
 import {GameObject} from "../gameObject.js";
 import RenderPipeline from "../renderPipeline.js";
+import Generic from "./generic.js";
 
-export class VGRenderer{
+export class VGRenderer extends Generic{
 	constructor(layer, rendFunc)
 	{
+		super();
 		this.type= "VGRenderer";
 		this.enabled= true;
 		this.layer= layer;

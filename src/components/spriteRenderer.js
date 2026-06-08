@@ -2,11 +2,13 @@ import {getRandomVector, isFunction, drawBoundingCircle, Circle2CircleCollision,
 import Vector from "../vector.js";
 import {GameObject} from "../gameObject.js";
 import RenderPipeline from "../renderPipeline.js";
+import Generic from "./generic.js";
 
-export class SpriteRenderer{
+export class SpriteRenderer extends Generic{
 
 	constructor(layer, sprite, spriteX= 0, spriteY= 0, spriteWidth, spriteHeight, drawWidth, drawHeight)
 	{
+		super();
 		this.layer= layer;
 		this.type= "SpriteRenderer";
 		this.ready= true;
