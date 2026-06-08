@@ -1,5 +1,5 @@
 import Vector from "./vector.js";
-import {drawVector, isPromise} from "./utilityFunctions.js";
+import {drawVector, isPromise, PrimaryKey} from "./utilityFunctions.js";
 
 export const GameObject= (() => {
 
@@ -75,7 +75,7 @@ export const GameObject= (() => {
 		{
 			component.gameObject= this;
 			component.Setup?.(this);
-			this.components[component.name ?? `$COMP-${performance.now()}-${Math.random()}`]= component;
+			this.components[component.name ?? `$COMP-${PrimaryKey.nextNumber()}`]= component;
 			return component;
 		}
 

@@ -1,6 +1,16 @@
 import Vector from "./vector.js";
 
 //------------------------------------------------------------------------
+export class PrimaryKey{
+	static key=0;
+
+	static nextNumber= ()=> {
+		PrimaryKey.key+= 1;
+		return PrimaryKey.key;
+	};
+};
+
+//------------------------------------------------------------------------
 export const isPromise= sus => sus && isFunction(sus.then);
 
 //------------------------------------------------------------------------
