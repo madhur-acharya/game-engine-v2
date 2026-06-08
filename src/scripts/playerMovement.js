@@ -30,15 +30,15 @@ class PlayerMovement{
 			this.rb.velocity.setMag(vel);
 			if(Input.getKey("d") === true)
 			{
-				this.rb.velocity.setAngle(Math.PI / 4);
+				this.rb.velocity.setAngle(-Math.PI / 4);
 			}
 			else if(Input.getKey("a") === true)
 			{
-				this.rb.velocity.setAngle( 3 * (Math.PI / 4));
+				this.rb.velocity.setAngle( 3 * (-Math.PI / 4));
 			}
 			else
 			{
-				this.rb.velocity.setAngle(Math.PI / 2);
+				this.rb.velocity.setAngle(-Math.PI / 2);
 			}
 		}
 		else if(Input.getKey("s") === true)
@@ -46,15 +46,15 @@ class PlayerMovement{
 			this.rb.velocity.setMag(vel);
 			if(Input.getKey("d") === true)
 			{
-				this.rb.velocity.setAngle(-Math.PI / 4);
+				this.rb.velocity.setAngle(Math.PI / 4);
 			}
 			else if(Input.getKey("a") === true)
 			{
-				this.rb.velocity.setAngle(-3 * (Math.PI / 4));
+				this.rb.velocity.setAngle(-3 * (-Math.PI / 4));
 			}
 			else
 			{
-				this.rb.velocity.setAngle(-Math.PI / 2);
+				this.rb.velocity.setAngle(Math.PI / 2);
 			}
 		}
 		else
@@ -66,7 +66,7 @@ class PlayerMovement{
 			}
 			else if(Input.getKey("a") === true)
 			{
-				this.rb.velocity.setAngle(Math.PI);
+				this.rb.velocity.setAngle(-Math.PI);
 			}
 		}
 

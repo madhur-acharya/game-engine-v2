@@ -41,8 +41,7 @@ export class TextRenderer extends Generic{
 		const textWidth= context.measureText(this.text);
 
 		context.save();
-		context.scale(1, -1);
-		context.translate(this.drawX - (window.width/2), this.drawY - (window.height/2));
+		context.translate(this.drawX, this.drawY);
 		context.fillStyle= this.color;
 		context.font= `${this.fontSize} ${this.fontFamily}`;
 		context.fillText(this.text, 0, 0);

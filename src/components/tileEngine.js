@@ -32,10 +32,7 @@ export class Tile extends Generic{
 	draw()
 	{
 		context.save();
-		context.scale(1, -1);
-		// context.translate(this.drawX + (this.drawWidth/2), -(this.drawY + (this.drawHeight/2)));
-		// context.drawImage(this.spriteSheet, this.spriteX, this.spriteY, this.spriteWidth, this.spriteHeight, -this.drawWidth/2, -this.drawHeight/2, this.drawWidth, this.drawHeight);
-		context.translate(this.drawX, -this.drawY);
+		context.translate(this.drawX, this.drawY);
 		context.drawImage(this.spriteSheet, this.spriteX, this.spriteY, this.spriteWidth, this.spriteHeight, 0, 0, this.drawWidth, this.drawHeight);
 		context.restore();
 	}
@@ -87,8 +84,8 @@ class TileEngine extends Generic{
 			{
 				const alias= this.getTile(col, row);
 				const tile= this.spriteMap[alias];
-				tile.drawX= ((col * tile.spriteWidth) - ((this.totalCellsHorizontal * this.tileSize)/2)) * this.hirizontalScale;
-				tile.drawY= (row * tile.spriteHeight - ((this.totalCellsVertical * this.tileSize)/2)) * this.verticalScale;
+				tile.drawX= col * tile.spriteWidth * this.hirizontalScale;
+				tile.drawY= row * tile.spriteHeight * this.verticalScale;
 				tile.drawWidth= tile.spriteWidth * this.hirizontalScale;
 				tile.drawHeight= tile.spriteHeight * this.verticalScale;
 				tile.draw();

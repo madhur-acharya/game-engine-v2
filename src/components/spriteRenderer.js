@@ -49,10 +49,9 @@ export class SpriteRenderer extends Generic{
 		if(this.drawHeight === undefined) this.drawHeight= this.spriteHeight;
 
 		context.save();
-		context.scale(1, -1);
-		context.translate(this.drawX + (this.drawWidth/2), -(this.drawY + (this.drawHeight/2)));
+		context.translate(this.drawX, this.drawY);
 		context.rotate(this.gameObject.rotation);
-		context.drawImage(this.sprite, this.spriteX, this.spriteY, this.spriteWidth, this.spriteHeight, -this.drawWidth/2, -this.drawHeight/2, this.drawWidth, this.drawHeight);
+		context.drawImage(this.sprite, this.spriteX, this.spriteY, this.spriteWidth, this.spriteHeight, 0, 0, this.drawWidth, this.drawHeight);
 		context.restore();
 	}
 };

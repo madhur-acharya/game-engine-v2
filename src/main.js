@@ -25,8 +25,8 @@ window.addEventListener("load", () => {
 	window.context= canvas.getContext("2d");
 	
 	context.imageSmoothingEnabled= false;
-	context.translate(width / 2, height / 2);
-	context.transform(1, 0, 0, -1, 0, 0);
+	// context.translate(width / 2, height / 2);
+	// context.transform(1, 0, 0, -1, 0, 0);
 
 	//context.transform(1, 0, 0, -1, 0, canvas.height); /*for cartecian cordinate system with origin at bottom left of screen*/
 
@@ -53,8 +53,8 @@ window.addEventListener("keyup", event => {
 
 const clearCanvas= () => {
 	context.fillStyle= "black";
-	context.fillRect(-width / 2, -height / 2, width, height);
-	//context.fillRect(0, 0, width, height);
+	// context.fillRect(-width / 2, -height / 2, width, height);
+	context.fillRect(0, 0, width, height);
 };
 
 const getNewFrame= () => {
