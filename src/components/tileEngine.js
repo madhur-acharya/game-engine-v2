@@ -1,5 +1,6 @@
 import {ImageLoader} from "../utilityFunctions.js";
 import RenderPipeline from "../renderPipeline.js";
+import Camera from "./camera.js";
 import Generic from "./generic.js";
 
 export class Tile extends Generic{
@@ -43,14 +44,6 @@ class TileEngine extends Generic{
 	{
 		super();
 
-		const totalTilemapWidth= totalCellsHorizontal * tileSize;
-		const totalTilemapHeight= totalCellsVertical * tileSize;
-		const hirizontalScale= window.width / totalTilemapWidth;
-		const verticalScale= window.height / totalTilemapHeight;
-
-		console.log("Tilemap Size:", totalTilemapWidth, totalTilemapHeight);
-		console.log("Scale:", hirizontalScale, verticalScale);
-
 		this.layer= layer;
 		this.type= "TileEngine";
 		this.ready= true;
@@ -60,9 +53,27 @@ class TileEngine extends Generic{
 		this.totalCellsHorizontal= totalCellsHorizontal;
 		this.totalCellsVertical= totalCellsVertical;
 		this.tileSize= tileSize;
+		this.camera= new Camera(window.width, window.height);
 
-		this.hirizontalScale= hirizontalScale;
-		this.verticalScale= verticalScale;
+		// this.init();
+	}
+
+	init() {
+		const hirizontalScale= window.width / this.camera.width;
+		const verticalScale= window.height / this.camera.height;
+		const scaleFactor= Math.min(hirizontalScale, verticalScale);
+
+		console.log("Screen size:", this.camera.width, this.camera.height);
+		console.log("Scale:", hirizontalScale, verticalScale);
+		console.log("scaleFactor:", scaleFactor, this.tileSize * scaleFactor);
+
+		this.scaleFactor= scaleFactor;
+		this.trueTileSize= Math.floor(this.tileSize * scaleFactor);
+
+		for(let k in this.spriteMap) {
+			this.spriteMap[k].drawWidth= this.trueTileSize;
+			this.spriteMap[k].drawHeight= this.trueTileSize;
+		}
 	}
 
 	Setup= obj => {
@@ -73,21 +84,31 @@ class TileEngine extends Generic{
 		RenderPipeline.DispatchDraw(this);
 	}
 
-	getTile= (col, row) => {
-		return this.levelData[row * this.totalCellsHorizontal + col];
+	attachCamera= cam => {
+		this.camera= cam;
+		this.init();
+	}
+
+	getTile= (row, col) => {
+		return this.levelData[row]?.[col];
 	}
 
 	draw= () => {
-		for(let row= 0; row < this.totalCellsHorizontal; row++)
+		const cameraPos= this.camera.position;
+		const rowStart= Math.max(Math.floor(cameraPos.y / this.tileSize), 0);
+		const colStart= Math.max(Math.floor(cameraPos.x / this.tileSize), 0);
+		const totalRows= Math.floor(this.camera.height / this.tileSize);
+		const totalCols= Math.floor(this.camera.width / this.tileSize);
+
+		for(let row= 0; row < totalRows; row++)
 		{
-			for(let col= 0; col < this.totalCellsHorizontal; col++)
+			for(let col= 0; col < totalCols; col++)
 			{
-				const alias= this.getTile(col, row);
+				const alias= this.getTile(row + rowStart, col + colStart);
+				if(!alias) continue;
 				const tile= this.spriteMap[alias];
-				tile.drawX= col * tile.spriteWidth * this.hirizontalScale;
-				tile.drawY= row * tile.spriteHeight * this.verticalScale;
-				tile.drawWidth= tile.spriteWidth * this.hirizontalScale;
-				tile.drawHeight= tile.spriteHeight * this.verticalScale;
+				tile.drawX= col * this.trueTileSize;
+				tile.drawY= row * this.trueTileSize;
 				tile.draw();
 			}
 		}

@@ -34,6 +34,7 @@ window.addEventListener("load", () => {
 
 	window.framerateTag= document.getElementById("framerate");
 	window.nurdyStats= document.getElementById("nurdy_stats");
+	window.nurdyStats1= document.getElementById("nurdy_stats1");
 	window.nurdyStats2= document.getElementById("nurdy_stats2");
 	window.nurdyStats3= document.getElementById("nurdy_stats3");
 	window.nurdyStats4= document.getElementById("nurdy_stats4");

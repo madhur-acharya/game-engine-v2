@@ -3,6 +3,7 @@ import {getImages} from "../constants.js";
 import RenderPipeline from "../renderPipeline.js";
 import {GameObject} from "../gameObject.js";
 import {TextRenderer} from "../components/textRenderer.js";
+import Camera from "../components/camera.js";
 import Input from "../input.js";
 import Vector from "../vector.js";
 
@@ -21,38 +22,50 @@ const load= () => {
 	};
 
 	const levelData= [
-		2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2,
-		1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 1, 1, 5, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1,
-		4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4,
-		3, 1, 1, 1, 4, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 3,
-		2, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
+		[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4,  2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,],
+		[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+		[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+		[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+		[1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,],
 	];
 
 	return {tileAtlas, spriteMap, levelData};
 }
 
 class GameLevel2{
-	constructor() {};
+	constructor(cam) {
+		this.camera= cam;
+	};
 
 	Setup= (gameObj) => {
 		this.gameObject= gameObj;
 		const {tileAtlas, spriteMap, levelData}= load();
-		this.gameObject.AddComponent(new TileEngine(2, tileAtlas, spriteMap, levelData, 16, 16, 64));
+		const tileMapComp= new TileEngine(2, tileAtlas, spriteMap, levelData, 16, 16, 64);
+		tileMapComp.attachCamera(this.camera);
+		this.gameObject.AddComponent(tileMapComp);
 		this.ready= true;
 	};
 
-	Update= () => {};
+	Update= () => {
+		const vel= 5;
+		if(Input.getKey("w")) this.camera.position.addTo(new Vector(0, -vel));
+		if(Input.getKey("s")) this.camera.position.addTo(new Vector(0, vel));
+		if(Input.getKey("a")) this.camera.position.addTo(new Vector(-vel, 0));
+		if(Input.getKey("d")) this.camera.position.addTo(new Vector(vel, 0));
+		
+		window.nurdyStats1.innerText= this.camera.position.toString();
+	};
 }
 
 class MouseTracker {
@@ -60,7 +73,7 @@ class MouseTracker {
 
 	Setup= (obj) => {
 		this.gameObject= obj;
-		const txtComp= new TextRenderer(2, "Hello");
+		const txtComp= new TextRenderer(4, "Hello");
 		txtComp.name= "mousePosText";
 		txtComp.color= "crimson";
 		this.gameObject.AddComponent(txtComp);
@@ -75,7 +88,10 @@ class MouseTracker {
 
 
 const Scene2= () => {
-	new GameObject().AddComponent(new GameLevel2());
+	window.camera= new Camera(1024, 512);
+	// window.camera= new Camera(window.width, window.height);
+	window.camera.moveTo(new Vector(0, 0));
+	new GameObject().AddComponent(new GameLevel2(window.camera));
 	new GameObject().AddComponent(new MouseTracker());
 }
 

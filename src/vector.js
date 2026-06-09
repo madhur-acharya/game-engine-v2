@@ -6,6 +6,8 @@ class Vector{
 		this.y= y;
 	}
 
+	toString= () => `${this.x},${this.y}`;
+
 	clone= () => new Vector(this.x, this.y);
 	from= vect => {
 		this.x= vect.x;
