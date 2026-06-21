@@ -5,6 +5,7 @@ import {GameObject} from "../gameObject.js";
 import {drawBoundingCircle} from "../utilityFunctions.js";
 import PlayerMovement from "../scripts/playerMovement.js";
 import {VGRenderer} from "../components/vgRenderer.js";
+import Vector from "../vector.js";
 
 
 const load= () => {
@@ -113,7 +114,8 @@ class RenderTest{
 
 const Scene1= () => {
 	// new GameObject().AddComponent(new GameLevel1());
-	new GameObject().AddComponent(new PlayerMovement());
+	const player= new GameObject();
+	player.AddComponent(new PlayerMovement());
 	// new GameObject().AddComponent(new RenderTest());
 }
 

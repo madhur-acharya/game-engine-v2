@@ -19,6 +19,7 @@ window.addEventListener("onCanvasReady", () => {
 		"tilesetClifside": "/src/assets/cliffside.png",
 		"character": "/src/assets/character.png",
 		"mario": "/src/assets/mario_tileset.png",
+		"cobblestone": "/src/assets/cobblestone.png",
 	})
 	.then(imgMp => {
 		EventSystem.dispatchEvent("onGameReady");
@@ -30,7 +31,7 @@ window.addEventListener("onCanvasReady", () => {
 
 window.addEventListener("onGameReady", () => {
 	console.log("game load complete");
-	Scene1();
+	// Scene1();
 	Scene2();
 	EventSystem.dispatchEvent("onDispatchNewFrame");
 });

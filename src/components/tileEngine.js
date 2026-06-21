@@ -2,6 +2,7 @@ import {ImageLoader} from "../utilityFunctions.js";
 import RenderPipeline from "../renderPipeline.js";
 import Camera from "./camera.js";
 import Generic from "./generic.js";
+import {getImages} from "../constants.js";
 
 export class Tile extends Generic{
 	constructor(
@@ -40,7 +41,7 @@ export class Tile extends Generic{
 }
 
 class TileEngine extends Generic{
-	constructor(layer, tileAtlas= {}, spriteMap= {}, levelData, totalCellsHorizontal= 16, totalCellsVertical= 16, tileSize= 64)
+	constructor(layer, tileAtlas= {}, spriteMap= {}, levelData, tileSize= 64)
 	{
 		super();
 
@@ -50,25 +51,46 @@ class TileEngine extends Generic{
 		this.spriteMap= spriteMap;
 		this.tileAtlas= tileAtlas;
 		this.levelData= levelData;
-		this.totalCellsHorizontal= totalCellsHorizontal;
-		this.totalCellsVertical= totalCellsVertical;
 		this.tileSize= tileSize;
 		this.camera= new Camera(window.width, window.height);
+		this.defaultSprite= spriteMap["#"];
 
 		// this.init();
 	}
 
 	init() {
-		const hirizontalScale= window.width / this.camera.width;
-		const verticalScale= window.height / this.camera.height;
-		const scaleFactor= Math.min(hirizontalScale, verticalScale);
+		// const hirizontalScale= window.width / this.camera.width;
+		// const verticalScale= window.height / this.camera.height;
+		// const scaleFactor= Math.min(hirizontalScale, verticalScale);
 
-		console.log("Screen size:", this.camera.width, this.camera.height);
-		console.log("Scale:", hirizontalScale, verticalScale);
-		console.log("scaleFactor:", scaleFactor, this.tileSize * scaleFactor);
+		// this.scaleFactor= scaleFactor;
+		// this.trueTileSize= Math.floor(this.tileSize * scaleFactor);
+		// this.totalCellsHorizontal= this.levelData[0].length * this.tileSize;
+		// this.totalCellsVertical= this.levelData.length * this.tileSize;
+
+		// console.log("TileMap Size:", this.totalCellsHorizontal, this.totalCellsVertical);
+		// console.log("Screen size:", this.camera.width, this.camera.height);
+		// console.log("Scale:", parseFloat(hirizontalScale.toFixed(2)), parseFloat(verticalScale.toFixed(2)));
+		// console.log("scaleFactor:", scaleFactor, this.tileSize * scaleFactor);
+
+		// for(let k in this.spriteMap) {
+		// 	this.spriteMap[k].drawWidth= this.trueTileSize;
+		// 	this.spriteMap[k].drawHeight= this.trueTileSize;
+		// }
+
+		const hirizontalScale= this.camera.width;
+		const verticalScale= this.camera.height;
+		const scaleFactor= 1;
 
 		this.scaleFactor= scaleFactor;
-		this.trueTileSize= Math.floor(this.tileSize * scaleFactor);
+		this.trueTileSize= this.tileSize;
+		this.totalCellsHorizontal= this.levelData[0].length * this.tileSize;
+		this.totalCellsVertical= this.levelData.length * this.tileSize;
+
+		console.log("TileMap Size:", this.totalCellsHorizontal, this.totalCellsVertical);
+		console.log("Screen size:", this.camera.width, this.camera.height);
+		console.log("Scale:", parseFloat(hirizontalScale.toFixed(2)), parseFloat(verticalScale.toFixed(2)));
+		console.log("scaleFactor:", scaleFactor, this.tileSize * scaleFactor);
 
 		for(let k in this.spriteMap) {
 			this.spriteMap[k].drawWidth= this.trueTileSize;
@@ -95,23 +117,49 @@ class TileEngine extends Generic{
 
 	draw= () => {
 		const cameraPos= this.camera.position;
-		const rowStart= Math.max(Math.floor(cameraPos.y / this.tileSize), 0);
-		const colStart= Math.max(Math.floor(cameraPos.x / this.tileSize), 0);
-		const totalRows= Math.floor(this.camera.height / this.tileSize);
-		const totalCols= Math.floor(this.camera.width / this.tileSize);
+		const rowStart= Math.floor(cameraPos.y / this.trueTileSize);
+		const colStart= Math.floor(cameraPos.x / this.trueTileSize);
+		const totalRows= Math.ceil(this.camera.height / this.trueTileSize);
+		const totalCols= Math.ceil(this.camera.width / this.trueTileSize);
 
-		for(let row= 0; row < totalRows; row++)
+		const camOffsetY= cameraPos.y - (rowStart * this.trueTileSize);
+		const camOffsetX= cameraPos.x - (colStart * this.trueTileSize);
+
+		for(let row= 0; row <= totalRows; row++)
 		{
-			for(let col= 0; col < totalCols; col++)
+			for(let col= 0; col <= totalCols; col++)
 			{
 				const alias= this.getTile(row + rowStart, col + colStart);
-				if(!alias) continue;
-				const tile= this.spriteMap[alias];
-				tile.drawX= col * this.trueTileSize;
-				tile.drawY= row * this.trueTileSize;
-				tile.draw();
+				if(!alias) {
+					if(!this.defaultSprite) continue;
+					const tile= this.defaultSprite;
+					tile.drawX= (col * this.trueTileSize) - camOffsetX;
+					tile.drawY= (row * this.trueTileSize) - camOffsetY;
+					tile.draw();
+				} else {
+					const tile= this.spriteMap[alias];
+					tile.drawX= (col * this.trueTileSize) - camOffsetX;
+					tile.drawY= (row * this.trueTileSize) - camOffsetY;
+					tile.draw();
+				}
 			}
 		}
+
+		const debugMsg= `${colStart} -> ${totalRows} : ${totalCols}`;
+		// const debugMsg= this.trueTileSize;
+		context.save();
+		context.translate(25, window.height - 25);
+		context.fillStyle= "lime";
+		context.font= "14px sans-serif";
+		context.fillText(debugMsg, 0, 0);
+		context.restore();
+
+
+		context.save();
+		context.translate(0, 0);
+		context.strokeStyle= "orange";
+		context.strokeRect(0, 0, this.camera.width, this.camera.height);
+		context.restore();
 	}
 }
 

@@ -6,7 +6,7 @@ import Generic from "./generic.js";
 
 export class TextRenderer extends Generic{
 
-	constructor(layer, text, fontSize= "14px", fontFamily= "sans-serif", color= "grey")
+	constructor(layer, fontSize= "14px", fontFamily= "sans-serif", color= "grey")
 	{
 		super();
 		this.layer= layer;
@@ -15,7 +15,7 @@ export class TextRenderer extends Generic{
 		this.enabled= true;
 		this.drawX= 0;
 		this.drawY= 0;
-		this.text= text;
+		this.text= "";
 		this.fontSize= fontSize;
 		this.fontFamily= fontFamily;
 		this.color= color;
@@ -29,6 +29,10 @@ export class TextRenderer extends Generic{
 	Update()
 	{
 		RenderPipeline.DispatchDraw(this);
+	}
+
+	setText(txt) {
+		this.text= txt;
 	}
 
 	draw()
