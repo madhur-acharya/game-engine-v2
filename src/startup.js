@@ -31,7 +31,7 @@ window.addEventListener("onCanvasReady", () => {
 
 window.addEventListener("onGameReady", () => {
 	console.log("game load complete");
-	// Scene1();
+	Scene1();
 	Scene2();
 	EventSystem.dispatchEvent("onDispatchNewFrame");
 });

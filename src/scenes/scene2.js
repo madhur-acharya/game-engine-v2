@@ -53,14 +53,22 @@ class GameLevel2{
 	Setup= (gameObj) => {
 		this.gameObject= gameObj;
 		const {tileAtlas, spriteMap, levelData}= load();
-		const tileMapComp= new TileEngine(2, tileAtlas, spriteMap, levelData, 64);
-		tileMapComp.attachCamera(this.camera);
-		this.gameObject.AddComponent(tileMapComp);
+		
+		const foreground= new TileEngine(2, tileAtlas, spriteMap, levelData, 64);
+		foreground.attachCamera(this.camera);
+		this.gameObject.AddComponent(foreground);
+
+		const backgroundLayer= new TileEngine(1, tileAtlas, {
+			"#": new Tile(tileAtlas.tilesetSample, "#", 0, 0, 16, 16),
+		}, [1], 64);
+		backgroundLayer.attachCamera(this.camera);
+		this.gameObject.AddComponent(backgroundLayer);
+
 		this.ready= true;
 	};
 
 	Update= () => {
-		const vel= 5;
+		const vel= 8;
 		if(Input.getKey("w")) this.camera.position.addTo(new Vector(0, -vel));
 		if(Input.getKey("s")) this.camera.position.addTo(new Vector(0, vel));
 		if(Input.getKey("a")) this.camera.position.addTo(new Vector(-vel, 0));
@@ -90,8 +98,8 @@ class MouseTracker {
 
 
 const Scene2= () => {
-	window.camera= new Camera(1366, 760);
-	// window.camera= new Camera(1440, 900);
+	// window.camera= new Camera(760, 512);
+	window.camera= new Camera(1440, 900);
 	// window.camera= new Camera(window.width, window.height);
 	window.camera.moveTo(new Vector(0, 0));
 	new GameObject().AddComponent(new GameLevel2(window.camera));
