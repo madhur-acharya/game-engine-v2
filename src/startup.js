@@ -20,6 +20,7 @@ window.addEventListener("onCanvasReady", () => {
 		"character": "/src/assets/character.png",
 		"mario": "/src/assets/mario_tileset.png",
 		"cobblestone": "/src/assets/cobblestone.png",
+		"water": "/src/assets/water.png",
 	})
 	.then(imgMp => {
 		EventSystem.dispatchEvent("onGameReady");

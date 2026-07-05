@@ -11,6 +11,7 @@ const load= () => {
 	const tileAtlas= {
 		"tilesetSample": getImages()?.tilesetSample,
 		"cobblestone": getImages()?.cobblestone,
+		"water": getImages()?.water,
 	};
 
 	const spriteMap= {
@@ -19,8 +20,8 @@ const load= () => {
 		"3": new Tile(tileAtlas.tilesetSample, "3", 128, 0, 64, 64),
 		"4": new Tile(tileAtlas.tilesetSample, "4", 192, 0, 64, 64),
 		"5": new Tile(tileAtlas.tilesetSample, "5", 256, 0, 64, 64),
-		"0": new Tile(tileAtlas.tilesetSample, "1", 320, 0, 64, 64),
-		"#": new Tile(tileAtlas.cobblestone, "#", 0, 0, 16, 16),
+		"0": new Tile(tileAtlas.cobblestone, "0", 0, 0, 16, 16),
+		"#": new Tile(tileAtlas.water, "#", 0, 0, 64, 64),
 	};
 
 	const levelData= [
@@ -38,8 +39,8 @@ const load= () => {
 		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 1, 1, 1,],
 		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
 		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
-		[2, 1, 1, 1, 1, 1, 1, 1, 1, 5, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
-		[2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,],
+		[2, 0, 1, 1, 1, 1, 1, 1, 1, 5, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+		[2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
 	];
 
 	return {tileAtlas, spriteMap, levelData};
@@ -53,7 +54,7 @@ class GameLevel2{
 	Setup= (gameObj) => {
 		this.gameObject= gameObj;
 		const {tileAtlas, spriteMap, levelData}= load();
-		
+
 		const foreground= new TileEngine(2, tileAtlas, spriteMap, levelData, 64);
 		foreground.attachCamera(this.camera);
 		this.gameObject.AddComponent(foreground);
