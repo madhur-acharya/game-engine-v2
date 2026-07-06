@@ -21,11 +21,6 @@ export class TextRenderer extends Generic{
 		this.color= color;
 	}
 
-	Setup(obj)
-	{
-		this.gameObject= obj;
-	}
-
 	Update()
 	{
 		RenderPipeline.DispatchDraw(this);

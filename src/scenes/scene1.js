@@ -9,11 +9,8 @@ import Vector from "../vector.js";
 
 
 class RenderTest{
-	constructor() {
+	constructor(gameObj) {
 		this.layer= 3;
-	};
-
-	Setup= (gameObj) => {
 		this.gameObject= gameObj;
 		this.ready= true;
 		this.gameObject.AddComponent(new VGRenderer(1, (gameObject) => {
@@ -41,7 +38,8 @@ class RenderTest{
 const Scene1= () => {
 	// const player= new GameObject();
 	// player.AddComponent(new PlayerMovement());
-	// new GameObject().AddComponent(new RenderTest());
+	const gm= new GameObject();
+	gm.AddComponent(new RenderTest(gm));
 }
 
 export default Scene1;

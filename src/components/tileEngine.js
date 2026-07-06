@@ -59,25 +59,6 @@ class TileEngine extends Generic{
 	}
 
 	init() {
-		// const hirizontalScale= window.width / this.camera.width;
-		// const verticalScale= window.height / this.camera.height;
-		// const scaleFactor= Math.min(hirizontalScale, verticalScale);
-
-		// this.scaleFactor= scaleFactor;
-		// this.trueTileSize= Math.floor(this.tileSize * scaleFactor);
-		// this.totalCellsHorizontal= this.levelData[0].length * this.tileSize;
-		// this.totalCellsVertical= this.levelData.length * this.tileSize;
-
-		// console.log("TileMap Size:", this.totalCellsHorizontal, this.totalCellsVertical);
-		// console.log("Screen size:", this.camera.width, this.camera.height);
-		// console.log("Scale:", parseFloat(hirizontalScale.toFixed(2)), parseFloat(verticalScale.toFixed(2)));
-		// console.log("scaleFactor:", scaleFactor, this.tileSize * scaleFactor);
-
-		// for(let k in this.spriteMap) {
-		// 	this.spriteMap[k].drawWidth= this.trueTileSize;
-		// 	this.spriteMap[k].drawHeight= this.trueTileSize;
-		// }
-
 		const hirizontalScale= this.camera.width;
 		const verticalScale= this.camera.height;
 		const scaleFactor= 1;
@@ -96,10 +77,6 @@ class TileEngine extends Generic{
 			this.spriteMap[k].drawWidth= this.trueTileSize;
 			this.spriteMap[k].drawHeight= this.trueTileSize;
 		}
-	}
-
-	Setup= obj => {
-		this.gameObject= obj;
 	}
 
 	Update= delta => {

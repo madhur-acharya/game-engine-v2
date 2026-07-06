@@ -18,11 +18,6 @@ export class VGRenderer extends Generic{
 			this.rendererFunction= () => {}
 	}
 
-	Setup(obj)
-	{
-		this.gameObject= obj;
-	}
-
 	Update()
 	{
 		RenderPipeline.DispatchDraw(this);

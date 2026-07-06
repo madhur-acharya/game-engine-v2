@@ -21,11 +21,6 @@ export class RigidBody extends Generic{
 		this.kinematic= false;
 	}
 
-	Setup(obj)
-	{
-		this.gameObject= obj;
-	}
-
 	Update()
 	{
 		if(!this.enabled) return;

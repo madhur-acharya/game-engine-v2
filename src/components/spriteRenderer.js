@@ -22,11 +22,6 @@ export class SpriteRenderer extends Generic{
 		this.drawHeight= drawHeight;
 	}
 
-	Setup(obj)
-	{
-		this.gameObject= obj;
-	}
-
 	Update()
 	{
 		RenderPipeline.DispatchDraw(this);

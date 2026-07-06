@@ -74,7 +74,6 @@ export const GameObject= (() => {
 		AddComponent(component)
 		{
 			component.gameObject= this;
-			component.Setup?.(this);
 			this.components[component.name ?? `$COMP-${PrimaryKey.nextNumber()}`]= component;
 			return component;
 		}

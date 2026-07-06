@@ -7,12 +7,9 @@ import {drawBoundingCircle, drawRectangle, box2BoxCollision, drawVector, getRand
 import {getImages} from "../constants.js";
 
 class PlayerMovement{
-	constructor()
+	constructor(obj)
 	{
 		this.color= "orange"; 
-	}
-
-	Setup= (obj) => {
 		this.ready= true;
 		this.gameObject= obj;
 		this.gameObject.position= new Vector();

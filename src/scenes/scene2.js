@@ -47,11 +47,8 @@ const load= () => {
 }
 
 class GameLevel2{
-	constructor(cam) {
+	constructor(gameObj, cam) {
 		this.camera= cam;
-	};
-
-	Setup= (gameObj) => {
 		this.gameObject= gameObj;
 		const {tileAtlas, spriteMap, levelData}= load();
 
@@ -80,9 +77,7 @@ class GameLevel2{
 }
 
 class MouseTracker {
-	constructor() {};
-
-	Setup= (obj) => {
+	constructor(obj){
 		this.gameObject= obj;
 		const txtComp= new TextRenderer(4);
 		txtComp.name= "mousePosText";
@@ -100,11 +95,12 @@ class MouseTracker {
 
 const Scene2= () => {
 	// window.camera= new Camera(760, 512);
-	window.camera= new Camera(1440, 900);
-	// window.camera= new Camera(window.width, window.height);
+	// window.camera= new Camera(1440, 900);
+	window.camera= new Camera(window.width, window.height);
 	window.camera.moveTo(new Vector(0, 0));
-	new GameObject().AddComponent(new GameLevel2(window.camera));
-	new GameObject().AddComponent(new MouseTracker());
+	const gameObj= new GameObject();
+	gameObj.AddComponent(new GameLevel2(gameObj, window.camera));
+	gameObj.AddComponent(new MouseTracker(gameObj));
 }
 
 export default Scene2;
