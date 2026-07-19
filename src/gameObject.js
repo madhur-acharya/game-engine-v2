@@ -7,15 +7,13 @@ export const GameObject= (() => {
 
 	class GameObject 
 	{
-		constructor(positionVector= new Vector(0, 0), layer= "default", layerIndex= 0, drawGizmos= false) 
+		constructor(positionVector= new Vector(0, 0), layer= "default") 
 		{
 			this.position= positionVector;
 			this.rotation= 0;
-			this.scale= new Vector(1, 1);
-			this.objectId= performance.now().toString() + Math.round(Math.random() * 1000);
-			this.drawGizmos= drawGizmos;
+			this.objectId= PrimaryKey.nextNumber("GAMEOBJECT");
+			this.drawGizmos= false;
 			this.layer= "default";
-			this.layerIndex= layerIndex;
 			this.timers= {};
 			this.components= {};
 			gameObjectList.push(this);
@@ -74,7 +72,7 @@ export const GameObject= (() => {
 		AddComponent(component)
 		{
 			component.gameObject= this;
-			this.components[component.name ?? `$COMP-${PrimaryKey.nextNumber()}`]= component;
+			this.components[component.name ?? `$COMP-${PrimaryKey.nextNumber("COMPONENT")}`]= component;
 			return component;
 		}
 

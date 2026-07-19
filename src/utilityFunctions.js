@@ -2,11 +2,11 @@ import Vector from "./vector.js";
 
 //------------------------------------------------------------------------
 export class PrimaryKey{
-	static key=0;
+	static key={};
 
-	static nextNumber= ()=> {
-		PrimaryKey.key+= 1;
-		return PrimaryKey.key;
+	static nextNumber= (nameSpace= "GLOBAL") => {
+		PrimaryKey.key[nameSpace]= (PrimaryKey.key[nameSpace]??0) + 1;
+		return PrimaryKey.key[nameSpace];
 	};
 };
 
@@ -282,7 +282,6 @@ export function drawVector(pos, vel= pos, color= "red", unitVector= true)
 		context.strokeStyle= color;
 		context.translate(pos.x, pos.y);
 		context.rotate(vel.getAngle());
-		context.beginPath();
 		context.moveTo(0, 0);
 		context.lineTo(mag, 0);
 		context.lineTo(mag - 10, 10);

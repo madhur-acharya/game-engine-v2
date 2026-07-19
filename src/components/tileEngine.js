@@ -59,19 +59,20 @@ class TileEngine extends Generic{
 	}
 
 	init() {
-		const hirizontalScale= this.camera.width;
+		const horizontalScale= this.camera.width;
 		const verticalScale= this.camera.height;
-		const scaleFactor= 1;
 
-		this.scaleFactor= scaleFactor;
+		this.scaleFactor= 1;
 		this.trueTileSize= this.tileSize;
 		this.totalCellsHorizontal= this.levelData[0].length * this.tileSize;
 		this.totalCellsVertical= this.levelData.length * this.tileSize;
 
+		this.scaleFactor= Math.max(window.width, window.height) / Math.max(horizontalScale, verticalScale);
+		this.trueTileSize= this.tileSize * this.scaleFactor;
+
 		console.log("TileMap Size:", this.totalCellsHorizontal, this.totalCellsVertical);
-		console.log("Screen size:", this.camera.width, this.camera.height);
-		console.log("Scale:", parseFloat(hirizontalScale.toFixed(2)), parseFloat(verticalScale.toFixed(2)));
-		console.log("scaleFactor:", scaleFactor, this.tileSize * scaleFactor);
+		console.log("Screen size:", parseFloat(horizontalScale.toFixed(2)), parseFloat(verticalScale.toFixed(2)));
+		console.log("scaleFactor:", this.scaleFactor, this.tileSize * this.scaleFactor);
 
 		for(let k in this.spriteMap) {
 			this.spriteMap[k].drawWidth= this.trueTileSize;
@@ -79,7 +80,7 @@ class TileEngine extends Generic{
 		}
 	}
 
-	Update= delta => {
+	Update(delta){
 		RenderPipeline.DispatchDraw(this);
 	}
 
@@ -92,7 +93,7 @@ class TileEngine extends Generic{
 		return this.levelData[row]?.[col];
 	}
 
-	draw= () => {
+	draw(){
 		const cameraPos= this.camera.position;
 		const rowStart= Math.floor(cameraPos.y / this.trueTileSize);
 		const colStart= Math.floor(cameraPos.x / this.trueTileSize);
@@ -121,22 +122,6 @@ class TileEngine extends Generic{
 				}
 			}
 		}
-
-		const debugMsg= `${colStart} -> ${totalRows} : ${totalCols}`;
-		// const debugMsg= this.trueTileSize;
-		context.save();
-		context.translate(25, window.height - 25);
-		context.fillStyle= "lime";
-		context.font= "14px sans-serif";
-		context.fillText(debugMsg, 0, 0);
-		context.restore();
-
-
-		context.save();
-		context.translate(0, 0);
-		context.strokeStyle= "orange";
-		context.strokeRect(0, 0, this.camera.width, this.camera.height);
-		context.restore();
 	}
 }
 
