@@ -61,7 +61,6 @@ class TileEngine extends Generic{
 	init() {
 		const horizontalScale= this.camera.width;
 		const verticalScale= this.camera.height;
-
 		this.scaleFactor= 1;
 		this.trueTileSize= this.tileSize;
 		this.totalCellsHorizontal= this.levelData[0].length * this.tileSize;
@@ -97,29 +96,27 @@ class TileEngine extends Generic{
 		const cameraPos= this.camera.position;
 		const rowStart= Math.floor(cameraPos.y / this.trueTileSize);
 		const colStart= Math.floor(cameraPos.x / this.trueTileSize);
-		const totalRows= Math.ceil(this.camera.height / this.trueTileSize);
-		const totalCols= Math.ceil(this.camera.width / this.trueTileSize);
+		const endRow= rowStart + Math.ceil(this.camera.height / this.trueTileSize);
+		const endCol= colStart + Math.ceil(this.camera.width / this.trueTileSize);
 
-		const camOffsetY= cameraPos.y - (rowStart * this.trueTileSize);
-		const camOffsetX= cameraPos.x - (colStart * this.trueTileSize);
+		const offsetX= (colStart * this.trueTileSize) - cameraPos.x;
+		const offsetY= (rowStart * this.trueTileSize) - cameraPos.y;
 
-		for(let row= 0; row <= totalRows; row++)
+		for(let row= rowStart; row <= endRow; row++)
 		{
-			for(let col= 0; col <= totalCols; col++)
+			for(let col= colStart; col <= endCol; col++)
 			{
-				const alias= this.getTile(row + rowStart, col + colStart);
-				if(!alias) {
+				const alias= this.getTile(row, col);
+				let tile;
+				if(alias == undefined || !this.spriteMap[alias]) {
 					if(!this.defaultSprite) continue;
-					const tile= this.defaultSprite;
-					tile.drawX= (col * this.trueTileSize) - camOffsetX;
-					tile.drawY= (row * this.trueTileSize) - camOffsetY;
-					tile.draw();
+					tile= this.defaultSprite;
 				} else {
-					const tile= this.spriteMap[alias];
-					tile.drawX= (col * this.trueTileSize) - camOffsetX;
-					tile.drawY= (row * this.trueTileSize) - camOffsetY;
-					tile.draw();
+					tile= this.spriteMap[alias];
 				}
+				tile.drawX= ((col - colStart) * this.trueTileSize) + offsetX;
+				tile.drawY= ((row - rowStart) * this.trueTileSize) + offsetY;
+				tile.draw();
 			}
 		}
 	}

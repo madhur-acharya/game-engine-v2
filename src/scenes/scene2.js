@@ -58,7 +58,7 @@ class GameLevel2{
 
 		const backgroundLayer= new TileEngine(1, tileAtlas, {
 			"#": new Tile(tileAtlas.tilesetSample, "#", 0, 0, 16, 16),
-		}, [1], 64);
+		}, [[1]], 64);
 		backgroundLayer.attachCamera(this.camera);
 		this.gameObject.AddComponent(backgroundLayer);
 
@@ -94,6 +94,7 @@ class MouseTracker {
 
 
 const Scene2= () => {
+	// window.camera= new Camera(512, 512);
 	// window.camera= new Camera(760, 512);
 	// window.camera= new Camera(1440, 900);
 	window.camera= new Camera(window.width, window.height);

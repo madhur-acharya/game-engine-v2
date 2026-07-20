@@ -65,26 +65,27 @@ class TileEditor extends TileEngine{
 			const cameraPos= this.camera.position;
 			const rowStart= Math.floor(cameraPos.y / this.trueTileSize);
 			const colStart= Math.floor(cameraPos.x / this.trueTileSize);
-			const totalRows= Math.ceil(this.camera.height / this.trueTileSize);
-			const totalCols= Math.ceil(this.camera.width / this.trueTileSize);
+			const endRow= rowStart + Math.ceil(this.camera.height / this.trueTileSize);
+			const endCol= colStart + Math.ceil(this.camera.width / this.trueTileSize);
 
-			for(let row= 0; row <= totalRows; row++)
+			const offsetX= (colStart * this.trueTileSize) - cameraPos.x;
+			const offsetY= (rowStart * this.trueTileSize) - cameraPos.y;
+
+			for(let row= rowStart; row <= endRow; row++)
 			{
-				for(let col= 0; col <= totalCols; col++)
+				for(let col= colStart; col <= endCol; col++)
 				{
-					const alias= this.getTile(row + rowStart, col + colStart);
-					if(!alias) {
+					const alias= this.getTile(row, col);
+					let tile;
+					if(alias == undefined || !this.spriteMap[alias]) {
 						if(!this.defaultSprite) continue;
-						const tile= this.defaultSprite;
-						tile.drawX= (col * this.trueTileSize);
-						tile.drawY= (row * this.trueTileSize);
-						tile.draw();
+						tile= this.defaultSprite;
 					} else {
-						const tile= this.spriteMap[alias];
-						tile.drawX= (col * this.trueTileSize);
-						tile.drawY= (row * this.trueTileSize);
-						tile.draw();
+						tile= this.spriteMap[alias];
 					}
+					tile.drawX= ((col - colStart) * this.trueTileSize) + offsetX;
+					tile.drawY= ((row - rowStart) * this.trueTileSize) + offsetY;
+					tile.draw();
 				}
 			}
 		}
@@ -92,14 +93,22 @@ class TileEditor extends TileEngine{
 
 		const cameraPos= this.camera.position;
 		const mousePos= this.mousePtr.position;
-		const rowStart= Math.floor(mousePos.y / this.trueTileSize);
-		const colStart= Math.floor(mousePos.x / this.trueTileSize);
-		const tilePos= new Vector(colStart, rowStart).multiply(this.trueTileSize);
 
 		const rowStartCam= Math.floor(cameraPos.y / this.trueTileSize);
 		const colStartCam= Math.floor(cameraPos.x / this.trueTileSize);
-		const cellPosX= rowStart + rowStartCam;
-		const cellPosY= colStart + colStartCam;
+		const offsetX= (colStartCam * this.trueTileSize) - cameraPos.x;
+		const offsetY= (rowStartCam * this.trueTileSize) - cameraPos.y;
+
+		// const deltaPos= mousePos.subtract(cameraPos);
+		const deltaPos= new Vector(mousePos.x + offsetX, mousePos.y + offsetY);
+		const rowStart= Math.floor(deltaPos.y / this.trueTileSize);
+		const colStart= Math.floor(deltaPos.x / this.trueTileSize);
+		drawVector(new Vector(0, 0), deltaPos, "blue", false);
+
+		const tilePos= new Vector(
+			(colStart * this.trueTileSize) + offsetX, 
+			(rowStart * this.trueTileSize) + offsetY
+		);
 
 		context.save();
 		context.translate(0, 0);
@@ -107,7 +116,7 @@ class TileEditor extends TileEngine{
 		context.strokeStyle= "cyan";
 		context.strokeRect(tilePos.x, tilePos.y, this.trueTileSize, this.trueTileSize);
 
-		const txt= `${cellPosX}:${cellPosY}`;
+		const txt= `${rowStart}:${colStart}`;
 		context.fillStyle= "black";
 		context.font= "14px sans-serif";
 		const textWidth= context.measureText(txt).width;
@@ -117,8 +126,6 @@ class TileEditor extends TileEngine{
 
 		context.restore();
 
-		// const drawCam= new Vector(-cameraPos.x, -cameraPos.y);
-		// drawVector(new Vector(0, 0), mousePos, "blue", false);
 	}
 };
 

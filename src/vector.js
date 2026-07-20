@@ -72,8 +72,8 @@ class Vector{
 	limit= (l= this, r= this) => {
 		if(this.x < l.x){this.x = l.x};
 		if(this.y < l.y){this.y = l.y};
-		// if(this.x > r.x){this.x = r.x};
-		// if(this.y > r.y){this.y = r.y};
+		if(this.x > r.x){this.x = r.x};
+		if(this.y > r.y){this.y = r.y};
 	};
 
 	getTangentVector= () => new Vector(-this.y, this.x);
