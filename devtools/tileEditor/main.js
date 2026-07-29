@@ -2,6 +2,7 @@ import {GameObject} from "../../src/gameObject.js";
 import {TimeOut, Interval, drawGrid, Coroutine} from "../../src/utilityFunctions.js";
 import RenderPipeline from "../../src/renderPipeline.js";
 import EventSystem from "../../src/eventSystem.js";
+import Vector from "../../src/vector.js";
 import "./startup.js";
 
 let aniId,
@@ -20,8 +21,9 @@ window.addEventListener("load", () => {
 	console.log("DOM Loaded");
 
 	window.canvas= document.getElementById("my_canvas");
-	window.width= canvas.width= window.innerWidth;
-	window.height= canvas.height= window.innerHeight;
+	const dim= canvas.getBoundingClientRect();
+	window.width= canvas.width= dim.width;
+	window.height= canvas.height= dim.height;
 	window.context= canvas.getContext("2d");
 	
 	context.imageSmoothingEnabled= false;
