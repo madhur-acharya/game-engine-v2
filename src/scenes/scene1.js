@@ -6,10 +6,12 @@ import {drawBoundingCircle} from "../utilityFunctions.js";
 import PlayerMovement from "../scripts/playerMovement.js";
 import {VGRenderer} from "../components/vgRenderer.js";
 import Vector from "../vector.js";
+import Generic from "../components/generic.js";
 
-
-class RenderTest{
+class RenderTest extends Generic{
 	constructor(gameObj) {
+		super();
+		
 		this.layer= 3;
 		this.gameObject= gameObj;
 		this.ready= true;

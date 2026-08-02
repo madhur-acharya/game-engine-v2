@@ -2,6 +2,7 @@ import {GameObject} from "../../src/gameObject.js";
 import {TimeOut, Interval, drawGrid, Coroutine} from "../../src/utilityFunctions.js";
 import RenderPipeline from "../../src/renderPipeline.js";
 import EventSystem from "../../src/eventSystem.js";
+import ScreenManager, {Screen} from "../../src/components/screen.js";
 import Vector from "../../src/vector.js";
 import "./startup.js";
 
@@ -16,14 +17,16 @@ window.gameObjectList= GameObject.getGameObjectList();
 window.time= 0;
 window.timestamp= 0;
 window.deltaTime= 0;
+window.RenderPipeline= RenderPipeline;
 
 window.addEventListener("load", () => {	
 	console.log("DOM Loaded");
 
 	window.canvas= document.getElementById("my_canvas");
-	const dim= canvas.getBoundingClientRect();
-	window.width= canvas.width= dim.width;
-	window.height= canvas.height= dim.height;
+	ScreenManager.init(new Screen(new Vector(), window.innerWidth, window.innerHeight));
+	window.defaultScreen= ScreenManager.getDefault();
+	window.width= canvas.width= window.defaultScreen.width;
+	window.height= canvas.height= window.defaultScreen.height;
 	window.context= canvas.getContext("2d");
 	
 	context.imageSmoothingEnabled= false;
@@ -40,7 +43,8 @@ window.addEventListener("keyup", event => {
 	event.preventDefault();
 	if(event.keyCode === 27)
 	{
-		window.alert("PAUSED!");
+		window.isPaused= !window.isPaused;
+		if(!window.isPaused) getNewFrame();
 		return;
 	}
 });
@@ -48,11 +52,11 @@ window.addEventListener("keyup", event => {
 
 const clearCanvas= () => {
 	context.fillStyle= "black";
-	// context.fillRect(-width / 2, -height / 2, width, height);
 	context.fillRect(0, 0, width, height);
 };
 
 const getNewFrame= () => {
+	if(window.isPaused) return;
 	aniId= requestAnimationFrame((timestamp) => {
 
 		timePerFrame= (timestamp - lastTime);

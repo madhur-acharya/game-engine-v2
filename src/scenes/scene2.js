@@ -6,6 +6,7 @@ import {TextRenderer} from "../components/textRenderer.js";
 import Camera from "../components/camera.js";
 import Input from "../input.js";
 import Vector from "../vector.js";
+import Generic from "../components/generic.js";
 
 const load= () => {
 	const tileAtlas= {
@@ -46,20 +47,20 @@ const load= () => {
 	return {tileAtlas, spriteMap, levelData};
 }
 
-class GameLevel2{
-	constructor(gameObj, cam) {
-		this.camera= cam;
+class GameLevel2 extends Generic{
+	constructor(gameObj) {
+		super();
+
+		this.camera= window.camera;
 		this.gameObject= gameObj;
 		const {tileAtlas, spriteMap, levelData}= load();
 
-		const foreground= new TileEngine(2, tileAtlas, spriteMap, levelData, 64);
-		foreground.attachCamera(this.camera);
+		const foreground= new TileEngine(this.camera, 2, tileAtlas, spriteMap, levelData, 64);
 		this.gameObject.AddComponent(foreground);
 
-		const backgroundLayer= new TileEngine(1, tileAtlas, {
-			"#": new Tile(tileAtlas.tilesetSample, "#", 0, 0, 16, 16),
+		const backgroundLayer= new TileEngine(this.camera, 1, tileAtlas, {
+			"#": new Tile(tileAtlas.tilesetSample, "#", 0, 0, 16, 16)
 		}, [[1]], 64);
-		backgroundLayer.attachCamera(this.camera);
 		this.gameObject.AddComponent(backgroundLayer);
 
 		this.ready= true;
@@ -76,8 +77,10 @@ class GameLevel2{
 	};
 }
 
-class MouseTracker {
+class MouseTracker extends Generic{
 	constructor(obj){
+		super();
+		
 		this.gameObject= obj;
 		const txtComp= new TextRenderer(4);
 		txtComp.name= "mousePosText";
@@ -94,13 +97,8 @@ class MouseTracker {
 
 
 const Scene2= () => {
-	// window.camera= new Camera(512, 512);
-	// window.camera= new Camera(760, 512);
-	// window.camera= new Camera(1440, 900);
-	window.camera= new Camera(window.width, window.height);
-	window.camera.moveTo(new Vector(0, 0));
 	const gameObj= new GameObject();
-	gameObj.AddComponent(new GameLevel2(gameObj, window.camera));
+	gameObj.AddComponent(new GameLevel2(gameObj));
 	gameObj.AddComponent(new MouseTracker(gameObj));
 }
 

@@ -4,6 +4,9 @@ import {bulkLoadImages} from "../../src/constants.js";
 import TileEngine, {Tile} from "../../src/components/tileEngine.js";
 import {getImages} from "../../src/constants.js";
 import RenderPipeline from "../../src/renderPipeline.js";
+import Vector from "../../src/vector.js";
+import Camera from "../../src/components/camera.js";
+import ScreenManager, {Screen} from "../../src/components/screen.js";
 
 import levelData from "./levelData.js";
 import TileEditor from "./tileEditor.js";
@@ -51,23 +54,51 @@ const load= () => {
 		"water": getImages()?.water,
 	};
 
-	const spriteMap= {
+	const spriteMap= (withDef= false) =>({
 		"1": new Tile(tileAtlas.tilesetSample, "1", 0, 0, 64, 64),
 		"2": new Tile(tileAtlas.tilesetSample, "2", 64, 0, 64, 64),
 		"3": new Tile(tileAtlas.tilesetSample, "3", 128, 0, 64, 64),
 		"4": new Tile(tileAtlas.tilesetSample, "4", 192, 0, 64, 64),
 		"5": new Tile(tileAtlas.tilesetSample, "5", 256, 0, 64, 64),
 		"0": new Tile(tileAtlas.cobblestone, "0", 0, 0, 16, 16),
-		// "#": new Tile(tileAtlas.water, "#", 0, 0, 64, 64),
-	};
+		...(withDef ? {"#": new Tile(tileAtlas.water, "#", 0, 0, 64, 64)} : {})
+	});
 
-	new TileEditor({
-		layer: 2, 
-		tileAtlas: tileAtlas, 
-		spriteMap: spriteMap, 
-		levelData: levelData, 
+	const sidebarwidth= window.width * 0.25;
+	const bottombarHeight= window.height * 0.33;
+	const mainCamera= new Camera(window.width-sidebarwidth, window.height-bottombarHeight);
+
+	// window.camera= new Camera(760, 512);
+	// window.camera= new Camera(1440, 900);
+	// window.camera= new Camera(2000, 2000);
+	// window.camera= new Camera(window.width, window.height);
+
+
+	const mainEditor= new TileEditor({
+		camera: mainCamera, layer: 2, tileAtlas: tileAtlas, spriteMap: spriteMap(), levelData: levelData, 
 		tileSize: 64
 	});
+	const mainScreen= new Screen(new Vector(sidebarwidth, 0), mainCamera.width, mainCamera.height);
+	ScreenManager.addScreen("main", mainScreen);
+	mainEditor.setScreen(mainScreen);
+
+	const leftBar= new Camera(sidebarwidth, window.height-bottombarHeight);
+	const leftEditor= new TileEditor({
+		camera: leftBar, layer: 2, tileAtlas: tileAtlas, spriteMap: spriteMap(), levelData: levelData, 
+		tileSize: 64
+	});
+	const leftScreen= new Screen(new Vector(0, 0), leftBar.width, leftBar.height);
+	ScreenManager.addScreen("left", leftScreen);
+	leftEditor.setScreen(leftScreen);
+
+	const bottomBar= new Camera(window.width, bottombarHeight);
+	const bottomEditor= new TileEditor({
+		camera: bottomBar, layer: 2, tileAtlas: tileAtlas, spriteMap: spriteMap(), levelData: levelData, 
+		tileSize: 64
+	});
+	const bottomScreen= new Screen(new Vector(0, window.height-bottombarHeight), bottomBar.width, bottomBar.height);
+	ScreenManager.addScreen("bottom", bottomScreen);
+	bottomEditor.setScreen(bottomScreen);
 };
 
 

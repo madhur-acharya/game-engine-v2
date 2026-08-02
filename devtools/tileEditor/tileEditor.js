@@ -2,14 +2,13 @@ import TileEngine from "../../src/components/tileEngine.js";
 import {TextRenderer} from "../../src/components/textRenderer.js";
 import Input from "../../src/input.js";
 import Vector from "../../src/vector.js";
-import Camera from "../../src/components/camera.js";
-import Screen from "../../src/components/screen.js";
 import {GameObject} from "../../src/gameObject.js";
 import {drawVector} from "../../src/utilityFunctions.js";
 
 class TileEditor extends TileEngine{
 	constructor(conf= {}, sheetWidth= 50, sheetHeight= 50){
 		super(
+			conf.camera,
 			conf.layer, 
 			conf.tileAtlas,
 			conf.spriteMap,
@@ -19,44 +18,11 @@ class TileEditor extends TileEngine{
 
 		this.gameObject= new GameObject();
 		this.gameObject.AddComponent(this);
-
-		this.screen= new Screen(new Vector(100, 100), 1024, 512);
-		window.camera= new Camera(1024, 256);
-		// window.camera= new Camera(760, 512);
-		// window.camera= new Camera(1440, 900);
-		// window.camera= new Camera(2000, 2000);
-		// window.camera= new Camera(window.width, window.height);
-		this.camera= window.camera;
-		this.camera.moveTo(new Vector(0, 0));
-		this.attachCamera(this.camera);
-
 		this.mousePtr= new GameObject();
 		this.txtComp= new TextRenderer(4);
 		this.txtComp.color= "crimson";
 		this.mousePtr.AddComponent(this.txtComp);
-
 		this.ready= true;
-	}
-
-	init(){
-		const horizontalScale= this.camera.width;
-		const verticalScale= this.camera.height;
-		this.scaleFactor= 1;
-		this.trueTileSize= this.tileSize;
-		this.totalCellsHorizontal= this.levelData[0].length * this.tileSize;
-		this.totalCellsVertical= this.levelData.length * this.tileSize;
-
-		this.scaleFactor= Math.max(this.screen.width, this.screen.height) / Math.max(horizontalScale, verticalScale);
-		this.trueTileSize= this.tileSize * this.scaleFactor;
-
-		console.log("TileMap Size:", this.totalCellsHorizontal, this.totalCellsVertical);
-		console.log("Screen size:", parseFloat(horizontalScale.toFixed(2)), parseFloat(verticalScale.toFixed(2)));
-		console.log("trueTileSize:", this.trueTileSize);
-
-		for(let k in this.spriteMap) {
-			this.spriteMap[k].drawWidth= this.trueTileSize;
-			this.spriteMap[k].drawHeight= this.trueTileSize;
-		}
 	}
 
 	Update(delta){
@@ -72,56 +38,58 @@ class TileEditor extends TileEngine{
 
 		const mPos= Input.getMousePos();
 		this.mousePtr.position= new Vector(mPos.x, mPos.y);
-		// this.txtComp.setText(`${mPos.x}:${mPos.y}`);
+		this.txtComp.setText(`${mPos.x}:${mPos.y}`);
 
 		// ---
 		super.Update(delta);
 	}
 
 	draw(){
-		// ------------------------------------------------------
-		{
-			const cameraPos= this.camera.position;
-			const rowStart= Math.floor(cameraPos.y / this.trueTileSize);
-			const colStart= Math.floor(cameraPos.x / this.trueTileSize);
-			const endRow= rowStart + Math.ceil(this.camera.height / this.trueTileSize);
-			const endCol= colStart + Math.ceil(this.camera.width / this.trueTileSize);
+		// // ------------------------------------------------------
+		// {
+		// 	const cameraPos= this.camera.position;
+		// 	const rowStart= Math.floor(cameraPos.y / this.trueTileSize);
+		// 	const colStart= Math.floor(cameraPos.x / this.trueTileSize);
+		// 	const endRow= rowStart + Math.ceil(this.camera.height / this.trueTileSize);
+		// 	const endCol= colStart + Math.ceil(this.camera.width / this.trueTileSize);
 
-			const offsetX= (colStart * this.trueTileSize) - cameraPos.x;
-			const offsetY= (rowStart * this.trueTileSize) - cameraPos.y;
+		// 	const offsetX= (colStart * this.trueTileSize) - cameraPos.x;
+		// 	const offsetY= (rowStart * this.trueTileSize) - cameraPos.y;
 
-			for(let row= rowStart; row <= endRow; row++)
-			{
-				for(let col= colStart; col <= endCol; col++)
-				{
-					const alias= this.getTile(row, col);
-					let tile;
-					if(alias == undefined || !this.spriteMap[alias]) {
-						if(!this.defaultSprite) continue;
-						tile= this.defaultSprite;
-					} else {
-						tile= this.spriteMap[alias];
-					}
-					tile.drawX= (((col - colStart) * this.trueTileSize) + offsetX) + this.screen.origin.x;
-					tile.drawY= (((row - rowStart) * this.trueTileSize) + offsetY) + this.screen.origin.y;
-					tile.draw();
-					// context.strokeStyle= "blue";
-					// context.strokeRect(
-					// 	tile.drawX, tile.drawY, 
-					// 	this.trueTileSize, this.trueTileSize
-					// );
-				}
-			}
-			// context.strokeStyle= "black";
-			// for(let row= rowStart; row <= endRow; row++)
-			// for(let col= colStart; col <= endCol; col++)
-			// 	context.strokeRect(
-			// 		((col - colStart) * this.trueTileSize),
-			// 		((row - rowStart) * this.trueTileSize),
-			// 		this.trueTileSize, this.trueTileSize
-			// 	);
-		}
-		// ------------------------------------------------------
+		// 	for(let row= rowStart; row <= endRow; row++)
+		// 	{
+		// 		for(let col= colStart; col <= endCol; col++)
+		// 		{
+		// 			const alias= this.getTile(row, col);
+		// 			let tile;
+		// 			if(alias == undefined || !this.spriteMap[alias]) {
+		// 				if(!this.defaultSprite) continue;
+		// 				tile= this.defaultSprite;
+		// 			} else {
+		// 				tile= this.spriteMap[alias];
+		// 			}
+		// 			tile.drawX= (((col - colStart) * this.trueTileSize) + offsetX);
+		// 			tile.drawY= (((row - rowStart) * this.trueTileSize) + offsetY);
+		// 			tile.draw();
+		// 			// context.strokeStyle= "blue";
+		// 			// context.strokeRect(
+		// 			// 	tile.drawX, tile.drawY, 
+		// 			// 	this.trueTileSize, this.trueTileSize
+		// 			// );
+		// 		}
+		// 	}
+		// 	// context.strokeStyle= "black";
+		// 	// for(let row= rowStart; row <= endRow; row++)
+		// 	// for(let col= colStart; col <= endCol; col++)
+		// 	// 	context.strokeRect(
+		// 	// 		((col - colStart) * this.trueTileSize),
+		// 	// 		((row - rowStart) * this.trueTileSize),
+		// 	// 		this.trueTileSize, this.trueTileSize
+		// 	// 	);
+		// }
+		// // ------------------------------------------------------
+
+		super.draw();
 
 		const cameraPos= this.camera.position.subtract(this.screen.origin);
 		const mousePos= this.mousePtr.position;
@@ -155,6 +123,13 @@ class TileEditor extends TileEngine{
 		context.fillStyle= "black";
 		textLenDiff= (textWidth - this.trueTileSize) / 2
 		context.fillText(txt, tilePos.x - textLenDiff, tilePos.y+this.trueTileSize+20);
+		context.restore();
+
+
+		context.save();
+		context.lineWidth= "3";
+		context.strokeStyle= "orange";
+		context.strokeRect(0,0, this.screen.width, this.screen.height);
 		context.restore();
 	}
 };

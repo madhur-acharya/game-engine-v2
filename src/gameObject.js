@@ -72,7 +72,8 @@ export const GameObject= (() => {
 		AddComponent(component)
 		{
 			component.gameObject= this;
-			this.components[component.name ?? `$COMP-${PrimaryKey.nextNumber("COMPONENT")}`]= component;
+			if(!component.name) console.warn("Component has no name", component);
+			this.components[component.name]= component;
 			return component;
 		}
 

@@ -33,15 +33,12 @@ export class Tile extends Generic{
 
 	draw()
 	{
-		context.save();
-		context.translate(this.drawX, this.drawY);
-		context.drawImage(this.spriteSheet, this.spriteX, this.spriteY, this.spriteWidth, this.spriteHeight, 0, 0, this.drawWidth, this.drawHeight);
-		context.restore();
+		context.drawImage(this.spriteSheet, this.spriteX, this.spriteY, this.spriteWidth, this.spriteHeight, this.drawX, this.drawY, this.drawWidth, this.drawHeight);
 	}
 }
 
 class TileEngine extends Generic{
-	constructor(layer, tileAtlas= {}, spriteMap= {}, levelData, tileSize= 64)
+	constructor(camera, layer, tileAtlas= {}, spriteMap= {}, levelData, tileSize= 64)
 	{
 		super();
 
@@ -52,10 +49,9 @@ class TileEngine extends Generic{
 		this.tileAtlas= tileAtlas;
 		this.levelData= levelData;
 		this.tileSize= tileSize;
-		this.camera= new Camera(window.width, window.height);
+		this.camera= camera;
 		this.defaultSprite= spriteMap["#"];
-
-		// this.init();
+		this.init();
 	}
 
 	init() {
@@ -66,7 +62,7 @@ class TileEngine extends Generic{
 		this.totalCellsHorizontal= this.levelData[0].length * this.tileSize;
 		this.totalCellsVertical= this.levelData.length * this.tileSize;
 
-		this.scaleFactor= Math.max(window.width, window.height) / Math.max(horizontalScale, verticalScale);
+		this.scaleFactor= Math.max(this.screen.width, this.screen.height) / Math.max(horizontalScale, verticalScale);
 		this.trueTileSize= this.tileSize * this.scaleFactor;
 
 		console.log("TileMap Size:", this.totalCellsHorizontal, this.totalCellsVertical);
@@ -114,8 +110,8 @@ class TileEngine extends Generic{
 				} else {
 					tile= this.spriteMap[alias];
 				}
-				tile.drawX= ((col - colStart) * this.trueTileSize) + offsetX;
-				tile.drawY= ((row - rowStart) * this.trueTileSize) + offsetY;
+				tile.drawX= (((col - colStart) * this.trueTileSize) + offsetX);
+				tile.drawY= (((row - rowStart) * this.trueTileSize) + offsetY);
 				tile.draw();
 			}
 		}

@@ -26,7 +26,26 @@
 	}
 	#my_canvas{
 		width: 100%;
+		height: 80%;
+	}
+	#tilepicker{
+		padding: 10px;
+		border: 5px solid grey;
+		width: 100%;
+		height: 20%;
+	}
+	#leftbar{
+		width: 20%;
+		padding: 10px;
+		border: 5px solid grey;
 		height: 100%;
+	}
+	#rightbar{
+		width: 80%;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		width: 100%;
 	}
 </style>
 </head>
@@ -34,7 +53,13 @@
 	<p id= "framerate"></p>
 	<pre id= "nurdy_stats" ></pre>
 	<pre id= "nurdy_stats4" ></pre>
-	<canvas id= "my_canvas" > whoops!!!</canvas>
+	<main>
+		<div id="leftbar"></div>
+		<div id="rightbar">
+			<canvas id= "my_canvas" > whoops!!!</canvas>
+			<div id="tilepicker"></div>
+		</div>
+	</main>
 	</div>
 
 	<script type= "module" src= "tileEditor/main.js"></script>

@@ -3,6 +3,9 @@ import {TimeOut, Interval, drawGrid, Coroutine} from "./utilityFunctions.js";
 import RenderPipeline from "./renderPipeline.js";
 import EventSystem from "./eventSystem.js";
 import "./startup.js";
+import ScreenManager, {Screen} from "./components/screen.js";
+import Vector from "./vector.js";
+import Camera from "./components/camera.js";
 
 let aniId,
 	lastTime= performance.now() + 16.666666666666668,
@@ -15,22 +18,20 @@ window.gameObjectList= GameObject.getGameObjectList();
 window.time= 0;
 window.timestamp= 0;
 window.deltaTime= 0;
+window.RenderPipeline= RenderPipeline;
 
 window.addEventListener("load", () => {	
 	console.log("DOM Loaded");
 
 	window.canvas= document.getElementById("my_canvas");
-	window.width= canvas.width= window.innerWidth;
-	window.height= canvas.height= window.innerHeight;
+	ScreenManager.init(new Screen(new Vector(), window.innerWidth, window.innerHeight));
+	window.defaultScreen= ScreenManager.getDefault();
+	window.width= canvas.width= window.defaultScreen.width;
+	window.height= canvas.height= window.defaultScreen.height;
+	window.camera= new Camera(window.defaultScreen.width, window.defaultScreen.height);
+
 	window.context= canvas.getContext("2d");
-	
 	context.imageSmoothingEnabled= false;
-	// context.translate(width / 2, height / 2);
-	// context.transform(1, 0, 0, -1, 0, 0);
-
-	//context.transform(1, 0, 0, -1, 0, canvas.height); /*for cartecian cordinate system with origin at bottom left of screen*/
-
-	context.lineWidth= 1;
 
 	window.framerateTag= document.getElementById("framerate");
 	window.nurdyStats= document.getElementById("nurdy_stats");
@@ -46,7 +47,8 @@ window.addEventListener("keyup", event => {
 	event.preventDefault();
 	if(event.keyCode === 27)
 	{
-		window.alert("PAUSED!");
+		window.isPaused= !window.isPaused;
+		if(!window.isPaused) getNewFrame();
 		return;
 	}
 });
@@ -54,11 +56,11 @@ window.addEventListener("keyup", event => {
 
 const clearCanvas= () => {
 	context.fillStyle= "black";
-	// context.fillRect(-width / 2, -height / 2, width, height);
 	context.fillRect(0, 0, width, height);
 };
 
 const getNewFrame= () => {
+	if(window.isPaused) return;
 	aniId= requestAnimationFrame((timestamp) => {
 
 		timePerFrame= (timestamp - lastTime);
@@ -74,7 +76,7 @@ const getNewFrame= () => {
 		fpsArray.pop();
 
 		framerateTag.innerHTML= "FPS: " + Math.round(fpsArray.reduce((accu, curr) => accu + curr, 0) / 6);
-		nurdyStats.innerHTML= "Time: " + Math.floor(time / 1000);
+		nurdyStats.innerHTML= "Time: " + (time / 1000).toFixed(2);
 
 		const calcsPerFrame= Math.floor(timePerFrame / 16.666666666666668) || 1;
 
@@ -95,7 +97,6 @@ const Update= () => {
 	}
 
 	RenderPipeline.Render();
-
 	nurdyStats2.innerHTML= gameObjectList.length;
 };
 
