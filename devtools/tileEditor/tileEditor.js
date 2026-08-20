@@ -4,6 +4,7 @@ import Input from "../../src/input.js";
 import Vector from "../../src/vector.js";
 import {GameObject} from "../../src/gameObject.js";
 import {drawVector} from "../../src/utilityFunctions.js";
+import ScreenManager from "../../src/components/screen.js";
 
 class TileEditor extends TileEngine{
 	constructor(conf= {}, screen, sheetWidth= 50, sheetHeight= 50){
@@ -28,19 +29,21 @@ class TileEditor extends TileEngine{
 	}
 
 	Update(delta){
-		const vel= 8;
-		const prevCamPos= this.camera.position.clone();
-		const limitL= new Vector(0, 0);
-		const limitR= new Vector(1000, 1000);
-		if(Input.getKey("w")) this.camera.position.addTo(new Vector(0, -vel));
-		if(Input.getKey("s")) this.camera.position.addTo(new Vector(0, vel));
-		if(Input.getKey("a")) this.camera.position.addTo(new Vector(-vel, 0));
-		if(Input.getKey("d")) this.camera.position.addTo(new Vector(vel, 0));
-		// this.camera.position.limit(limitL);
+		if(ScreenManager.ACTIVE_SCREEN == this.screen.key){
+			const vel= 8;
+			const prevCamPos= this.camera.position.clone();
+			const limitL= new Vector(0, 0);
+			const limitR= new Vector(1000, 1000);
+			if(Input.getKey("w")) this.camera.position.addTo(new Vector(0, -vel));
+			if(Input.getKey("s")) this.camera.position.addTo(new Vector(0, vel));
+			if(Input.getKey("a")) this.camera.position.addTo(new Vector(-vel, 0));
+			if(Input.getKey("d")) this.camera.position.addTo(new Vector(vel, 0));
+			// this.camera.position.limit(limitL);
 
-		const mPos= Input.worldToScreenPoint(this.screen);
-		this.mousePtr.position= new Vector(mPos.x, mPos.y);
-		this.txtComp.setText(`${parseInt(mPos.x)}:${parseInt(mPos.y)}`);
+			const mPos= Input.worldToScreenPoint(this.screen);
+			this.mousePtr.position= new Vector(mPos.x, mPos.y);
+			this.txtComp.setText(`${parseInt(mPos.x)}:${parseInt(mPos.y)}`);
+		}
 
 		// ---
 		super.Update(delta);

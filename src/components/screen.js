@@ -22,6 +22,7 @@ export class Screen extends Generic{
 export class ScreenManager{
 	static screens={};
 	static DEFAULT= "ZDEFAULT";
+	static ACTIVE_SCREEN= "ZDEFAULT";
 
 	static getLength= () => {
 		return Object.keys(ScreenManager.screens).length;
@@ -50,6 +51,8 @@ export class ScreenManager{
 	static removeScreen= (name) => {
 		delete ScreenManager.screens[name];
 	};
+
+	static getActiveScreen= () => ScreenManager.screens[ScreenManager.ACTIVE_SCREEN] ?? getDefault();
 };
 
 export default ScreenManager;
