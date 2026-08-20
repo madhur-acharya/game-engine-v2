@@ -74,31 +74,28 @@ const load= () => {
 	// window.camera= new Camera(window.width, window.height);
 
 
+	const mainScreen= new Screen(new Vector(sidebarwidth, 0), mainCamera.width, mainCamera.height);
+	ScreenManager.addScreen("main", mainScreen);
 	const mainEditor= new TileEditor({
 		camera: mainCamera, layer: 2, tileAtlas: tileAtlas, spriteMap: spriteMap(), levelData: levelData, 
 		tileSize: 64
-	});
-	const mainScreen= new Screen(new Vector(sidebarwidth, 0), mainCamera.width, mainCamera.height);
-	ScreenManager.addScreen("main", mainScreen);
-	mainEditor.setScreen(mainScreen);
+	}, mainScreen);
 
 	const leftBar= new Camera(sidebarwidth, window.height-bottombarHeight);
+	const leftScreen= new Screen(new Vector(0, 0), leftBar.width, leftBar.height);
+	ScreenManager.addScreen("left", leftScreen);
 	const leftEditor= new TileEditor({
 		camera: leftBar, layer: 2, tileAtlas: tileAtlas, spriteMap: spriteMap(), levelData: levelData, 
 		tileSize: 64
-	});
-	const leftScreen= new Screen(new Vector(0, 0), leftBar.width, leftBar.height);
-	ScreenManager.addScreen("left", leftScreen);
-	leftEditor.setScreen(leftScreen);
+	}, leftScreen);
 
 	const bottomBar= new Camera(window.width, bottombarHeight);
+	const bottomScreen= new Screen(new Vector(0, window.height-bottombarHeight), bottomBar.width, bottomBar.height);
+	ScreenManager.addScreen("bottom", bottomScreen);
 	const bottomEditor= new TileEditor({
 		camera: bottomBar, layer: 2, tileAtlas: tileAtlas, spriteMap: spriteMap(), levelData: levelData, 
 		tileSize: 64
-	});
-	const bottomScreen= new Screen(new Vector(0, window.height-bottombarHeight), bottomBar.width, bottomBar.height);
-	ScreenManager.addScreen("bottom", bottomScreen);
-	bottomEditor.setScreen(bottomScreen);
+	}, bottomScreen);
 };
 
 

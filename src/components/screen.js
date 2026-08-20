@@ -21,24 +21,25 @@ export class Screen extends Generic{
 
 export class ScreenManager{
 	static screens={};
+	static DEFAULT= "ZDEFAULT";
 
 	static getLength= () => {
 		return Object.keys(ScreenManager.screens).length;
 	};
 
 	static init= (scrn) => {
-		scrn.key= "DEFAULT";
-		ScreenManager.screens["DEFAULT"]= scrn;
+		scrn.key= ScreenManager.DEFAULT;
+		ScreenManager.screens[ScreenManager.DEFAULT]= scrn;
 	};
 
 	static setDefault= (name) => {
 		if(ScreenManager.screens[name]){
-			ScreenManager.screens["DEFAULT"]= ScreenManager.screens[name];
+			ScreenManager.screens[ScreenManager.DEFAULT]= ScreenManager.screens[name];
 			// delete ScreenManager.screens[name];
 		}
 	};
 
-	static getDefault= () => ScreenManager.screens["DEFAULT"];
+	static getDefault= () => ScreenManager.screens[ScreenManager.DEFAULT];
 
 	static addScreen= (name, scrn) => {
 		scrn.key= name;

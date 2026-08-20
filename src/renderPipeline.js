@@ -37,7 +37,7 @@ class RenderPipeline{
 		const stack= RenderPipeline.renderStack[screen][layer];
 		if(!stack) return;
 
-		for(let i=0; i < Object.keys(stack).length; i++) RenderPipeline.Draw(screen, layer);
+		for(let i=0; i < stack.length; i++) RenderPipeline.Draw(screen, layer);
 	}
 
 	static Render() {
@@ -46,25 +46,30 @@ class RenderPipeline{
 		}, 0);
 		nurdyStats4.innerHTML= `Render dispatch count: ${count}`;
 		if(ScreenManager.getLength() > 1) {
-			for (let key in ScreenManager.screens) {
-				const scr= ScreenManager.screens[key];
+			for (let scrKey of Object.keys(ScreenManager.screens).sort((a, b) => a.localeCompare(b))) {
+				if(!RenderPipeline.renderStack[scrKey]) continue;
+				const scr= ScreenManager.screens[scrKey];
 				window.context.save();
 				window.context.translate(scr.origin.x, scr.origin.y);
 				const region = new Path2D();
 				region.rect(0, 0, scr.width, scr.height);
 				window.context.clip(region);
-				for(let l in RenderPipeline.renderStack[key]) RenderPipeline.RenderLayer(key, l);
+				for(let l of Object.keys(RenderPipeline.renderStack[scrKey]).sort()) RenderPipeline.RenderLayer(scrKey, l);
 				window.context.restore();
 			}
 		}
 		else {
-			const scr= ScreenManager.getDefault().key;
-			for(let l in RenderPipeline.renderStack[scr]) RenderPipeline.RenderLayer(scr, l);
+			const scrKey= ScreenManager.getDefault().key;
+			for(let l of Object.keys(RenderPipeline.renderStack[scrKey]).sort()) RenderPipeline.RenderLayer(scrKey, l);
 		}
 		RenderPipeline.Clear();
 	}
 
 	static Clear(){
+		if(window.isPaused) {
+			console.log(RenderPipeline.renderStack);
+			return;
+		}
 		RenderPipeline.renderStack= {};
 	}
 
