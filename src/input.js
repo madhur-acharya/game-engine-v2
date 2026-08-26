@@ -22,6 +22,7 @@ class Input{
 		x: 0,
 		y: 0,
 	};
+	static clickHandlers= {};
 
 	static init(canvas) {
 		console.log("inputs initializing")
@@ -76,6 +77,14 @@ class Input{
 					ScreenManager.ACTIVE_SCREEN= scrNm;
 					break
 				}
+			}
+		});
+
+		canvas.addEventListener("click", event => {
+			for(let key in Input.clickHandlers) {
+				const hand= Input.clickHandlers[key];
+				const screenPointer= Input.worldToScreenPoint(hand.screen);
+				hand.handler(screenPointer);
 			}
 		});
 
