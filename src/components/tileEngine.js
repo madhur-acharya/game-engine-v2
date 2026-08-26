@@ -62,7 +62,7 @@ class TileEngine extends Generic{
 		this.totalCellsHorizontal= this.levelData[0].length * this.tileSize;
 		this.totalCellsVertical= this.levelData.length * this.tileSize;
 
-		this.scaleFactor= Math.max(this.screen.width, this.screen.height) / Math.max(horizontalScale, verticalScale);
+		this.scaleFactor= Math.max(window.width, window.height) / Math.max(horizontalScale, verticalScale);
 		this.trueTileSize= this.tileSize * this.scaleFactor;
 
 		console.log("TileMap Size:", this.totalCellsHorizontal, this.totalCellsVertical);

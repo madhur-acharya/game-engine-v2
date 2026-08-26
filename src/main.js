@@ -3,7 +3,6 @@ import {TimeOut, Interval, drawGrid, Coroutine} from "./utilityFunctions.js";
 import RenderPipeline from "./renderPipeline.js";
 import EventSystem from "./eventSystem.js";
 import "./startup.js";
-import ScreenManager, {Screen} from "./components/screen.js";
 import Vector from "./vector.js";
 import Camera from "./components/camera.js";
 
@@ -19,16 +18,15 @@ window.time= 0;
 window.timestamp= 0;
 window.deltaTime= 0;
 window.RenderPipeline= RenderPipeline;
+window.origin= new Vector();
 
 window.addEventListener("load", () => {	
 	console.log("DOM Loaded");
 
 	window.canvas= document.getElementById("my_canvas");
-	ScreenManager.init(new Screen(new Vector(), window.innerWidth, window.innerHeight));
-	window.defaultScreen= ScreenManager.getDefault();
-	window.width= canvas.width= window.defaultScreen.width;
-	window.height= canvas.height= window.defaultScreen.height;
-	window.camera= new Camera(window.defaultScreen.width, window.defaultScreen.height);
+	window.width= canvas.width= window.innerWidth;
+	window.height= canvas.height= window.innerHeight;
+	window.camera= new Camera(window.width, window.height);
 
 	window.context= canvas.getContext("2d");
 	context.imageSmoothingEnabled= false;

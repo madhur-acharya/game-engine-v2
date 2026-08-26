@@ -4,10 +4,9 @@ import Input from "../../src/input.js";
 import Vector from "../../src/vector.js";
 import {GameObject} from "../../src/gameObject.js";
 import {drawVector} from "../../src/utilityFunctions.js";
-import ScreenManager from "../../src/components/screen.js";
 
 class TileEditor extends TileEngine{
-	constructor(conf= {}, screen, sheetWidth= 50, sheetHeight= 50){
+	constructor(conf= {}, sheetWidth= 50, sheetHeight= 50){
 		super(
 			conf.camera,
 			conf.layer, 
@@ -16,7 +15,6 @@ class TileEditor extends TileEngine{
 			conf.levelData, 
 			conf.tileSize,
 		);
-		this.setScreen(screen);
 
 		this.gameObject= new GameObject();
 		this.gameObject.AddComponent(this);
@@ -24,26 +22,23 @@ class TileEditor extends TileEngine{
 		this.txtComp= new TextRenderer(3);
 		this.txtComp.color= "crimson";
 		this.mousePtr.AddComponent(this.txtComp);
-		this.txtComp.setScreen(this.screen);
 		this.ready= true;
 	}
 
 	Update(delta){
-		if(ScreenManager.ACTIVE_SCREEN == this.screen.key){
-			const vel= 8;
-			const prevCamPos= this.camera.position.clone();
-			const limitL= new Vector(0, 0);
-			const limitR= new Vector(1000, 1000);
-			if(Input.getKey("w")) this.camera.position.addTo(new Vector(0, -vel));
-			if(Input.getKey("s")) this.camera.position.addTo(new Vector(0, vel));
-			if(Input.getKey("a")) this.camera.position.addTo(new Vector(-vel, 0));
-			if(Input.getKey("d")) this.camera.position.addTo(new Vector(vel, 0));
-			// this.camera.position.limit(limitL);
+		const vel= 8;
+		const prevCamPos= this.camera.position.clone();
+		const limitL= new Vector(0, 0);
+		const limitR= new Vector(1000, 1000);
+		if(Input.getKey("w")) this.camera.position.addTo(new Vector(0, -vel));
+		if(Input.getKey("s")) this.camera.position.addTo(new Vector(0, vel));
+		if(Input.getKey("a")) this.camera.position.addTo(new Vector(-vel, 0));
+		if(Input.getKey("d")) this.camera.position.addTo(new Vector(vel, 0));
+		// this.camera.position.limit(limitL);
 
-			const mPos= Input.worldToScreenPoint(this.screen);
-			this.mousePtr.position= new Vector(mPos.x, mPos.y);
-			this.txtComp.setText(`${parseInt(mPos.x)}:${parseInt(mPos.y)}`);
-		}
+		const mPos= Input.getMousePos();
+		this.mousePtr.position= new Vector(mPos.x, mPos.y);
+		this.txtComp.setText(`${parseInt(mPos.x)}:${parseInt(mPos.y)}`);
 
 		// ---
 		super.Update(delta);
@@ -90,7 +85,7 @@ class TileEditor extends TileEngine{
 		context.save();
 		context.lineWidth= "3";
 		context.strokeStyle= "orange";
-		context.strokeRect(0,0, this.screen.width, this.screen.height);
+		context.strokeRect(0,0, window.width, window.height);
 		context.restore();
 	}
 };

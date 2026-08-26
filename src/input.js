@@ -1,4 +1,3 @@
-import ScreenManager from "./components/screen.js";
 
 class Input{
 	static ready= false;
@@ -65,18 +64,6 @@ class Input{
 			const rect = canvas.getBoundingClientRect();
 			Input.mousePos.x= event.clientX - rect.left;
 			Input.mousePos.y= event.clientY - rect.top;
-
-			// Set Active screen
-			for(let scrNm in ScreenManager.screens) {
-				if(scrNm == ScreenManager.DEFAULT) continue;
-				const scr= ScreenManager.screens[scrNm];
-				const inp= Input.mousePos;
-				const pos= scr.origin;
-				if((inp.x >= pos.x) && (inp.x <= pos.x + scr.width) && (inp.y >= pos.y) && (inp.y <= pos.y + scr.height)){
-					ScreenManager.ACTIVE_SCREEN= scrNm;
-					break
-				}
-			}
 		});
 
 
@@ -95,15 +82,6 @@ class Input{
 		return Input.mousePos;
 	}
 
-	static worldToScreenPoint(screen)
-	{
-		if(!Input.ready) return;
-		const pos= Input.mousePos;
-		return {
-			x:  pos.x - screen.origin.x,
-			y:  pos.y - screen.origin.y,
-		}
-	}
 };
 
 export default Input;

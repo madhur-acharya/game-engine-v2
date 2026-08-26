@@ -2,7 +2,6 @@ import {GameObject} from "../../src/gameObject.js";
 import {TimeOut, Interval, drawGrid, Coroutine} from "../../src/utilityFunctions.js";
 import RenderPipeline from "../../src/renderPipeline.js";
 import EventSystem from "../../src/eventSystem.js";
-import ScreenManager, {Screen} from "../../src/components/screen.js";
 import Vector from "../../src/vector.js";
 import "./startup.js";
 
@@ -18,15 +17,14 @@ window.time= 0;
 window.timestamp= 0;
 window.deltaTime= 0;
 window.RenderPipeline= RenderPipeline;
+window.origin= new Vector();
 
 window.addEventListener("load", () => {	
 	console.log("DOM Loaded");
 
 	window.canvas= document.getElementById("my_canvas");
-	ScreenManager.init(new Screen(new Vector(), window.innerWidth, window.innerHeight));
-	window.defaultScreen= ScreenManager.getDefault();
-	window.width= canvas.width= window.defaultScreen.width;
-	window.height= canvas.height= window.defaultScreen.height;
+	window.width= canvas.width= window.innerWidth;
+	window.height= canvas.height= window.innerHeight;
 	window.context= canvas.getContext("2d");
 	
 	context.imageSmoothingEnabled= false;
