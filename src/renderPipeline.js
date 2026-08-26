@@ -36,7 +36,7 @@ class RenderPipeline{
 
 	static Render() {
 		const count= Object.values(RenderPipeline.renderStack).reduce((accu, curr) => {
-			return accu+Object.values(curr).reduce((a, c) => a+c.length, 0);
+			return accu+curr.length;
 		}, 0);
 		nurdyStats4.innerHTML= `Render dispatch count: ${count}`;
 		for(let l of Object.keys(RenderPipeline.renderStack).sort()) RenderPipeline.RenderLayer(l);
