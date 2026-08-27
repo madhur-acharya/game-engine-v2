@@ -9,6 +9,7 @@ import Camera from "../../src/components/camera.js";
 
 import levelData from "./levelData.js";
 import TileEditor from "./tileEditor.js";
+import TileSelector from "./tileSelector.js";
 
 
 EventSystem.createEvent("onCanvasReady");
@@ -73,6 +74,14 @@ const load= () => {
 		camera: window.camera, layer: 2, tileAtlas: tileAtlas, spriteMap: spriteMap(), levelData: levelData, 
 		tileSize: 64
 	});
+
+	const sidebarCam= new Camera(64*3, window.height);
+	const sideBar= new TileSelector({
+		camera: sidebarCam, layer: 4, tileAtlas: tileAtlas, spriteMap: spriteMap(), levelData: levelData, 
+		tileSize: 64
+	});
+
+	mainEditor.camera.position= new Vector(-sideBar.trueTileSize*3, 0);
 };
 
 
