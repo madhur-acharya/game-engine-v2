@@ -63,10 +63,15 @@ class TileSelector extends TileEngine{
 	}
 
 	draw(){
+		context.save();
+		context.fillStyle= "white";
+		context.fillRect(0, 0, this.screen.width, this.screen.height);
+		context.restore();
+
 		super.draw();
 
 		const cameraPos= this.camera.position;
-		const mousePos= Input.getMousePos();
+		const mousePos= Input.worldToScreenPoint(this.screen);
 
 		const rowStartCam= Math.floor(cameraPos.y / this.trueTileSize);
 		const colStartCam= Math.floor(cameraPos.x / this.trueTileSize);
