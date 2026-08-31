@@ -17,6 +17,7 @@ class TileEditor extends TileEngine{
 			conf.tileSize,
 		);
 		this.setScreen(screen);
+		this.init();
 
 		this.gameObject= new GameObject();
 		this.gameObject.AddComponent(this);
