@@ -15,6 +15,7 @@ class TileEditor extends TileEngine{
 			conf.levelData, 
 			conf.tileSize,
 		);
+		this.init();
 
 		this.gameObject= new GameObject();
 		this.gameObject.AddComponent(this);

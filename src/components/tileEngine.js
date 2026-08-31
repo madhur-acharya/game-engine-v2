@@ -65,8 +65,9 @@ class TileEngine extends Generic{
 		this.scaleFactor= Math.max(window.width, window.height) / Math.max(horizontalScale, verticalScale);
 		this.trueTileSize= this.tileSize * this.scaleFactor;
 
+		console.log(">>", this.name);
 		console.log("TileMap Size:", this.totalCellsHorizontal, this.totalCellsVertical);
-		console.log("Screen size:", parseFloat(horizontalScale.toFixed(2)), parseFloat(verticalScale.toFixed(2)));
+		console.log("Camera size:", parseFloat(horizontalScale.toFixed(2)), parseFloat(verticalScale.toFixed(2)));
 		console.log("trueTileSize:", this.trueTileSize);
 
 		for(let k in this.spriteMap) {

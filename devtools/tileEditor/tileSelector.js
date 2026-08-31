@@ -49,6 +49,7 @@ class TileSelector extends TileEngine{
 			spriteSheet, 
 			conf.tileSize,
 		);
+		this.init();
 
 		this.gameObject= new GameObject();
 		this.gameObject.AddComponent(this);

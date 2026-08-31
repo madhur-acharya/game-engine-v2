@@ -69,11 +69,11 @@ const load= () => {
 	// window.camera= new Camera(2000, 2000);
 	window.camera= new Camera(window.width, window.height);
 
-
 	const mainEditor= new TileEditor({
 		camera: window.camera, layer: 2, tileAtlas: tileAtlas, spriteMap: spriteMap(), levelData: levelData, 
 		tileSize: 64
 	});
+	mainEditor.camera.position= new Vector(-64*3, 0);
 
 	const sidebarCam= new Camera(64*3, window.height);
 	const sideBar= new TileSelector({
@@ -81,7 +81,6 @@ const load= () => {
 		tileSize: 64
 	});
 
-	mainEditor.camera.position= new Vector(-sideBar.trueTileSize*3, 0);
 };
 
 
