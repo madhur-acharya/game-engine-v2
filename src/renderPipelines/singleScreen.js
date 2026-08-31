@@ -4,14 +4,9 @@ class RenderPipeline{
 	static renderStack= {};
 
 	static DispatchDraw(comp) {
-		let skipping= false;
-		if(!comp) skipping= true;
-		if(!comp.layer) skipping= true;
-		if(!comp.draw) skipping= true;
-		if(skipping){
-			console.warn("cannot dispatch draw", comp);
-			return;
-		}
+		if(!comp) return console.warn("cannot dispatch draw. Missing component", comp);
+		if(!comp.layer) return console.warn("cannot dispatch draw. Missing layer", comp);
+		if(!comp.draw) return console.warn("cannot dispatch draw. Missing draw function", comp);
 
 		if(!RenderPipeline.renderStack[comp.layer]){
 			RenderPipeline.renderStack[comp.layer]= [];

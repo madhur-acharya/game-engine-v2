@@ -12,7 +12,7 @@ const generateSpriteMap= (sprite, conf) => {
 
 	console.log(cols, rows);
 	const tilemap= {
-		"#": new Tile(conf.tileAtlas.water, "#", 0, 0, 64, 64)
+		// "#": new Tile(conf.tileAtlas.water, "#", 0, 0, 64, 64)
 	};
 	const spriteSheet= [[]];
 
@@ -33,7 +33,7 @@ const generateSpriteMap= (sprite, conf) => {
 }
 
 class TileSelector extends TileEngine{
-	constructor(conf= {}){
+	constructor(conf= {}, screen){
 		const tileAtlas= {
 			"tilesetSample": getImages()?.tilesetSample,
 			"cobblestone": getImages()?.cobblestone,
@@ -44,11 +44,13 @@ class TileSelector extends TileEngine{
 		super(
 			conf.camera,
 			conf.layer, 
-			conf.tileAtlas,
+			tileAtlas,
 			spriteMap,
 			spriteSheet, 
 			conf.tileSize,
 		);
+		this.setScreen(screen);
+		this.init();
 
 		this.gameObject= new GameObject();
 		this.gameObject.AddComponent(this);
@@ -60,7 +62,7 @@ class TileSelector extends TileEngine{
 		super.Update(delta);
 	}
 
-	preDraw(){
+	draw(){
 		super.draw();
 
 		const cameraPos= this.camera.position;
@@ -88,17 +90,8 @@ class TileSelector extends TileEngine{
 		context.save();
 		context.lineWidth= "6";
 		context.strokeStyle= "grey";
-		context.strokeRect(0,0, this.trueTileSize*3, window.height);
+		context.strokeRect(0,0, this.screen.width, this.screen.height);
 		context.restore();
-	}
-
-	draw() {
-		window.context.save();
-		const region = new Path2D();
-		region.rect(0, 0, this.trueTileSize*3, window.height);
-		window.context.clip(region);
-		this.preDraw();
-		window.context.restore();
 	}
 };
 

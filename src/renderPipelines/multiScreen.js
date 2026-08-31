@@ -1,18 +1,25 @@
 import ScreenManager from "../components/screen.js";
 
+const warnLogs= {};
+
 class RenderPipeline{
 
 	static renderStack= {};
 
 	static DispatchDraw(comp) {
-		let skipping= false;
-		if(!comp) skipping= true;
-		if(!comp.screen?.key) skipping= true;
-		if(!comp.layer) skipping= true;
-		if(!comp.draw) skipping= true;
-		if(skipping){
-			console.warn("cannot dispatch draw", comp);
-			return;
+		let skip = false;
+		if(!comp) skip= "cannot dispatch draw. Missing component";
+		if(!comp.screen?.key) skip= "cannot dispatch draw. Missing screen";
+		if(!comp.layer) skip= "cannot dispatch draw. Missing layer";
+		if(!comp.draw) skip= "cannot dispatch draw. Missing draw function";
+
+		if(skip){
+			if(!comp) console.warn(skip);
+			else if(!warnLogs[comp.name]) {
+				warnLogs[comp.name]= true;
+				console.warn(skip, comp);
+			}
+			return 
 		}
 
 		const scrnKey= comp.screen.key;

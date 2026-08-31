@@ -7,6 +7,7 @@ import RenderPipeline from "../../src/renderPipeline.js";
 import Vector from "../../src/vector.js";
 import Camera from "../../src/components/camera.js";
 import ScreenManager, {Screen} from "../../src/components/screen.js";
+import TileSelector from "./tileSelector.js";
 
 import levelData from "./levelData.js";
 import TileEditor from "./tileEditor.js";
@@ -92,9 +93,8 @@ const load= () => {
 	const bottomBar= new Camera(window.width, bottombarHeight);
 	const bottomScreen= new Screen(new Vector(0, window.height-bottombarHeight), bottomBar.width, bottomBar.height);
 	ScreenManager.addScreen("bottom", bottomScreen);
-	const bottomEditor= new TileEditor({
-		camera: bottomBar, layer: 2, tileAtlas: tileAtlas, spriteMap: spriteMap(), levelData: levelData, 
-		tileSize: 64
+	const sideBar= new TileSelector({
+		camera: bottomBar, layer: 4, tileSize: 64
 	}, bottomScreen);
 };
 
