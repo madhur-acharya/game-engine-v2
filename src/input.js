@@ -82,9 +82,8 @@ class Input{
 
 		canvas.addEventListener("click", event => {
 			for(let key in Input.clickHandlers) {
-				const hand= Input.clickHandlers[key];
-				const screenPointer= Input.worldToScreenPoint(hand.screen);
-				hand.handler(screenPointer);
+				const handler= Input.clickHandlers[key];
+				handler();
 			}
 		});
 
@@ -112,6 +111,16 @@ class Input{
 			x:  pos.x - screen.origin.x,
 			y:  pos.y - screen.origin.y,
 		}
+	}
+
+	static addClickHandler(key, handler)
+	{
+		Input.clickHandlers[key]= handler;
+	}
+
+	static removeClickHandler(key)
+	{
+		delete Input.clickHandlers[key];
 	}
 };
 

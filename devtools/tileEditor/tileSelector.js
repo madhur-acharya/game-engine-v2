@@ -33,6 +33,12 @@ const generateSpriteMap= (sprite, conf) => {
 }
 
 class TileSelector extends TileEngine{
+	selection= {
+		tilePos: new Vector(),
+		colStart: 0,
+		rowStart: 0,
+	};
+
 	constructor(conf= {}, screen){
 		const tileAtlas= {
 			"tilesetSample": getImages()?.tilesetSample,
@@ -54,22 +60,22 @@ class TileSelector extends TileEngine{
 
 		this.gameObject= new GameObject();
 		this.gameObject.AddComponent(this);
+
+		Input.addClickHandler("tileSelect", () => this._tileSelectHandler());
+
 		this.ready= true;
 	}
 
-	Update(delta){
-		// ---
-		super.Update(delta);
+	_tileSelectHandler(){
+		const selection= this.selection;
+		this.selectedTile= {
+			tileNumber: this.getTile(selection.rowStart, selection.colStart),
+			position: this.selection.tilePos
+		}
+		console.log(this.selectedTile.tileNumber);
 	}
 
-	draw(){
-		context.save();
-		context.fillStyle= "white";
-		context.fillRect(0, 0, this.screen.width, this.screen.height);
-		context.restore();
-
-		super.draw();
-
+	Update(delta){
 		const cameraPos= this.camera.position;
 		const mousePos= Input.worldToScreenPoint(this.screen);
 
@@ -82,10 +88,27 @@ class TileSelector extends TileEngine{
 		const rowStart= Math.floor(deltaPos.y / this.trueTileSize);
 		const colStart= Math.floor(deltaPos.x / this.trueTileSize);
 
-		const tilePos= new Vector(
-			(colStart * this.trueTileSize) + offsetX, 
-			(rowStart * this.trueTileSize) + offsetY
-		);
+		this.selection= {
+			colStart, rowStart,
+			tilePos: new Vector(
+				(colStart * this.trueTileSize) + offsetX, 
+				(rowStart * this.trueTileSize) + offsetY
+			)
+		}
+
+		// ---
+		super.Update(delta);
+	}
+
+	draw(){
+		context.save();
+		context.fillStyle= "white";
+		context.fillRect(0, 0, this.screen.width, this.screen.height);
+		context.restore();
+
+		super.draw();
+
+		const tilePos= this.selection.tilePos;
 		context.save();
 		context.lineWidth= "3";
 		context.strokeStyle= "green";
@@ -97,6 +120,17 @@ class TileSelector extends TileEngine{
 		context.strokeStyle= "grey";
 		context.strokeRect(0,0, this.screen.width, this.screen.height);
 		context.restore();
+
+		if(this.selectedTile) {
+			context.save();
+			context.fillStyle= 'rgba(0, 0, 255, 0.2)';
+			const pos= this.selectedTile.position;
+			context.fillRect(pos.x, pos.y, this.trueTileSize, this.trueTileSize);
+			context.lineWidth= "3";
+			context.strokeStyle= "cyan";
+			context.strokeRect(pos.x, pos.y, this.trueTileSize, this.trueTileSize);
+			context.restore();
+		}
 	}
 };
 
