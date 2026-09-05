@@ -1,6 +1,18 @@
 import Vector from "./vector.js";
 
 //------------------------------------------------------------------------
+export class Debugger{
+	static logs= new Set();
+
+	static log= (key, func) => {
+		if(!Debugger.logs.has(key)){
+			func();
+			Debugger.logs.add(key);
+		}
+	};
+};
+
+//------------------------------------------------------------------------
 export class PrimaryKey{
 	static key={};
 

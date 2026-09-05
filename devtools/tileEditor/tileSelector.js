@@ -10,7 +10,6 @@ const generateSpriteMap= (sprite, conf) => {
 	const cols= Math.floor(sprite.width/tileSize);
 	const rows= Math.floor(sprite.height/tileSize);
 
-	console.log(cols, rows);
 	const tilemap= {
 		// "#": new Tile(conf.tileAtlas.water, "#", 0, 0, 64, 64)
 	};
@@ -57,9 +56,6 @@ class TileSelector extends TileEngine{
 		);
 		this.setScreen(screen);
 		this.init();
-
-		this.gameObject= new GameObject();
-		this.gameObject.AddComponent(this);
 
 		Input.addClickHandler("tileSelect", () => this._tileSelectHandler());
 

@@ -1,10 +1,10 @@
-import {ImageLoader} from "../utilityFunctions.js";
+import {ImageLoader, Debugger} from "../utilityFunctions.js";
 import RenderPipeline from "../renderPipeline.js";
 import Camera from "./camera.js";
 import Generic from "./generic.js";
 import {getImages} from "../constants.js";
 
-export class Tile extends Generic{
+export class Tile extends Generic{	
 	constructor(
 		spriteSheet, 
 		alias= "#", 
@@ -38,6 +38,8 @@ export class Tile extends Generic{
 }
 
 class TileEngine extends Generic{
+	drawGrid= false;
+
 	constructor(camera, layer, tileAtlas= {}, spriteMap= {}, levelData, tileSize= 64)
 	{
 		super();
@@ -65,12 +67,14 @@ class TileEngine extends Generic{
 		this.scaleFactor= Math.max(this.screen.width, this.screen.height) / Math.max(horizontalScale, verticalScale);
 		this.trueTileSize= this.tileSize * this.scaleFactor;
 
-		console.log(">>", this.name);
+
+		console.groupCollapsed(">>", this.name);
 		console.log("TileMap Size:", this.totalCellsHorizontal, this.totalCellsVertical);
 		console.log("Screen size:", parseFloat(this.screen.width.toFixed(2)), parseFloat(this.screen.height.toFixed(2)));
 		console.log("Camera size:", parseFloat(horizontalScale.toFixed(2)), parseFloat(verticalScale.toFixed(2)));
 		console.log("trueTileSize:", this.trueTileSize);
 		console.log("-----------------");
+		console.groupEnd();
 
 		for(let k in this.spriteMap) {
 			this.spriteMap[k].drawWidth= this.trueTileSize;
@@ -91,6 +95,10 @@ class TileEngine extends Generic{
 		return this.levelData[row]?.[col];
 	}
 
+	setDrawGrid(op){
+		this.drawGrid= op;
+	}
+
 	draw(){
 		const cameraPos= this.camera.position;
 		const rowStart= Math.floor(cameraPos.y / this.trueTileSize);
@@ -105,6 +113,18 @@ class TileEngine extends Generic{
 		{
 			for(let col= colStart; col <= endCol; col++)
 			{
+				const drawX= (((col - colStart) * this.trueTileSize) + offsetX);
+				const drawY= (((row - rowStart) * this.trueTileSize) + offsetY);
+
+				if(this.drawGrid)
+				{
+					context.save();
+					context.lineWidth= "0.5";
+					context.strokeStyle= "grey";
+					context.strokeRect(drawX, drawY, this.trueTileSize, this.trueTileSize);
+					context.restore();
+				}
+
 				const alias= this.getTile(row, col);
 				let tile;
 				if(alias == undefined || !this.spriteMap[alias]) {
@@ -113,8 +133,8 @@ class TileEngine extends Generic{
 				} else {
 					tile= this.spriteMap[alias];
 				}
-				tile.drawX= (((col - colStart) * this.trueTileSize) + offsetX);
-				tile.drawY= (((row - rowStart) * this.trueTileSize) + offsetY);
+				tile.drawX= drawX;
+				tile.drawY= drawY;
 				tile.draw();
 			}
 		}

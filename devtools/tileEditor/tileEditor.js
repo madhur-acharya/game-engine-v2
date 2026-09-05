@@ -19,8 +19,6 @@ class TileEditor extends TileEngine{
 		this.setScreen(screen);
 		this.init();
 
-		this.gameObject= new GameObject();
-		this.gameObject.AddComponent(this);
 		this.mousePtr= new GameObject();
 		this.txtComp= new TextRenderer(3);
 		this.txtComp.color= "crimson";
@@ -34,12 +32,16 @@ class TileEditor extends TileEngine{
 			const vel= 8;
 			const prevCamPos= this.camera.position.clone();
 			const limitL= new Vector(0, 0);
-			const limitR= new Vector(1000, 1000);
+
+			const maxCol= this.levelData[0].length - Math.floor(this.screen.width / this.trueTileSize);
+			const maxRow= this.levelData.length - Math.floor(this.screen.height / this.trueTileSize);
+
+			const limitR= new Vector(maxCol * this.trueTileSize, maxRow * this.trueTileSize);
 			if(Input.getKey("w")) this.camera.position.addTo(new Vector(0, -vel));
 			if(Input.getKey("s")) this.camera.position.addTo(new Vector(0, vel));
 			if(Input.getKey("a")) this.camera.position.addTo(new Vector(-vel, 0));
 			if(Input.getKey("d")) this.camera.position.addTo(new Vector(vel, 0));
-			// this.camera.position.limit(limitL);
+			this.camera.position.limit(limitL, limitR);
 
 			const mPos= Input.worldToScreenPoint(this.screen);
 			this.mousePtr.position= new Vector(mPos.x, mPos.y);
