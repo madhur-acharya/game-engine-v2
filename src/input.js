@@ -23,6 +23,7 @@ class Input{
 		y: 0,
 	};
 	static clickHandlers= {};
+	static IsMouseDown= false;
 
 	static init(canvas) {
 		console.log("inputs initializing")
@@ -78,6 +79,14 @@ class Input{
 					break
 				}
 			}
+		});
+
+		canvas.addEventListener('mousedown', event => {
+			Input.IsMouseDown= true;
+		});
+
+		canvas.addEventListener('mouseup', event => {
+			Input.IsMouseDown= false;
 		});
 
 		canvas.addEventListener("click", event => {

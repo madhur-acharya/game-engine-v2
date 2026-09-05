@@ -32,7 +32,7 @@ export class Tile extends Generic{
 
 
 class Tilemap extends Generic{
-	constructor(level, spriteMap, totalCellsHorizontal= 32, aspectRatio= 4/3)
+	constructor(level, tileIndex, totalCellsHorizontal= 32, aspectRatio= 4/3)
 	{
 		super();
 		let tilemapWidth= width;
@@ -52,7 +52,7 @@ class Tilemap extends Generic{
 		this.totalCellsVertical= Math.trunc(totalCellsHorizontal / aspectRatio);
 		this.cellSize= (tilemapWidth / totalCellsHorizontal);
 		this.level= level;
-		this.spriteMap= spriteMap;
+		this.tileIndex= tileIndex;
 
 		const padding= (height - (this.totalCellsVertical * this.cellSize)) / 2;
 
@@ -61,7 +61,7 @@ class Tilemap extends Generic{
 			const row= [];
 			for(let j= 0; j < this.totalCellsHorizontal; j++)
 			{
-				const tile= level[i] && level[i][j] ? spriteMap[level[i][j]]() : spriteMap["#"]()
+				const tile= level[i] && level[i][j] ? tileIndex[level[i][j]]() : tileIndex["#"]()
 
 				tile.drawX= -this.tilemapWidth/2 + (j * this.cellSize);
 				tile.drawY= (height/2 - padding - (i * this.cellSize));
@@ -77,7 +77,7 @@ class Tilemap extends Generic{
 			const row= [];
 			for(let j= 0; j < this.totalCellsHorizontal; j++)
 			{
-				const tile= level[i] && level[i][j] ? spriteMap[level[i][j]]() : spriteMap["#"]()
+				const tile= level[i] && level[i][j] ? tileIndex[level[i][j]]() : tileIndex["#"]()
 
 				tile.drawX= -tilemapWidth/2 + (j * this.cellSize);
 				tile.drawY= -(tilemapHeight/2) + (i * this.cellSize);
@@ -160,13 +160,13 @@ export class LevelManager{
 			["#", "#", "$", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"]
 		];
 
-		const spriteMap= {
+		const tileIndex= {
 			"@": () => new Tile(tileSet1, "@", 384, 0, 16, 16),
 			"$": () => new Tile(tileSet2, "$", 0, 0, 16, 16),
 			"#": () => new Tile(tileSet1, "#", 48, 368, 16, 16),
 		};
 
-		this.gameObject.addComponent(new Tilemap(level, spriteMap));
+		this.gameObject.addComponent(new Tilemap(level, tileIndex));
 	}
 
 	Update= () => {}

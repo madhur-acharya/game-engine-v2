@@ -40,19 +40,18 @@ export class Tile extends Generic{
 class TileEngine extends Generic{
 	drawGrid= false;
 
-	constructor(camera, layer, tileAtlas= {}, spriteMap= {}, levelData, tileSize= 64)
+	constructor(camera, layer, tileIndex= {}, tileMap, tileSize= 64)
 	{
 		super();
 
 		this.layer= layer;
 		this.type= "TileEngine";
 		this.ready= true;
-		this.spriteMap= spriteMap;
-		this.tileAtlas= tileAtlas;
-		this.levelData= levelData;
+		this.tileIndex= tileIndex;
+		this.tileMap= tileMap;
 		this.tileSize= tileSize;
 		this.camera= camera;
-		this.defaultSprite= spriteMap["#"];
+		this.defaultSprite= tileIndex["#"];
 		this.init();
 	}
 
@@ -61,8 +60,8 @@ class TileEngine extends Generic{
 		const verticalScale= this.camera.height;
 		this.scaleFactor= 1;
 		this.trueTileSize= this.tileSize;
-		this.totalCellsHorizontal= this.levelData[0].length * this.tileSize;
-		this.totalCellsVertical= this.levelData.length * this.tileSize;
+		this.totalCellsHorizontal= this.tileMap[0].length * this.tileSize;
+		this.totalCellsVertical= this.tileMap.length * this.tileSize;
 
 		this.scaleFactor= Math.max(this.screen.width, this.screen.height) / Math.max(horizontalScale, verticalScale);
 		this.trueTileSize= this.tileSize * this.scaleFactor;
@@ -76,9 +75,9 @@ class TileEngine extends Generic{
 		console.log("-----------------");
 		console.groupEnd();
 
-		for(let k in this.spriteMap) {
-			this.spriteMap[k].drawWidth= this.trueTileSize;
-			this.spriteMap[k].drawHeight= this.trueTileSize;
+		for(let k in this.tileIndex) {
+			this.tileIndex[k].drawWidth= this.trueTileSize;
+			this.tileIndex[k].drawHeight= this.trueTileSize;
 		}
 	}
 
@@ -86,13 +85,9 @@ class TileEngine extends Generic{
 		RenderPipeline.DispatchDraw(this);
 	}
 
-	attachCamera= cam => {
-		this.camera= cam;
-		this.init();
-	}
 
 	getTile= (row, col) => {
-		return this.levelData[row]?.[col];
+		return this.tileMap[row]?.[col];
 	}
 
 	setDrawGrid(op){
@@ -127,11 +122,11 @@ class TileEngine extends Generic{
 
 				const alias= this.getTile(row, col);
 				let tile;
-				if(alias == undefined || !this.spriteMap[alias]) {
+				if(alias == undefined || !this.tileIndex[alias]) {
 					if(!this.defaultSprite) continue;
 					tile= this.defaultSprite;
 				} else {
-					tile= this.spriteMap[alias];
+					tile= this.tileIndex[alias];
 				}
 				tile.drawX= drawX;
 				tile.drawY= drawY;

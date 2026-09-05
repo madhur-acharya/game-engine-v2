@@ -15,7 +15,7 @@ const load= () => {
 		"water": getImages()?.water,
 	};
 
-	const spriteMap= {
+	const tileIndex= {
 		"1": new Tile(tileAtlas.tilesetSample, "1", 0, 0, 64, 64),
 		"2": new Tile(tileAtlas.tilesetSample, "2", 64, 0, 64, 64),
 		"3": new Tile(tileAtlas.tilesetSample, "3", 128, 0, 64, 64),
@@ -25,7 +25,7 @@ const load= () => {
 		"#": new Tile(tileAtlas.water, "#", 0, 0, 64, 64),
 	};
 
-	const levelData= [
+	const tileMap= [
 		[2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4,  2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,],
 		[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
 		[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
@@ -44,7 +44,7 @@ const load= () => {
 		[2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
 	];
 
-	return {tileAtlas, spriteMap, levelData};
+	return {tileAtlas, tileIndex, tileMap};
 }
 
 class GameLevel2 extends Generic{
@@ -53,9 +53,9 @@ class GameLevel2 extends Generic{
 
 		this.camera= window.camera;
 		this.gameObject= gameObj;
-		const {tileAtlas, spriteMap, levelData}= load();
+		const {tileAtlas, tileIndex, tileMap}= load();
 
-		const foreground= new TileEngine(this.camera, 2, tileAtlas, spriteMap, levelData, 64);
+		const foreground= new TileEngine(this.camera, 2, tileAtlas, tileIndex, tileMap, 64);
 		this.gameObject.AddComponent(foreground);
 
 		const backgroundLayer= new TileEngine(this.camera, 1, tileAtlas, {

@@ -3,32 +3,20 @@ import Input from "../../src/input.js";
 import Vector from "../../src/vector.js";
 import {GameObject} from "../../src/gameObject.js";
 import {drawVector} from "../../src/utilityFunctions.js";
-import {getImages} from "../../src/constants.js";
+import ScreenManager from "../../src/components/screen.js";
 
-const generateSpriteMap= (sprite, conf) => {
-	const tileSize= conf.tileSize;
-	const cols= Math.floor(sprite.width/tileSize);
-	const rows= Math.floor(sprite.height/tileSize);
 
-	const tilemap= {
-		// "#": new Tile(conf.tileAtlas.water, "#", 0, 0, 64, 64)
-	};
-	const spriteSheet= [[]];
+const generateTileMap= (tileIndex, tileSize, maxWidth) => {
+	const tileMap= [[]];
 
-	for(let i=0; i<rows; i++) {
-		for(let j=0; j<cols; j++) {
-			const key= `${i}${j}`;
-			tilemap[key]= new Tile(sprite, key, (j*tileSize), (i*tileSize), tileSize, tileSize);
-
-			const maxColls= Math.floor(conf.camera.width/tileSize);
-			const currSheet= spriteSheet[spriteSheet.length-1];
-			currSheet.push(key);
-			if(currSheet.length >= maxColls) {
-				spriteSheet.push([]);
-			}
+	for(const key of Object.keys(tileIndex)) {
+		const currSheet= tileMap[tileMap.length-1];
+		currSheet.push(key);
+		if(currSheet.length >= Math.floor(maxWidth/tileSize)) {
+			tileMap.push([]);
 		}
 	};
-	return [tilemap, spriteSheet];
+	return tileMap;
 }
 
 class TileSelector extends TileEngine{
@@ -39,19 +27,13 @@ class TileSelector extends TileEngine{
 	};
 
 	constructor(conf= {}, screen){
-		const tileAtlas= {
-			"tilesetSample": getImages()?.tilesetSample,
-			"cobblestone": getImages()?.cobblestone,
-			"water": getImages()?.water,
-		};
-		const [spriteMap, spriteSheet]= generateSpriteMap(tileAtlas.tilesetSample ,conf);
+		const tileMap= generateTileMap(conf.tileIndex, conf.tileSize, conf.camera.width);
 
 		super(
 			conf.camera,
 			conf.layer, 
-			tileAtlas,
-			spriteMap,
-			spriteSheet, 
+			conf.tileIndex,
+			tileMap, 
 			conf.tileSize,
 		);
 		this.setScreen(screen);
@@ -63,15 +45,19 @@ class TileSelector extends TileEngine{
 	}
 
 	_tileSelectHandler(){
-		const selection= this.selection;
+		if(ScreenManager.ACTIVE_SCREEN != this.screen.key) return;
+
 		this.selectedTile= {
-			tileNumber: this.getTile(selection.rowStart, selection.colStart),
+			tileNumber: this.getTile(this.selection.rowStart, this.selection.colStart),
 			position: this.selection.tilePos
 		}
+		this.mainEditor?.setActiveTile(this.selectedTile.tileNumber);
 		console.log(this.selectedTile.tileNumber);
 	}
 
 	Update(delta){
+		if(ScreenManager.ACTIVE_SCREEN != this.screen.key) return super.Update(delta);
+
 		const cameraPos= this.camera.position;
 		const mousePos= Input.worldToScreenPoint(this.screen);
 

@@ -10,7 +10,6 @@ import ScreenManager, {Screen} from "../../src/components/screen.js";
 import TileSelector from "./tileSelector.js";
 import {GameObject} from "../../src/gameObject.js";
 
-import levelData from "./levelData.js";
 import TileEditor from "./tileEditor.js";
 
 
@@ -56,15 +55,15 @@ class levelsSelector {
 
 	}
 
-	addNewLevel(name, maxColumns, maxRows, spriteMap)
+	addNewLevel(name, maxColumns, maxRows, tileIndex)
 	{
-		const spriteSheet= [];
+		const tileMap= [];
 		for(let i=0; i<maxRows; i++) {
-			spriteSheet.push(Array(maxColumns));
+			tileMap.push(Array(maxColumns));
 		};
 		this.levels[name]= {
-			levelData: spriteSheet,
-			spriteMap: spriteMap,
+			tileMap: tileMap,
+			tileIndex: tileIndex,
 		}
 	}
 
@@ -74,26 +73,38 @@ class levelsSelector {
 	}
 }
 
+const generateTileIndex= (tileAtlas) => {
+	const tileIndex= {};
+
+	for(const T of Object.keys(tileAtlas)) {
+		const tileSheet= tileAtlas[T].img;
+		const ogSize= tileAtlas[T].size;
+		const cols= Math.floor(tileSheet.width/ogSize);
+		const rows= Math.floor(tileSheet.height/ogSize);
+		for(let i=0; i<rows; i++) {
+			for(let j=0; j<cols; j++) {
+				const key= `${T}${i}${j}`;
+				tileIndex[key]= new Tile(tileSheet, key, (j*ogSize), (i*ogSize), ogSize, ogSize);
+			}
+		};
+	}
+	return tileIndex;
+}
 
 const load= () => {
 	const tileAtlas= {
-		"tilesetSample": getImages()?.tilesetSample,
-		"cobblestone": getImages()?.cobblestone,
-		"water": getImages()?.water,
+		"A": {img: getImages()?.tilesetSample, size: 64},
+		"B": {img: getImages()?.cobblestone, size: 32},
+		"C": {img: getImages()?.character, size: 64},
+		"W": {img: getImages()?.water, size: 64},
+		"M": {img: getImages()?.mario, size: 16},
 	};
 
-	const spriteMap= (withDef= false) =>({
-		"1": new Tile(tileAtlas.tilesetSample, "1", 0, 0, 64, 64),
-		"2": new Tile(tileAtlas.tilesetSample, "2", 64, 0, 64, 64),
-		"3": new Tile(tileAtlas.tilesetSample, "3", 128, 0, 64, 64),
-		"4": new Tile(tileAtlas.tilesetSample, "4", 192, 0, 64, 64),
-		"5": new Tile(tileAtlas.tilesetSample, "5", 256, 0, 64, 64),
-		"0": new Tile(tileAtlas.cobblestone, "0", 0, 0, 16, 16),
-		...(withDef ? {"#": new Tile(tileAtlas.water, "#", 0, 0, 64, 64)} : {})
-	});
+	const lvl1TileIndex= generateTileIndex(tileAtlas);
+
 
 	const levelselector= new levelsSelector();
-	levelselector.addNewLevel("level1", 50, 50, spriteMap());
+	levelselector.addNewLevel("level1", 50, 50, lvl1TileIndex);
 
 	const sidebarwidth= window.width * 0.25;
 	const bottombarHeight= window.height * 0.33;
@@ -110,21 +121,11 @@ const load= () => {
 	const mainScreen= new Screen(new Vector(sidebarwidth, 0), mainCamera.width, mainCamera.height);
 	ScreenManager.addScreen("main", mainScreen);
 	const mainEditor= new TileEditor({
-		camera: mainCamera, layer: 2, tileAtlas: tileAtlas, spriteMap: lvl1.spriteMap, levelData: lvl1.levelData, 
+		camera: mainCamera, layer: 2, tileIndex: lvl1.tileIndex, tileMap: lvl1.tileMap, 
 		tileSize: 64
 	}, mainScreen);
 	mainEditor.setDrawGrid(true);
 	mainScreenObject.AddComponent(mainEditor);
-
-	const leftBarObject= new GameObject();
-	const leftBar= new Camera(sidebarwidth, window.height-bottombarHeight);
-	const leftScreen= new Screen(new Vector(0, 0), leftBar.width, leftBar.height);
-	ScreenManager.addScreen("left", leftScreen);
-	const leftEditor= new TileEditor({
-		camera: leftBar, layer: 2, tileAtlas: tileAtlas, spriteMap: spriteMap(), levelData: levelData, 
-		tileSize: 64
-	}, leftScreen);
-	leftBarObject.AddComponent(leftEditor);
 
 
 	const bottomBarObject= new GameObject();
@@ -132,10 +133,12 @@ const load= () => {
 	const bottomScreen= new Screen(new Vector(0, window.height-bottombarHeight), bottomCam.width, bottomCam.height);
 	ScreenManager.addScreen("bottom", bottomScreen);
 	const bottomBar= new TileSelector({
-		camera: bottomCam, layer: 4, tileSize: 64
+		camera: bottomCam, layer: 4, tileSize: 32,
+		tileIndex: lvl1TileIndex,
 	}, bottomScreen);
 	bottomBar.setDrawGrid(true);
 	bottomBarObject.AddComponent(bottomBar);
+	bottomBar.mainEditor= mainEditor;
 };
 
 
