@@ -130,6 +130,8 @@ class TileEngine extends Generic{
 				}
 				tile.drawX= drawX;
 				tile.drawY= drawY;
+				tile.drawWidth= this.trueTileSize;
+				tile.drawHeight= this.trueTileSize;
 				tile.draw();
 			}
 		}
