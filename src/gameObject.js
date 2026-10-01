@@ -5,9 +5,9 @@ export const GameObject= (() => {
 
 	const gameObjectList= [];
 
-	class GameObject 
+	class GameObject
 	{
-		constructor(positionVector= new Vector(0, 0), layer= "default") 
+		constructor(positionVector= new Vector(0, 0), layer= "default")
 		{
 			this.position= positionVector;
 			this.rotation= 0;
@@ -43,12 +43,12 @@ export const GameObject= (() => {
 			else
 			{
 				this.onDestroy(this)
-				.then(() => {
-					delete gameObjectList[this.objectId];
-				})
-				.catch(err => {
-					console.error(err);
-				});
+					.then(() => {
+						delete gameObjectList[this.objectId];
+					})
+					.catch(err => {
+						console.error(err);
+					});
 			}
 		}
 
@@ -60,18 +60,17 @@ export const GameObject= (() => {
 				this.selfDestructDelay= undefined;
 
 				this.onDestroy(this)
-				.then(() => {
-					delete gameObjectList[this.objectId];
-				})
-				.catch(err => {
-					console.error(err);
-				});
+					.then(() => {
+						delete gameObjectList[this.objectId];
+					})
+					.catch(err => {
+						console.error(err);
+					});
 			}
 		}
 
 		AddComponent(component)
 		{
-			component.gameObject= this;
 			if(!component.name) console.warn("Component has no name", component);
 			this.components[component.name]= component;
 			return component;
@@ -81,7 +80,7 @@ export const GameObject= (() => {
 		{
 			for(let i in this.components)
 			{
-				// this.components[i].ready && this.components[i].Update(this);
+				// this.components[i].ready && this.components[i].update(this);
 				this.components[i].Update(this);
 			}
 		}
@@ -103,4 +102,3 @@ export const GameObject= (() => {
 
 	return GameObject;
 })();
-

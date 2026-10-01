@@ -15,19 +15,20 @@ class TileEditor extends TileEngine{
 		colStartCam: 0,
 	};
 
-	constructor(conf= {}, screen, sheetWidth= 50, sheetHeight= 50){
+	constructor(gameObject, conf= {}, screen, sheetWidth= 50, sheetHeight= 50){
 		super(
+			gameObject,
 			conf.camera,
-			conf.layer, 
+			conf.layer,
 			conf.tileIndex,
-			conf.tileMap, 
+			conf.tileMap,
 			conf.tileSize,
 		);
 		this.setScreen(screen);
 		this.init();
 
 		this.mousePtr= new GameObject();
-		this.txtComp= new TextRenderer(3);
+		this.txtComp= new TextRenderer(this.mousePtr, 3);
 		this.txtComp.color= "crimson";
 		this.mousePtr.AddComponent(this.txtComp);
 		this.txtComp.setScreen(this.screen);

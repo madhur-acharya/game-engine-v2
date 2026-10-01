@@ -55,10 +55,10 @@ class GameLevel2 extends Generic{
 		this.gameObject= gameObj;
 		const {tileAtlas, tileIndex, tileMap}= load();
 
-		const foreground= new TileEngine(this.camera, 2, tileAtlas, tileIndex, tileMap, 64);
+		const foreground= new TileEngine(this.gameObject, this.camera, 2, tileIndex, tileMap, 64);
 		this.gameObject.AddComponent(foreground);
 
-		const backgroundLayer= new TileEngine(this.camera, 1, tileAtlas, {
+		const backgroundLayer= new TileEngine(this.gameObject, this.camera, 1, {
 			"#": new Tile(tileAtlas.tilesetSample, "#", 0, 0, 16, 16)
 		}, [[1]], 64);
 		this.gameObject.AddComponent(backgroundLayer);
@@ -82,7 +82,7 @@ class MouseTracker extends Generic{
 		super();
 		
 		this.gameObject= obj;
-		const txtComp= new TextRenderer(4);
+		const txtComp= new TextRenderer(this.gameObject, 4);
 		txtComp.name= "mousePosText";
 		txtComp.color= "crimson";
 		this.gameObject.AddComponent(txtComp);

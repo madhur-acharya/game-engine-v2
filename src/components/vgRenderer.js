@@ -5,9 +5,10 @@ import RenderPipeline from "../renderPipeline.js";
 import Generic from "./generic.js";
 
 export class VGRenderer extends Generic{
-	constructor(layer, rendFunc)
+	constructor(gameObject, layer, rendFunc)
 	{
 		super();
+		this.gameObject= gameObject;
 		this.type= "VGRenderer";
 		this.enabled= true;
 		this.layer= layer;

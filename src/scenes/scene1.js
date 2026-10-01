@@ -15,7 +15,7 @@ class RenderTest extends Generic{
 		this.layer= 3;
 		this.gameObject= gameObj;
 		this.ready= true;
-		this.gameObject.AddComponent(new VGRenderer(1, (gameObject) => {
+		this.gameObject.AddComponent(new VGRenderer(this.gameObject, 1, (gameObject) => {
 			context.save();
 			context.translate(gameObject.position.x, gameObject.position.y);
 			context.rotate(Math.PI / 2);

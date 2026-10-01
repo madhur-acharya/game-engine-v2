@@ -40,9 +40,10 @@ export class Tile extends Generic{
 class TileEngine extends Generic{
 	drawGrid= false;
 
-	constructor(camera, layer, tileIndex= {}, tileMap, tileSize= 64)
+	constructor(gameObject, camera, layer, tileIndex= {}, tileMap, tileSize= 64)
 	{
 		super();
+		this.gameObject= gameObject;
 
 		this.layer= layer;
 		this.type= "TileEngine";

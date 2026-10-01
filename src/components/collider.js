@@ -6,9 +6,10 @@ import Generic from "./generic.js";
 
 export class Collider extends Generic{
 	
-	constructor(colliderType= "circle", dimentions= {radius: 5}, onCollisionEnter= () => {}, onCollisionExit= () => {}, isTrigger= false, ignoreLayers= [])
+	constructor(gameObject, colliderType= "circle", dimentions= {radius: 5}, onCollisionEnter= () => {}, onCollisionExit= () => {}, isTrigger= false, ignoreLayers= [])
 	{
 		super();
+		this.gameObject= gameObject;
 		this.colliderType= colliderType;
 		this.dimentions= dimentions;
 		this.onCollisionEnter= onCollisionEnter;
@@ -19,11 +20,6 @@ export class Collider extends Generic{
 		this.colliding= false;
 		this.drawColiider= false;
 		this.type= "Collider"
-	}
-
-	Start(obj)
-	{
-		this.gameObject= obj;
 	}
 
 	Update()

@@ -18,6 +18,10 @@ app.get('/devtools/tileEditor', (req, res) => {
   res.sendFile(path.join(__dirname, './devtools/tileEditor/index.html'));
 });
 
+app.post('/devtools/tileEditor', (req, res) => {
+  console.log(req);
+});
+
 // Serve everything statically
 app.use(express.static(__dirname));
 

@@ -5,9 +5,10 @@ import Generic from "./generic.js";
 
 export class RigidBody extends Generic{
 
-	constructor(applyGravity= true, applyFriction= true)
+	constructor(gameObject, applyGravity= true, applyFriction= true)
 	{
 		super();
+		this.gameObject= gameObject;
 		this.type= "RigidBody";
 		this.mass= 1;
 		this.applyGravity= applyGravity;

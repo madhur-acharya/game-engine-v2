@@ -11,6 +11,7 @@ import TileSelector from "./tileSelector.js";
 import {GameObject} from "../../src/gameObject.js";
 
 import TileEditor from "./tileEditor.js";
+import LevelSelector from "./levelselector.js";
 
 
 EventSystem.createEvent("onCanvasReady");
@@ -47,32 +48,6 @@ window.addEventListener("onGameReady", () => {
 
 
 
-class levelsSelector {
-	levels= {};
-
-	constructor()
-	{
-
-	}
-
-	addNewLevel(name, maxColumns, maxRows, tileIndex)
-	{
-		const tileMap= [];
-		for(let i=0; i<maxRows; i++) {
-			tileMap.push(Array(maxColumns));
-		};
-		this.levels[name]= {
-			tileMap: tileMap,
-			tileIndex: tileIndex,
-		}
-	}
-
-	getLevel(name)
-	{
-		return this.levels[name];
-	}
-}
-
 const generateTileIndex= (tileAtlas) => {
 	const tileIndex= {};
 
@@ -103,8 +78,10 @@ const load= () => {
 	const lvl1TileIndex= generateTileIndex(tileAtlas);
 
 
-	const levelselector= new levelsSelector();
-	levelselector.addNewLevel("level1", 50, 50, lvl1TileIndex);
+	const levelSelectorObj= new GameObject();
+	const levelselector= new LevelSelector(levelSelectorObj, 4);
+	levelselector.addNewLevel("level1", 50, 10, lvl1TileIndex);
+	levelSelectorObj.AddComponent(levelselector);
 
 	const sidebarwidth= window.width * 0.25;
 	const bottombarHeight= window.height * 0.33;
@@ -120,8 +97,8 @@ const load= () => {
 	const mainScreenObject= new GameObject();
 	const mainScreen= new Screen(new Vector(sidebarwidth, 0), mainCamera.width, mainCamera.height);
 	ScreenManager.addScreen("main", mainScreen);
-	const mainEditor= new TileEditor({
-		camera: mainCamera, layer: 2, tileIndex: lvl1.tileIndex, tileMap: lvl1.tileMap, 
+	const mainEditor= new TileEditor(mainScreenObject, {
+		camera: mainCamera, layer: 2, tileIndex: lvl1.tileIndex, tileMap: lvl1.tileMap,
 		tileSize: 64
 	}, mainScreen);
 	mainEditor.setDrawGrid(true);
@@ -132,13 +109,14 @@ const load= () => {
 	const bottomCam= new Camera(window.width, bottombarHeight);
 	const bottomScreen= new Screen(new Vector(0, window.height-bottombarHeight), bottomCam.width, bottomCam.height);
 	ScreenManager.addScreen("bottom", bottomScreen);
-	const bottomBar= new TileSelector({
+	const bottomBar= new TileSelector(bottomBarObject, {
 		camera: bottomCam, layer: 4, tileSize: 32,
 		tileIndex: lvl1TileIndex,
 	}, bottomScreen);
 	bottomBar.setDrawGrid(true);
 	bottomBarObject.AddComponent(bottomBar);
 	bottomBar.mainEditor= mainEditor;
+
 };
 
 

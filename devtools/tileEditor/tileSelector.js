@@ -26,14 +26,15 @@ class TileSelector extends TileEngine{
 		rowStart: 0,
 	};
 
-	constructor(conf= {}, screen){
+	constructor(gameObject, conf= {}, screen){
 		const tileMap= generateTileMap(conf.tileIndex, conf.tileSize, conf.camera.width);
 
 		super(
+			gameObject,
 			conf.camera,
-			conf.layer, 
+			conf.layer,
 			conf.tileIndex,
-			tileMap, 
+			tileMap,
 			conf.tileSize,
 		);
 		this.setScreen(screen);

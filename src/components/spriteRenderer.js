@@ -6,9 +6,10 @@ import Generic from "./generic.js";
 
 export class SpriteRenderer extends Generic{
 
-	constructor(layer, sprite, spriteX= 0, spriteY= 0, spriteWidth, spriteHeight, drawWidth, drawHeight)
+	constructor(gameObject, layer, sprite, spriteX= 0, spriteY= 0, spriteWidth, spriteHeight, drawWidth, drawHeight)
 	{
 		super();
+		this.gameObject= gameObject;
 		this.layer= layer;
 		this.type= "SpriteRenderer";
 		this.ready= true;

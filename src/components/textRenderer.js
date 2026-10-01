@@ -6,9 +6,10 @@ import Generic from "./generic.js";
 
 export class TextRenderer extends Generic{
 
-	constructor(layer, fontSize= "14px", fontFamily= "sans-serif", color= "grey")
+	constructor(gameObject, layer, fontSize= "14px", fontFamily= "sans-serif", color= "grey")
 	{
 		super();
+		this.gameObject= gameObject;
 		this.layer= layer;
 		this.type= "TextRenderer";
 		this.ready= true;

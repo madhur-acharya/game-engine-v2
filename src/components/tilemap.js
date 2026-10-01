@@ -32,9 +32,10 @@ export class Tile extends Generic{
 
 
 class Tilemap extends Generic{
-	constructor(level, tileIndex, totalCellsHorizontal= 32, aspectRatio= 4/3)
+	constructor(gameObject, level, tileIndex, totalCellsHorizontal= 32, aspectRatio= 4/3)
 	{
 		super();
+		this.gameObject= gameObject;
 		let tilemapWidth= width;
 		let tilemapHeight= (tilemapWidth / totalCellsHorizontal) * Math.trunc(totalCellsHorizontal / aspectRatio);
 
@@ -166,7 +167,7 @@ export class LevelManager{
 			"#": () => new Tile(tileSet1, "#", 48, 368, 16, 16),
 		};
 
-		this.gameObject.addComponent(new Tilemap(level, tileIndex));
+		this.gameObject.addComponent(new Tilemap(this.gameObject, level, tileIndex));
 	}
 
 	Update= () => {}

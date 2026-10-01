@@ -13,8 +13,8 @@ class PlayerMovement{
 		this.ready= true;
 		this.gameObject= obj;
 		this.gameObject.position= new Vector();
-		this.gameObject.AddComponent(new SpriteRenderer(3, getImages()?.mario, 64, 368, 16, 16, 32, 32));
-		this.rb= this.gameObject.AddComponent(new RigidBody(false, false));
+		this.gameObject.AddComponent(new SpriteRenderer(this.gameObject, 3, getImages()?.mario, 64, 368, 16, 16, 32, 32));
+		this.rb= this.gameObject.AddComponent(new RigidBody(this.gameObject, false, false));
 		this.rb.ready= true;
 		this.rb.mass= 100;
 	}
