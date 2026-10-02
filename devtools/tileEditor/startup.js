@@ -42,7 +42,7 @@ window.addEventListener("onCanvasReady", () => {
 
 window.addEventListener("onGameReady", () => {
 	console.log("game load complete");
-	load();
+	loadResources();
 	EventSystem.dispatchEvent("onDispatchNewFrame");
 });
 
@@ -66,21 +66,53 @@ const generateTileIndex= (tileAtlas) => {
 	return tileIndex;
 }
 
-const load= () => {
+const loadResources= () => {
+	fetch("/devtools/tileEditor/getLevel/level1")
+	.then(res => res.json())
+	.then(data => {
+		load(data);
+	})
+	.catch(err => {throw error});
+};
+
+const load= (levelData) => {
 	const tileAtlas= {
-		"A": {img: getImages()?.tilesetSample, size: 64},
-		"B": {img: getImages()?.cobblestone, size: 32},
-		"C": {img: getImages()?.character, size: 64},
-		"W": {img: getImages()?.water, size: 64},
-		"M": {img: getImages()?.mario, size: 16},
+		// "A": {img: getImages()?.tilesetSample, size: 64},
+		// "B": {img: getImages()?.cobblestone, size: 32},
+		// "C": {img: getImages()?.character, size: 64},
+		// "W": {img: getImages()?.water, size: 64},
+		// "M": {img: getImages()?.mario, size: 16},
+		"tilesetSample": {img: getImages()?.tilesetSample, size: 64},
+		// "cobblestone": {img: getImages()?.cobblestone, size: 32},
+		// "character": {img: getImages()?.character, size: 64},
+		// "water": {img: getImages()?.water, size: 64},
+		// "mario": {img: getImages()?.mario, size: 16},
 	};
 
-	const lvl1TileIndex= generateTileIndex(tileAtlas);
+	// const lvl1TileIndex= generateTileIndex(tileAtlas);
 
+	const lvl1TileIndex= {};
+	for(let ke in levelData.tileIndex){
+		const t= levelData.tileIndex[ke];
+		lvl1TileIndex[ke]= new Tile(
+			tileAtlas[t.spriteSheet].img,
+			t.alias,
+			t.spriteX,
+			t.spriteY,
+			t.spriteWidth,
+			t.spriteHeight,
+			t.drawWidth,
+			t.drawHeight,
+			t.alias,
+			t.drawX,
+			t.drawY,
+		);
+	}
 
 	const levelSelectorObj= new GameObject();
 	const levelselector= new LevelSelector(levelSelectorObj, 4);
-	levelselector.addNewLevel("level1", 50, 10, lvl1TileIndex);
+	// levelselector.addNewLevel("level1", 50, 10, lvl1TileIndex);
+	levelselector.addNewLevel("level1", 10, 10, lvl1TileIndex, levelData.tileMap);
 	levelSelectorObj.AddComponent(levelselector);
 
 	const sidebarwidth= window.width * 0.25;

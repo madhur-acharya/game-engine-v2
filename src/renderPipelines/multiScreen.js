@@ -67,7 +67,8 @@ class RenderPipeline{
 		}
 		else {
 			const scrKey= ScreenManager.getDefault().key;
-			for(let l of Object.keys(RenderPipeline.renderStack[scrKey]).sort()) RenderPipeline.RenderLayer(scrKey, l);
+			if(RenderPipeline.renderStack[scrKey])
+				for(let l of Object.keys(RenderPipeline.renderStack[scrKey]).sort()) RenderPipeline.RenderLayer(scrKey, l);
 		}
 		RenderPipeline.Clear();
 	}

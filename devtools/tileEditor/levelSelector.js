@@ -63,15 +63,35 @@ class LevelSelector extends Generic{
 		.catch(err => console.log(err));
 	}
 
-	addNewLevel(name, maxColumns, maxRows, tileIndex)
+	loadAllLevels() 
 	{
-		const tileMap= [];
-		for(let i=0; i<maxRows; i++) {
-			tileMap.push(Array(maxColumns));
-		};
+		const levelData= {};
+		fetch("/devtools/tileEditor/getlevelindex").then(res => res.json())
+		.then(list => {
+			Promise.all(list.map(lvl => {
+				fetch(`/devtools/tileEditor/getLevel/${lvl}`).then(res => res.json())
+				.then(data => {
+					levelData[lvl]= data;
+				})
+			}))
+			.then(() => {
+				this.levels= levelData;
+			});
+		});
+	};
+
+	addNewLevel(name, maxColumns, maxRows, tileIndex, tileMap=null)
+	{
 		this.levels[name]= {
-			tileMap: tileMap,
 			tileIndex: tileIndex,
+			tileMap: tileMap,
+		}
+		if(!tileMap){
+			const tileMap= [];
+			for(let i=0; i<maxRows; i++) {
+				tileMap.push(Array(maxColumns));
+			};
+			this.levels[name].tileMap= tileMap;
 		}
 	}
 

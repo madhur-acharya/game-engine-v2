@@ -49,7 +49,6 @@ export class Tile extends Generic{
 			drawY: this.drawY,
 			drawWidth: this.drawWidth,
 			drawHeight: this.drawHeight,
-			screen: {key: this.screen.key, name: this.screen.name},
 		};
 	}
 }
