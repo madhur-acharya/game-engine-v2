@@ -573,6 +573,7 @@ export class ImageLoader{
 		const img= new Image();
 		const d= new Promise((resolve, reject) => {
 			img.onload= () => {
+				img.key= key;
 				this.images[key]= img;
 				resolve(img);
 			};

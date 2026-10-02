@@ -31,6 +31,36 @@ class LevelSelector extends Generic{
 		this.txtComp.setScreen(this.screen);
 		this.txtComp.setText("Save Level!");
 		this.ready= true;
+
+		Input.addClickHandler("saveLevel", () => this._saveLevel());
+	}
+
+	_saveLevel(){
+		if(ScreenManager.ACTIVE_SCREEN != this.screen.key) return;
+		console.log("Saving level...");
+
+		const serealizedLevels= {};
+		for(let key in this.levels){
+			const ref= this.levels[key];
+			serealizedLevels[key]= {
+				tileIndex: Object.entries(ref.tileIndex).reduce((accu, [k, e]) => {
+					return {...accu, [k]: e.serialize()};
+				}, {}),
+				tileMap: ref.tileMap,
+			}
+		}
+		// console.log(serealizedLevels);
+
+		fetch('/devtools/tileEditor', {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(serealizedLevels),
+		})
+		.then(res => res.json())
+		.then(data => console.log(data))
+		.catch(err => console.log(err));
 	}
 
 	addNewLevel(name, maxColumns, maxRows, tileIndex)
@@ -66,7 +96,7 @@ class LevelSelector extends Generic{
 
 		context.save();
 		context.fillStyle= 'orange';
-		context.fillRect(0, this.camera.height-10, this.screen.width, 50);
+		context.fillRect(0, this.camera.height-20, this.screen.width, 50);
 		context.restore();
 	}
 }

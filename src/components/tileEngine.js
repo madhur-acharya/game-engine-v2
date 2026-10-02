@@ -35,6 +35,23 @@ export class Tile extends Generic{
 	{
 		context.drawImage(this.spriteSheet, this.spriteX, this.spriteY, this.spriteWidth, this.spriteHeight, this.drawX, this.drawY, this.drawWidth, this.drawHeight);
 	}
+
+	serialize()
+	{
+		return {
+			spriteSheet: this.spriteSheet.key,
+			alias: this.alias,
+			spriteX: this.spriteX,
+			spriteY: this.spriteY,
+			spriteWidth: this.spriteWidth,
+			spriteHeight: this.spriteHeight,
+			drawX: this.drawX,
+			drawY: this.drawY,
+			drawWidth: this.drawWidth,
+			drawHeight: this.drawHeight,
+			screen: {key: this.screen.key, name: this.screen.name},
+		};
+	}
 }
 
 class TileEngine extends Generic{
