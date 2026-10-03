@@ -1,5 +1,5 @@
 import Vector from "./vector.js";
-import {drawVector, isPromise, PrimaryKey} from "./utilityFunctions.js";
+import {drawVector, isPromise, PrimaryKey, Timer} from "./utilityFunctions.js";
 
 export const GameObject= (() => {
 
@@ -16,6 +16,7 @@ export const GameObject= (() => {
 			this.layer= "default";
 			this.timers= {};
 			this.components= {};
+			this.index= gameObjectList.length;
 			gameObjectList.push(this);
 		}
 
@@ -35,37 +36,21 @@ export const GameObject= (() => {
 
 		Destroy(delay= 0)
 		{
-			if(delay > 0)
-			{
-				this.selfDestructTimer= new Timer();
-				this.selfDestructDelay= delay;
-			}
-			else
-			{
-				this.onDestroy(this)
-					.then(() => {
-						delete gameObjectList[this.objectId];
-					})
-					.catch(err => {
-						console.error(err);
-					});
-			}
+			this.selfDestructTimer= new Timer();
+			this.selfDestructDelay= delay;
 		}
 
-		selfDestruct()
+		destructor()
 		{
 			if(this.selfDestructTimer && this.selfDestructTimer.getDuration() > this.selfDestructDelay)
 			{
 				this.selfDestructTimer= undefined;
 				this.selfDestructDelay= undefined;
 
-				this.onDestroy(this)
-					.then(() => {
-						delete gameObjectList[this.objectId];
-					})
-					.catch(err => {
-						console.error(err);
-					});
+				((typeof this.onDestroy === "function") ? this.onDestroy : () => Promise.resolve())()
+				.then(() => {
+					gameObjectList.splice(this.index, 1);
+				})
 			}
 		}
 
@@ -85,16 +70,13 @@ export const GameObject= (() => {
 			}
 		}
 
-		onDestroy()
-		{
-			this.timers= {};
-		}
+		onDestroy(){return Promise.resolve();}
 
 		Update()
 		{
 			this.runComponents();
 			this.renderGizmos();
-			this.selfDestruct();
+			this.destructor();
 		}
 
 		static getGameObjectList= () => gameObjectList;
