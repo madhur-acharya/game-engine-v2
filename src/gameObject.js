@@ -1,9 +1,10 @@
 import Vector from "./vector.js";
 import {drawVector, isPromise, PrimaryKey, Timer} from "./utilityFunctions.js";
+import LinkedList from "./linkedList.js";
 
 export const GameObject= (() => {
 
-	const gameObjectList= [];
+	const GAME_OBJECT_LIST= new LinkedList();
 
 	class GameObject
 	{
@@ -16,8 +17,7 @@ export const GameObject= (() => {
 			this.layer= "default";
 			this.timers= {};
 			this.components= {};
-			this.index= gameObjectList.length;
-			gameObjectList.push(this);
+			this._listNode= GAME_OBJECT_LIST.append(this);
 		}
 
 		NewChildGameObject()
@@ -75,9 +75,7 @@ export const GameObject= (() => {
 
 				Promise.resolve((typeof this.onDestroy === "function") && this.onDestroy())
 				.then(() => {
-					gameObjectList.splice(this.index, 1);
-					for(let i=0; i<gameObjectList.length; i++)
-						gameObjectList[i].index= i;
+					GAME_OBJECT_LIST.removeByValue(this);
 				})
 			}
 		}
@@ -107,7 +105,7 @@ export const GameObject= (() => {
 			this.destructor();
 		}
 
-		static getGameObjectList= () => gameObjectList;
+		static getGameObjectList= () => GAME_OBJECT_LIST;
 	};
 
 	return GameObject;

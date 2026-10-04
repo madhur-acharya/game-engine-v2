@@ -29,20 +29,24 @@ export class Collider extends Generic{
 
 	static computeCollisionDetection()
 	{
-		const gameObjectList= GameObject.getGameObjectList();
+		const GAME_OBJECT_LIST= GameObject.getGameObjectList();
 
 		//loop through game objects and compare with eachother.
-		for(let i= 0; i < gameObjectList.length; i++)
+		for(let i= 0; i < GAME_OBJECT_LIST.length; i++)
 		{
-			for(let j= i; j < gameObjectList.length; j++)
+			const objI= GAME_OBJECT_LIST.get(i);
+			if(!objI) continue;
+			for(let j= i; j < GAME_OBJECT_LIST.length; j++)
 			{
+				const objJ= GAME_OBJECT_LIST.get(j);
+				if(!objJ) continue;
 				//if collider layer is listed in ignoreLayers, skip.
-				if(!("Collider" in gameObjectList[i].components) || !("Collider" in gameObjectList[j].components)) return;
-				if(gameObjectList[i].components.Collider.ignoreLayers.includes(gameObjectList[j].layer) || gameObjectList[j].components.Collider.ignoreLayers.includes(gameObjectList[i].layer)) continue;
-				if(gameObjectList[i].objectId !== gameObjectList[j].objectId)
+				if(!("Collider" in objI.components) || !("Collider" in objJ.components)) return;
+				if(objI.components.Collider.ignoreLayers.includes(objJ.layer) || objJ.components.Collider.ignoreLayers.includes(objI.layer)) continue;
+				if(objI.objectId !== objJ.objectId)
 				{
 					//check collider types
-					Collider.checkCollisionType(gameObjectList[i], gameObjectList[j]);
+					Collider.checkCollisionType(objI, objJ);
 				}
 			}
 		}

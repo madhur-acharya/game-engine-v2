@@ -13,7 +13,7 @@ let aniId,
 	deltaTime= 1/16,
 	fpsArray= [60, 60, 60, 60, 60, 60];
 
-window.gameObjectList= GameObject.getGameObjectList();
+window.GAME_OBJECT_LIST= GameObject.getGameObjectList();
 window.time= 0;
 window.timestamp= 0;
 window.deltaTime= 0;
@@ -87,10 +87,9 @@ const Update= () => {
 	Interval.update();
 	Coroutine.run();
 
-	for(let i= 0; i < gameObjectList.length; i++)
-	{
-		gameObjectList[i].Update();
-	}
+	window.GAME_OBJECT_LIST.forEach(node => {
+		node.Update();
+	});
 
 	RenderPipeline.Render();
 };
