@@ -2,7 +2,6 @@ import TileEngine from "../../src/components/tileEngine.js";
 import {TextRenderer} from "../../src/components/textRenderer.js";
 import Input from "../../src/input.js";
 import Vector from "../../src/vector.js";
-import {GameObject} from "../../src/gameObject.js";
 import {drawVector} from "../../src/utilityFunctions.js";
 import ScreenManager from "../../src/components/screen.js";
 
@@ -27,13 +26,13 @@ class TileEditor extends TileEngine{
 		this.setScreen(screen);
 		this.init();
 
-		this.mousePtr= new GameObject();
+		this.mousePtr= gameObject.NewChildGameObject();
 		this.txtComp= new TextRenderer(this.mousePtr, 3);
 		this.txtComp.color= "crimson";
 		this.mousePtr.AddComponent(this.txtComp);
 		this.txtComp.setScreen(this.screen);
 		this.ready= true;
-
+		this.mousePtr.onDestroy= () => console.log("mousePtr destoryed");
 
 		Input.addClickHandler("tileApply", () => this._tilePaintHandler());
 	}

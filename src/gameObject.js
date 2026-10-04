@@ -20,6 +20,26 @@ export const GameObject= (() => {
 			gameObjectList.push(this);
 		}
 
+		NewChildGameObject()
+		{
+			const child= new GameObject(...arguments);
+			this.addChild(child);
+			return child;
+		}
+
+		addChild(child)
+		{
+			if(!this.childNodes){
+				this.childNodes= new Set();
+			}
+			this.childNodes.add(child);
+		}
+
+		removeChild(child)
+		{
+			this.childNodes.delete(child);
+		}
+
 		addTimer(key, clock)
 		{
 			this.timers[key]= clock;
@@ -38,6 +58,12 @@ export const GameObject= (() => {
 		{
 			this.selfDestructTimer= new Timer();
 			this.selfDestructDelay= delay;
+
+			if(this.childNodes && this.childNodes.size > 0) {
+				for(const ch of this.childNodes) ch.Destroy();
+			}
+
+			if(!delay) this.destructor();
 		}
 
 		destructor()
@@ -47,9 +73,11 @@ export const GameObject= (() => {
 				this.selfDestructTimer= undefined;
 				this.selfDestructDelay= undefined;
 
-				((typeof this.onDestroy === "function") ? this.onDestroy : () => Promise.resolve())()
+				Promise.resolve((typeof this.onDestroy === "function") && this.onDestroy())
 				.then(() => {
 					gameObjectList.splice(this.index, 1);
+					for(let i=0; i<gameObjectList.length; i++)
+						gameObjectList[i].index= i;
 				})
 			}
 		}
