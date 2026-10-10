@@ -47,7 +47,6 @@ window.addEventListener("onGameReady", () => {
 });
 
 
-
 const generateTileIndex= (tileAtlas) => {
 	const tileIndex= {};
 
@@ -148,6 +147,10 @@ const load= (levelData) => {
 	bottomBar.setDrawGrid(true);
 	bottomBarObject.AddComponent(bottomBar);
 	bottomBar.mainEditor= mainEditor;
+
+	// Input.addClickHandler("destroyOnClick", () => {
+	// 	mainScreenObject.Destroy();
+	// });
 
 };
 

@@ -77,7 +77,7 @@ class TileEditor extends TileEngine{
 			activeCell: new Vector(rowStartCam+ rowStart, colStartCam+ colStart),
 		}
 
-		const vel= 8;
+		const vel= 8 * delta;
 		const prevCamPos= this.camera.position.clone();
 		const limitL= new Vector(0, 0);
 

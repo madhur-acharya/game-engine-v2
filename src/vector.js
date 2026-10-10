@@ -6,7 +6,7 @@ class Vector{
 		this.y= y;
 	}
 
-	toString= () => `${this.x}:${this.y}`;
+	toString= (toFixed= true) => toFixed ? `${this.x.toFixed(2)}:${this.y.toFixed(2)}` : `${this.x}:${this.y}`;
 
 	clone= () => new Vector(this.x, this.y);
 	from= vect => {

@@ -44,7 +44,7 @@ window.addEventListener("keyup", event => {
 	if(event.keyCode === 27)
 	{
 		window.isPaused= !window.isPaused;
-		if(!window.isPaused) getNewFrame();
+		if(!window.isPaused) getNewFrameUncapped();
 		return;
 	}
 });
@@ -55,11 +55,12 @@ const clearCanvas= () => {
 	context.fillRect(0, 0, width, height);
 };
 
-const getNewFrame= () => {
-	if(window.isPaused) return;
-	aniId= requestAnimationFrame((timestamp) => {
-
-		timePerFrame= (timestamp - lastTime);
+const yieldToEventLoop = () => new Promise(resolve => setTimeout(resolve, 0));
+async function getNewFrameUncapped() {
+    while (true) {
+		if(window.isPaused) return;
+        const timestamp= performance.now();
+        timePerFrame= (timestamp - lastTime);
 		time+= timePerFrame;
 		lastTime= timestamp;
 		deltaTime= timePerFrame / 16.666666666666668;
@@ -77,18 +78,45 @@ const getNewFrame= () => {
 		const calcsPerFrame= Math.floor(timePerFrame / 16.666666666666668) || 1;
 
 		clearCanvas();
-		Update();
-		getNewFrame();
-	});
-};
+		Update(deltaTime);
+        await yieldToEventLoop();
+    }
+}
 
-const Update= () => {
+// const getNewFrame= () => {
+// 	if(window.isPaused) return;
+// 	aniId= requestAnimationFrame((timestamp) => {
+
+// 		timePerFrame= (timestamp - lastTime);
+// 		time+= timePerFrame;
+// 		lastTime= timestamp;
+// 		deltaTime= timePerFrame / 16.666666666666668;
+// 		window.timestamp= timestamp;
+// 		window.deltaTime= deltaTime;
+// 		window.time= time;
+
+// 		fps= Math.ceil(1000 / timePerFrame);
+// 		fpsArray.unshift(fps);
+// 		fpsArray.pop();
+
+// 		framerateTag.innerHTML= "FPS: " + Math.round(fpsArray.reduce((accu, curr) => accu + curr, 0) / 6);
+// 		nurdyStats.innerHTML= "Time: " + Math.floor(time / 1000);
+
+// 		const calcsPerFrame= Math.floor(timePerFrame / 16.666666666666668) || 1;
+
+// 		clearCanvas();
+// 		Update(deltaTime);
+// 		getNewFrame1();
+// 	});
+// };
+
+const Update= (dt) => {
 	TimeOut.update();
 	Interval.update();
 	Coroutine.run();
 
 	window.GAME_OBJECT_LIST.forEach(node => {
-		node.Update();
+		node.Update(dt);
 	});
 
 	RenderPipeline.Render();
@@ -96,7 +124,7 @@ const Update= () => {
 
 
 window.addEventListener("onDispatchNewFrame", () => {
-	getNewFrame();
+	getNewFrameUncapped();
 });
 
 

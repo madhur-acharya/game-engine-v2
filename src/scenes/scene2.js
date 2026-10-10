@@ -66,8 +66,8 @@ class GameLevel2 extends Generic{
 		this.ready= true;
 	};
 
-	Update= () => {
-		const vel= 8;
+	Update= (deltatime) => {
+		const vel= 8 * deltatime;
 		if(Input.getKey("w")) this.camera.position.addTo(new Vector(0, -vel));
 		if(Input.getKey("s")) this.camera.position.addTo(new Vector(0, vel));
 		if(Input.getKey("a")) this.camera.position.addTo(new Vector(-vel, 0));

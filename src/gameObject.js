@@ -87,20 +87,20 @@ export const GameObject= (() => {
 			return component;
 		}
 
-		runComponents()
+		runComponents(deltatime)
 		{
 			for(let i in this.components)
 			{
 				// this.components[i].ready && this.components[i].update(this);
-				this.components[i].Update(this);
+				this.components[i].Update(deltatime);
 			}
 		}
 
 		onDestroy(){return Promise.resolve();}
 
-		Update()
+		Update(deltatime)
 		{
-			this.runComponents();
+			this.runComponents(deltatime);
 			this.renderGizmos();
 			this.destructor();
 		}
