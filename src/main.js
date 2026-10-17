@@ -62,8 +62,7 @@ const clearCanvas= () => {
 
 const yieldToEventLoop = () => new Promise(resolve => setTimeout(resolve, 0));
 async function getNewFrameUncapped() {
-    while (true) {
-		if(window.isPaused) return;
+    while (!window.isPaused) {
         const timestamp= performance.now();
         timePerFrame= (timestamp - lastTime);
 		time+= timePerFrame;
