@@ -32,7 +32,7 @@ class TileEditor extends TileEngine{
 		this.mousePtr.AddComponent(this.txtComp);
 		this.txtComp.setScreen(this.screen);
 		this.ready= true;
-		this.mousePtr.onDestroy= () => console.log("mousePtr destoryed");
+		this.disabled= false;
 
 		Input.addClickHandler("tileApply", () => this._tilePaintHandler());
 	}
@@ -46,7 +46,7 @@ class TileEditor extends TileEngine{
 	}
 
 	_tilePaintHandler(){
-		if(ScreenManager.ACTIVE_SCREEN != this.screen.key) return;
+		if(this.disabled || ScreenManager.ACTIVE_SCREEN != this.screen.key) return;
 
 		if(this.selection.activeCell){
 			this.tileMap[this.selection.activeCell.x][this.selection.activeCell.y]= this.activeSelectedTile;

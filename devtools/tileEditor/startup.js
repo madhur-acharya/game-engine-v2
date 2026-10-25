@@ -12,6 +12,7 @@ import {GameObject} from "../../src/gameObject.js";
 
 import TileEditor from "./tileEditor.js";
 import LevelSelector from "./levelselector.js";
+import LevelCreator from "./levelCreator.js";
 
 
 EventSystem.createEvent("onCanvasReady");
@@ -42,7 +43,7 @@ window.addEventListener("onCanvasReady", () => {
 
 window.addEventListener("onGameReady", () => {
 	console.log("game load complete");
-	loadResources();
+	load();
 	EventSystem.dispatchEvent("onDispatchNewFrame");
 });
 
@@ -74,7 +75,11 @@ const loadResources= () => {
 	.catch(err => {throw error});
 };
 
-const load= (levelData) => {
+const load= () => {
+	const creator= new LevelCreator();
+}
+
+const load2= (levelData) => {
 	const tileAtlas= {
 		// "A": {img: getImages()?.tilesetSample, size: 64},
 		// "B": {img: getImages()?.cobblestone, size: 32},
@@ -129,11 +134,13 @@ const load= (levelData) => {
 	const mainScreen= new Screen(new Vector(sidebarwidth, 0), mainCamera.width, mainCamera.height);
 	ScreenManager.addScreen("main", mainScreen);
 	const mainEditor= new TileEditor(mainScreenObject, {
-		camera: mainCamera, layer: 2, tileIndex: lvl1.tileIndex, tileMap: lvl1.tileMap,
+		// camera: mainCamera, layer: 2, tileIndex: lvl1.tileIndex, tileMap: lvl1.tileMap,
+		camera: mainCamera, layer: 2, tileIndex: {}, tileMap: [[]],
 		tileSize: 64
 	}, mainScreen);
 	mainEditor.setDrawGrid(true);
 	mainScreenObject.AddComponent(mainEditor);
+	mainEditor.disabled= true;
 
 
 	const bottomBarObject= new GameObject();

@@ -32,7 +32,7 @@ app.post('/devtools/tileEditor', (req, res) => {
 		res.status(201).json({ message: 'Data saved successfully!' });
 	})
 	.catch(err => {
-		return res.status(500).json({ message: 'Failed to save data.', error: err });
+		return res.status(500).json({ message: 'Failed to save data.', error: err.message });
 	});
 });
 
@@ -44,8 +44,10 @@ app.get('/devtools/tileEditor/getlevel/:level', (req, res) => {
 app.get('/devtools/tileEditor/getlevelindex', (req, res) => {
 	const levelPath= path.join(__dirname, "database/levels");
 	readdir(levelPath)
-	.then(r => res.status(200).json(r))
-	.catch(err => res.status(500).json({ message: 'Failed to load level index.', error: err }))
+	.then(r => res.status(200).json(r.filter(el => el.includes(".json")).map(el => el.replace(".json", ""))))
+	.catch(err => {
+		return res.status(500).json({ message: 'Failed to load level index.', error: err.message});
+	})
 });
 
 // Serve everything statically

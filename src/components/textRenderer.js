@@ -31,6 +31,10 @@ export class TextRenderer extends Generic{
 		this.text= txt;
 	}
 
+	getTextWidth(){
+		return context.measureText(this.text).width;
+	}
+
 	draw()
 	{
 		if(!this.enabled) return;
