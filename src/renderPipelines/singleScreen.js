@@ -26,7 +26,8 @@ class RenderPipeline{
 		const stack= RenderPipeline.renderStack[layer];
 		if(!stack) return;
 
-		for(let i=0; i < stack.length; i++) RenderPipeline.Draw(layer);
+		const len= stack.length;
+		for(let i=0; i<len; i++) RenderPipeline.Draw(screen, layer);
 	}
 
 	static Render() {

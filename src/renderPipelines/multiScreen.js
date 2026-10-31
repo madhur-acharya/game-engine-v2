@@ -44,7 +44,8 @@ class RenderPipeline{
 		const stack= RenderPipeline.renderStack[screen][layer];
 		if(!stack) return;
 
-		for(let i=0; i < stack.length; i++) RenderPipeline.Draw(screen, layer);
+		const len= stack.length;
+		for(let i=0; i<len; i++) RenderPipeline.Draw(screen, layer);
 	}
 
 	static Render() {
@@ -74,10 +75,7 @@ class RenderPipeline{
 	}
 
 	static Clear(){
-		if(window.isPaused) {
-			console.log(RenderPipeline.renderStack);
-			return;
-		}
+		// window.stack= RenderPipeline.renderStack;
 		RenderPipeline.renderStack= {};
 	}
 
