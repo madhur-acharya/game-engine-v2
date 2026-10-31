@@ -12,7 +12,7 @@ import {GameObject} from "../../src/gameObject.js";
 import Generic from "../../src/components/generic.js";
 
 import TileEditor from "./tileEditor.js";
-import LevelSelector, {LoadAllLevels} from "./levelselector.js";
+import LevelSelector, {LoadAllLevels, LoadLevel} from "./levelselector.js";
 import StateManager from "../../src/components/stateManager.js";
 
 
@@ -39,9 +39,10 @@ export default class LevelCreator extends Generic{
 	layers= [];
 
 
-	constructor() {
+	constructor(levelName) {
 		super();
 
+		this.levelName= levelName;
 		this.stateManager= new StateManager({});
 		this.tileAtlas= {
 			// "A": {img: getImages()?.tilesetSample, size: 64},
@@ -56,43 +57,65 @@ export default class LevelCreator extends Generic{
 			// "mario": {img: getImages()?.mario, size: 16},
 		}
 
-		LoadAllLevels()
-		.then(lvls => {
-			for(let k in lvls){
-				const idx= {};
-				for(let ke in lvls[k].tileIndex){
-					const t= lvls[k].tileIndex[ke];
-					idx[ke]= new Tile(
-						this.tileAtlas[t.spriteSheet].img,
-						t.alias,
-						t.spriteX,
-						t.spriteY,
-						t.spriteWidth,
-						t.spriteHeight,
-						t.drawWidth,
-						t.drawHeight,
-						t.drawX,
-						t.drawY,
-					);
-				};
-				lvls[k].tileIndex= idx;
-			}
-			this.init(lvls);
-			this.loadLevel(lvls["level1"]);
+		LoadLevel()
+		.then(lvl => {
+			const idx= {};
+			for(let ke in lvl.tileIndex){
+				const t= lvl.tileIndex[ke];
+				idx[ke]= new Tile(
+					this.tileAtlas[t.spriteSheet].img,
+					t.alias,
+					t.spriteX,
+					t.spriteY,
+					t.spriteWidth,
+					t.spriteHeight,
+					t.drawWidth,
+					t.drawHeight,
+					t.drawX,
+					t.drawY,
+				);
+			};
+			lvl.tileIndex= idx;
 		})
+		this.init(lvl);
+		this.loadLevel(lvl)
 		.catch(err => {throw err});
+
+		// LoadAllLevels()
+		// .then(lvls => {
+		// 	for(let k in lvls){
+		// 		const idx= {};
+		// 		for(let ke in lvls[k].tileIndex){
+		// 			const t= lvls[k].tileIndex[ke];
+		// 			idx[ke]= new Tile(
+		// 				this.tileAtlas[t.spriteSheet].img,
+		// 				t.alias,
+		// 				t.spriteX,
+		// 				t.spriteY,
+		// 				t.spriteWidth,
+		// 				t.spriteHeight,
+		// 				t.drawWidth,
+		// 				t.drawHeight,
+		// 				t.drawX,
+		// 				t.drawY,
+		// 			);
+		// 		};
+		// 		lvls[k].tileIndex= idx;
+		// 	}
+		// 	this.init(lvls);
+		// 	this.loadLevel(lvls[this.levelName]);
+		// })
+		// .catch(err => {throw err});
 	}
 
-	init(allLevels) {
-		console.log(allLevels);
-		const levelData= allLevels["level1"];
+	init(levelData) {
 		this.stateManager.setState(levelData);
 		this.sidebarwidth= window.width * 0.25;
 		this.bottombarHeight= window.height * 0.33;
 
-		const levelSelectorObj= new GameObject();
-		const levelselector= new LevelSelector(levelSelectorObj, 4, allLevels);
-		levelSelectorObj.AddComponent(levelselector);
+		// const levelSelectorObj= new GameObject();
+		// const levelselector= new LevelSelector(levelSelectorObj, 4, allLevels);
+		// levelSelectorObj.AddComponent(levelselector);
 
 		const mainCamera= new Camera(window.width-this.sidebarwidth, window.height-this.bottombarHeight);
 
@@ -125,7 +148,45 @@ export default class LevelCreator extends Generic{
 		this.bottomBar.setDrawGrid(true);
 		bottomBarObject.AddComponent(this.bottomBar);
 		this.bottomBar.mainEditor= this.mainEditor;
+
+
+		this.saveButton= gameObject.NewChildGameObject();
+		this.txtComp= new TextRenderer(this.saveButton, 5);
+		this.txtComp.color= "green";
+		this.saveButton.AddComponent(this.txtComp);
+		this.txtComp.setScreen(this.screen);
+		this.txtComp.setText("Save Level!");
+		this.saveButton.position= new Vector((this.camera.width - this.txtComp.getTextWidth())/2, this.camera.height - 25);
+		Input.addClickHandler("saveLevel", () => this._saveLevel());
 	}
+
+	// _saveLevel(levelName){
+	// 	if(!this.ready || ScreenManager.ACTIVE_SCREEN != this.screen.key) return;
+	// 	console.log("Saving level...");
+
+	// 	const serealizedLevels= {};
+	// 	for(let key in this.levels){
+	// 		const ref= this.levels[key];
+	// 		serealizedLevels[key]= {
+	// 			tileIndex: Object.entries(ref.tileIndex).reduce((accu, [k, e]) => {
+	// 				return {...accu, [k]: e.serialize()};
+	// 			}, {}),
+	// 			tileMap: ref.tileMap,
+	// 		}
+	// 	}
+	// 	// console.log(serealizedLevels);
+
+	// 	fetch('/devtools/tileEditor', {
+	// 		method: "POST",
+	// 		headers: {
+	// 			"Content-Type": "application/json",
+	// 		},
+	// 		body: JSON.stringify(serealizedLevels),
+	// 	})
+	// 	.then(res => res.json())
+	// 	.then(data => console.log(data))
+	// 	.catch(err => console.log(err));
+	// }
 
 	loadLevel(lvl){
 		this.mainEditor.tileIndex= lvl.tileIndex;
@@ -133,6 +194,7 @@ export default class LevelCreator extends Generic{
 		this.mainEditor.tileSize= Object.values(lvl.tileIndex)[0].drawWidth;
 		this.mainEditor.init();
 		this.mainEditor.disabled= false;
+
 	}
 };
 

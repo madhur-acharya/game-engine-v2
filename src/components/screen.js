@@ -48,6 +48,10 @@ export class ScreenManager{
 		return ScreenManager.screens[name];
 	};
 
+	static getScreen= (name) => {
+		return ScreenManager.screens[name];
+	};
+
 	static removeScreen= (name) => {
 		delete ScreenManager.screens[name];
 	};

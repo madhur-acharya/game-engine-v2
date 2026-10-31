@@ -5,10 +5,17 @@ import Camera from "../../src/components/camera.js";
 import ScreenManager, {Screen} from "../../src/components/screen.js";
 import Generic from "../../src/components/generic.js";
 import {TextRenderer} from "../../src/components/textRenderer.js";
+import {GameObject} from "../../src/gameObject.js";
 
+
+export const LoadLevelCatalogue= () => {
+	return fetch("/devtools/tileEditor/getlevelindex")
+	.then(res => res.json())
+	.catch(err => {throw error});
+};
 
 export const LoadAllLevels= () => {
-	return fetch("/devtools/tileEditor/getlevelindex").then(res => res.json())
+	return LoadLevelCatalogue()
 	.then(list => {
 		return Promise.all(list.map(lvl => {
 			return fetch(`/devtools/tileEditor/getLevel/${lvl}`).then(res => res.json())
@@ -23,79 +30,41 @@ export const LoadAllLevels= () => {
 	.catch(err => {throw error});
 };
 
-class LevelSelector extends Generic{
-	levels= {};
+export const LoadLevel= (lvl) => {
+	return fetch(`/devtools/tileEditor/getLevel/${lvl}`)
+	.then(res => res.json())
+	.catch(err => {throw error});
+};
 
-	constructor(gameObject, layer, levels)
+class LevelSelector extends Generic{
+	levels= [];
+
+	constructor(gameObject, layer)
 	{
 		super();
 		this.gameObject= gameObject;
-
+		this.screen= ScreenManager.getScreen("left");
 		this.layer= layer;
-		this.levels= levels;
-		const sidebarwidth= window.width * 0.25;
-		const bottombarHeight= window.height * (1- 0.33);
-		this.camera= new Camera(sidebarwidth, bottombarHeight);
-		this.screen= new Screen(new Vector(0, 0), this.camera.width, this.camera.height);
-		ScreenManager.addScreen("left", this.screen);
+		this.camera= new Camera(this.screen.width, this.screen.height);
 
-		this.saveButton= gameObject.NewChildGameObject();
-		this.txtComp= new TextRenderer(this.saveButton, 5);
-		this.txtComp.color= "green";
-		this.saveButton.AddComponent(this.txtComp);
-		this.txtComp.setScreen(this.screen);
-		this.txtComp.setText("Save Level!");
-		this.saveButton.position= new Vector((this.camera.width - this.txtComp.getTextWidth())/2, this.camera.height - 25);
-		this.ready= true;
-		Input.addClickHandler("saveLevel", () => this._saveLevel());
-	}
-
-	_saveLevel(){
-		if(ScreenManager.ACTIVE_SCREEN != this.screen.key) return;
-		console.log("Saving level...");
-
-		const serealizedLevels= {};
-		for(let key in this.levels){
-			const ref= this.levels[key];
-			serealizedLevels[key]= {
-				tileIndex: Object.entries(ref.tileIndex).reduce((accu, [k, e]) => {
-					return {...accu, [k]: e.serialize()};
-				}, {}),
-				tileMap: ref.tileMap,
-			}
-		}
-		// console.log(serealizedLevels);
-
-		fetch('/devtools/tileEditor', {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(serealizedLevels),
+		LoadLevelCatalogue()
+		.then(lvls => {
+			this.levels= lvls;
+			this.ready= true;
+			this.init();
 		})
-		.then(res => res.json())
-		.then(data => console.log(data))
-		.catch(err => console.log(err));
+		.catch(err => {throw err});
 	}
 
-	addNewLevel(name, maxColumns, maxRows, tileIndex, tileMap=null)
+	init()
 	{
-		this.levels[name]= {
-			tileIndex: tileIndex,
-			tileMap: tileMap,
+		this.levelList= new GameObject(new Vector(0, 0));
+		for(let i=0; i<this.levels.length; i++) {
+			const T= new TextRenderer(this.levelList, 5, this.levels[i], new Vector(20, (i * 50) + 50));
+			T.name= ""+i;
+			T.color= "black";
+			this.levelList.AddComponent(T);
 		}
-		if(!tileMap){
-			const tileMap= [];
-			for(let i=0; i<maxRows; i++) {
-				tileMap.push(Array(maxColumns));
-			};
-			this.levels[name].tileMap= tileMap;
-		}
-	}
-
-	getLevel(name)
-	{
-		return this.levels[name];
 	}
 
 	Update(delta)
@@ -105,9 +74,8 @@ class LevelSelector extends Generic{
 
 	draw()
 	{
-
 		context.save();
-		context.fillStyle= 'teal';
+		context.fillStyle= 'darkgrey';
 		context.fillRect(0, 0, this.screen.width, this.camera.height);
 		context.restore();
 

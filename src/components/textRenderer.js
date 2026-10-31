@@ -6,7 +6,7 @@ import Generic from "./generic.js";
 
 export class TextRenderer extends Generic{
 
-	constructor(gameObject, layer, fontSize= "14px", fontFamily= "sans-serif", color= "grey")
+	constructor(gameObject, layer, text, pos, fontSize= "16px", fontFamily= "sans-serif", color= "grey")
 	{
 		super();
 		this.gameObject= gameObject;
@@ -14,9 +14,9 @@ export class TextRenderer extends Generic{
 		this.type= "TextRenderer";
 		this.ready= true;
 		this.enabled= true;
-		this.drawX= 0;
-		this.drawY= 0;
-		this.text= "";
+		this.position= pos ? pos : gameObject.position;
+		this.trackGameObject= !pos;
+		this.text= String(text);
 		this.fontSize= fontSize;
 		this.fontFamily= fontFamily;
 		this.color= color;
@@ -35,17 +35,22 @@ export class TextRenderer extends Generic{
 		return context.measureText(this.text).width;
 	}
 
+	setPos(pos) {
+		this.position= pos;
+	}
+
 	draw()
 	{
 		if(!this.enabled) return;
 
-		this.drawX= this.gameObject.position.x;
-		this.drawY= this.gameObject.position.y;
+		if(this.trackGameObject) {
+			this.position= this.gameObject.position;
+		}
 
 		const textWidth= context.measureText(this.text);
 
 		context.save();
-		context.translate(this.drawX, this.drawY);
+		context.translate(this.position.x, this.position.y);
 		context.fillStyle= this.color;
 		context.font= `${this.fontSize} ${this.fontFamily}`;
 		context.fillText(this.text, 0, 0);

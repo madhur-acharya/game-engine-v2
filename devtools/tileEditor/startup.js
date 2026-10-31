@@ -13,6 +13,7 @@ import {GameObject} from "../../src/gameObject.js";
 import TileEditor from "./tileEditor.js";
 import LevelSelector from "./levelselector.js";
 import LevelCreator from "./levelCreator.js";
+import {TextRenderer} from "../../src/components/textRenderer.js";
 
 
 EventSystem.createEvent("onCanvasReady");
@@ -67,7 +68,29 @@ const generateTileIndex= (tileAtlas) => {
 }
 
 const load= () => {
-	const creator= new LevelCreator();
+	const sidebarwidth= window.width * 0.25;
+	const bottombarHeight= window.height * (1- 0.33);
+
+	const sideCamera= new Camera(sidebarwidth, bottombarHeight);
+	const sideScreen= new Screen(new Vector(0, 0), sideCamera.width, sideCamera.height);
+	ScreenManager.addScreen("left", sideScreen);
+
+
+	const mainCamera= new Camera(window.width-sidebarwidth, window.height-bottombarHeight);
+	const mainScreen= new Screen(new Vector(sidebarwidth, 0), mainCamera.width, mainCamera.height);
+	ScreenManager.addScreen("main", mainScreen);
+
+
+	const bottomCam= new Camera(window.width, bottombarHeight);
+	const bottomScreen= new Screen(new Vector(0, window.height-bottombarHeight), bottomCam.width, bottomCam.height);
+	ScreenManager.addScreen("bottom", bottomScreen);
+
+
+	const levelSelectorObj= new GameObject();
+	const levelselector= new LevelSelector(levelSelectorObj, 4);
+	levelSelectorObj.AddComponent(levelselector);
+
+	// const creator= new LevelCreator("level1");
 }
 
 

@@ -83,7 +83,11 @@ class LinkedList{
 			prev= current;
 			current = current.next;
 		}
-        prev.next = current.next;
+		if(!prev){
+			this.head= null;
+		} else {
+			prev.next = current.next;
+		}
     }
 
 	indexOf(node){
